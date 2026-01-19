@@ -16,23 +16,23 @@ Unblocks: feat-runner, feat-compat
   - [x] `SkillRef { id, dir: PathBuf, skill: Skill }`
   - [x] `EffectiveSkills { enabled: Vec<SkillRef>, disabled: Vec<SkillId>, warnings: Vec<String> }`
 
-- [ ] Compute candidate skill set
-  - [ ] Start from manifest `enabled.skills`
-  - [ ] Apply mode `enableSkills`/`disableSkills`
-  - [ ] Apply scope override `enableSkills`/`disableSkills` in resolution order
-  - [ ] Deduplicate and stable-sort by skill ID
+- [x] Compute candidate skill set
+  - [x] Start from manifest `enabled.skills`
+  - [x] Apply mode `enableSkills`/`disableSkills`
+  - [x] Apply scope override `enableSkills`/`disableSkills` in resolution order
+  - [x] Deduplicate and stable-sort by skill ID
 
-- [ ] Validate skill existence and enablement
-  - [ ] Error if a referenced skill is missing
-  - [ ] Error if a referenced skill is not listed in manifest enabled set (unless explicitly allowed by design)
+- [x] Validate skill existence and enablement
+  - [x] Error if a referenced skill is missing
+  - [x] Error if a referenced skill is not listed in manifest enabled set (unless explicitly allowed by design)
 
-- [ ] Check compatibility
-  - [ ] If `Skill.compatibility.agents` is non-empty:
-    - [ ] ensure target agent is included
-  - [ ] If `Skill.compatibility.backends` is non-empty:
-    - [ ] ensure resolved backend is included
-  - [ ] Decide behavior:
-    - [ ] default error (strict)
+- [x] Check compatibility
+  - [x] If `Skill.compatibility.agents` is non-empty:
+    - [x] ensure target agent is included
+  - [x] If `Skill.compatibility.backends` is non-empty:
+    - [x] ensure resolved backend is included
+  - [x] Decide behavior:
+    - [x] default error (strict)
     - [ ] optionally warn+drop skill (future)
 
 - [ ] Summarize requirements for later policy checks
@@ -40,9 +40,9 @@ Unblocks: feat-runner, feat-compat
   - [ ] Extract required paths (needs/writes)
   - [ ] Provide a `SkillRequirementsSummary` used by feat-runner and feat-compat
 
-- [ ] Deterministic ordering
-  - [ ] Ensure stable ordering by skill ID
-  - [ ] Preserve stable ordering of `tags` etc when printed
+- [x] Deterministic ordering
+  - [x] Ensure stable ordering by skill ID
+  - [x] Preserve stable ordering of `tags` etc when printed
 
 - [ ] Tests
   - [ ] Unit tests for enable/disable precedence
