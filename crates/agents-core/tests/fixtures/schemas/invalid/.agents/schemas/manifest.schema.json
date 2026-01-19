@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "manifest",
+  "type": "object",
+  "required": ["specVersion", "defaults", "enabled"],
+  "additionalProperties": false,
+  "properties": {
+    "specVersion": {"type": "string"},
+    "defaults": {
+      "type": "object",
+      "required": ["mode", "policy"],
+      "additionalProperties": true,
+      "properties": {
+        "mode": {"type": "string"},
+        "policy": {"type": "string"}
+      }
+    },
+    "enabled": {
+      "type": "object",
+      "required": ["modes", "policies", "skills", "adapters"],
+      "additionalProperties": true,
+      "properties": {
+        "modes": {"type": "array", "items": {"type": "string"}},
+        "policies": {"type": "array", "items": {"type": "string"}},
+        "skills": {"type": "array", "items": {"type": "string"}},
+        "adapters": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

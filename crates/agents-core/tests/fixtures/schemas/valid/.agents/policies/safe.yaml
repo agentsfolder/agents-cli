@@ -1,0 +1,7 @@
+id: safe
+description: safe
+capabilities: {}
+paths: {}
+confirmations: {}
+limits:
+  maxFilesChanged: 200

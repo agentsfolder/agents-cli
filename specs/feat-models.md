@@ -22,7 +22,7 @@ Unblocks: feat-loadag, feat-schemas, feat-resolv
     - [x] capabilities (filesystem/exec/network/mcp)
     - [x] paths (allow/deny/redact)
     - [x] confirmations (requiredFor)
-    - [x] limits
+    - [x] limits (including correct schema field renames)
   - [x] Skill
     - [x] `activation` enum
     - [x] `interface` struct with `type`, `entrypoint`, `args`, `env`

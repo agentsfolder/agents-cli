@@ -1,0 +1,5 @@
+---
+id: default
+---
+
+Default mode

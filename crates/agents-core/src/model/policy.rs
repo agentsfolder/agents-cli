@@ -124,13 +124,13 @@ pub enum ConfirmationType {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Limits {
-    #[serde(default)]
+    #[serde(default, rename = "maxFilesChanged")]
     pub max_files_changed: Option<i64>,
 
-    #[serde(default)]
+    #[serde(default, rename = "maxPatchLines")]
     pub max_patch_lines: Option<i64>,
 
-    #[serde(default)]
+    #[serde(default, rename = "maxCommandRuntimeSec")]
     pub max_command_runtime_sec: Option<i64>,
 }
 

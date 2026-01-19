@@ -55,12 +55,12 @@ Unblocks: feat-doctor, feat-adtest
     - [x] schema validation (this feature)
     - [x] referential integrity checks (can remain in load stage or here)
 
-- [ ] Tests
-  - [ ] Valid fixture passes
-  - [ ] Invalid fixture fails with:
-    - [ ] correct file path
-    - [ ] correct schema
-    - [ ] a non-empty pointer/message
+- [x] Tests
+  - [x] Valid fixture passes
+  - [x] Invalid fixture fails with:
+    - [x] correct file path
+    - [x] correct schema
+    - [x] a non-empty pointer/message
 
 ## Verification
 - [ ] `agents validate` fails fast on a deliberately broken `.agents/policies/*.yaml`

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "policy",
+  "type": "object",
+  "required": ["id", "description", "capabilities", "paths", "confirmations", "limits"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {"type": "string"},
+    "description": {"type": "string"},
+    "capabilities": {"type": "object"},
+    "paths": {"type": "object"},
+    "confirmations": {"type": "object"},
+    "limits": {
+      "type": "object",
+      "required": ["maxFilesChanged"],
+      "additionalProperties": true,
+      "properties": {
+        "maxFilesChanged": {"type": "integer"}
+      }
+    }
+  }
+}
