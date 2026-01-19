@@ -24,15 +24,15 @@ Unblocks: feat-doctor, feat-adtest
     - [x] additionalProperties false
     - [x] defaults are not required to be applied (OK)
 
-- [ ] Implement schema loader
-  - [ ] Load schema JSON from `.agents/schemas/*.schema.json`
-  - [ ] Cache compiled schemas in memory per process
-  - [ ] Map canonical file types to schema filenames
+- [x] Implement schema loader
+  - [x] Load schema JSON from `.agents/schemas/*.schema.json`
+  - [x] Cache compiled schemas in memory per process
+  - [x] Map canonical file types to schema filenames
 
-- [ ] Implement YAML/MD -> JSON conversion
-  - [ ] For YAML files: parse YAML -> `serde_json::Value`
+- [x] Implement YAML/MD -> JSON conversion
+  - [x] For YAML files: parse YAML -> `serde_json::Value`
   - [ ] For mode frontmatter: serialize `ModeFrontmatter` to JSON value
-  - [ ] For state: YAML -> JSON
+  - [x] For state: YAML -> JSON
 
 - [ ] Validate each file type
   - [ ] Manifest: `.agents/manifest.yaml`
