@@ -63,5 +63,5 @@ Unblocks: feat-doctor, feat-adtest
     - [x] a non-empty pointer/message
 
 ## Verification
-- [ ] `agents validate` fails fast on a deliberately broken `.agents/policies/*.yaml`
+- [x] `agents validate` fails fast on a deliberately broken `.agents/policies/*.yaml`
 - [ ] `agents validate` succeeds on the init preset output (once feat-initpr exists)
