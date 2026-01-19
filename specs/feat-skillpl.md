@@ -50,5 +50,5 @@ Unblocks: feat-runner, feat-compat
   - [x] Determinism test: ordering stable despite input file ordering
 
 ## Verification
-- [ ] `agents status` (once wired) lists enabled skills deterministically
+- [x] `agents status` (once wired) lists enabled skills deterministically
 - [x] Fixture where a skill is incompatible fails with actionable diagnostics
