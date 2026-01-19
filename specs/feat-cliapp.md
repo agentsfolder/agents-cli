@@ -41,45 +41,45 @@ Unblocks: feat-models, feat-initpr, feat-status
     - [x] `Backend` (`vfs_container`, `materialize`, `vfs_mount`) (string parsing + display)
 
 
-- [ ] Establish app context plumbing
-  - [ ] Create `AppContext` with:
-    - [ ] resolved repo root path
-    - [ ] output mode (human/json)
-    - [ ] logger handle / verbosity
-  - [ ] Add a single `dispatch(ctx, command) -> Result<()>` entrypoint
-  - [ ] For now, each command handler can return `NotImplemented` or `NotInitialized` errors
+- [x] Establish app context plumbing
+  - [x] Create `AppContext` with:
+    - [x] resolved repo root path
+    - [x] output mode (human/json)
+    - [x] verbosity flags (verbose/quiet)
+  - [x] Add a single `dispatch(ctx, command) -> Result<()>` entrypoint
+  - [x] For now, each command handler can return `NotImplemented` or `NotInitialized` errors
 
-- [ ] Structured errors and exit codes
-  - [ ] Implement error type(s) with categories:
-    - [ ] `NotInitialized` (missing `.agents/manifest.yaml`)
-    - [ ] `InvalidArgs`
-    - [ ] `Io`
-    - [ ] `SchemaInvalid`
-    - [ ] `Conflict` (collisions)
-    - [ ] `PolicyDenied`
-    - [ ] `ExternalToolMissing` (docker/agent binary)
-  - [ ] Map categories to stable exit codes (document in code):
-    - [ ] `0` success
-    - [ ] `2` invalid args
-    - [ ] `3` not initialized
-    - [ ] `4` validation/schema error
-    - [ ] `5` operational failure (io, external tool)
-  - [ ] Ensure errors print:
-    - [ ] one-line summary
-    - [ ] optional context lines (path, schema, hint)
+- [x] Structured errors and exit codes
+  - [x] Implement error type(s) with categories:
+    - [x] `NotInitialized` (missing `.agents/manifest.yaml`)
+    - [x] `InvalidArgs`
+    - [x] `Io`
+    - [x] `SchemaInvalid`
+    - [x] `Conflict` (collisions)
+    - [x] `PolicyDenied`
+    - [x] `ExternalToolMissing` (docker/agent binary)
+  - [x] Map categories to stable exit codes (document in code):
+    - [x] `0` success
+    - [x] `2` invalid args
+    - [x] `3` not initialized
+    - [x] `4` validation/schema error
+    - [x] `5` operational failure (io, external tool)
+  - [x] Ensure errors print:
+    - [x] one-line summary
+    - [x] optional context lines (path, schema, hint)
 
 - [ ] Logging/tracing setup
   - [ ] Add `tracing` + `tracing_subscriber`
   - [ ] Honor `--verbose` and `RUST_LOG`
   - [ ] Keep default output clean (no debug logs unless enabled)
 
-- [ ] Basic command UX and placeholders
-  - [ ] Implement `agents --help` and `agents <cmd> --help` output sanity
-  - [ ] Implement `agents validate` to:
-    - [ ] locate repo root
-    - [ ] detect missing `.agents/manifest.yaml`
-    - [ ] return `NotInitialized` with a hint to run `agents init`
-  - [ ] Ensure all other commands also fail with `NotInitialized` until feat-loadag is done
+- [x] Basic command UX and placeholders
+  - [x] Implement `agents --help` and `agents <cmd> --help` output sanity
+  - [x] Implement `agents validate` to:
+    - [x] locate repo root
+    - [x] detect missing `.agents/manifest.yaml`
+    - [x] return `NotInitialized` with a hint to run `agents init`
+  - [x] Ensure all other commands also fail with `NotInitialized` until feat-loadag is done
 
 - [ ] Tests
   - [ ] Add a minimal CLI snapshot test (help text stable) OR a smoke test that command parsing works

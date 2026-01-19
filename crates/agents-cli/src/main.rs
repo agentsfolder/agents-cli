@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use clap::{Parser, Subcommand, ValueEnum};
 
@@ -7,6 +7,16 @@ enum Backend {
     VfsContainer,
     Materialize,
     VfsMount,
+}
+
+impl Backend {
+    fn as_str(&self) -> &'static str {
+        match self {
+            Backend::VfsContainer => "vfs_container",
+            Backend::Materialize => "materialize",
+            Backend::VfsMount => "vfs_mount",
+        }
+    }
 }
 
 #[derive(Debug, Parser)]
@@ -114,9 +124,126 @@ enum TestCommands {
     },
 }
 
-fn main() {
-    let _cli = Cli::parse();
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum OutputMode {
+    Human,
+    Json,
+}
 
-    // Placeholder until feat-loadag wires everything.
-    println!("agents: not implemented yet");
+#[derive(Debug)]
+struct AppContext {
+    repo_root: PathBuf,
+    output: OutputMode,
+    verbose: bool,
+    quiet: bool,
+}
+
+#[derive(Debug)]
+enum ErrorCategory {
+    NotInitialized,
+    InvalidArgs,
+    Io,
+    SchemaInvalid,
+    Conflict,
+    PolicyDenied,
+    ExternalToolMissing,
+}
+
+#[derive(Debug)]
+struct AppError {
+    category: ErrorCategory,
+    message: String,
+    context: Vec<String>,
+}
+
+impl AppError {
+    fn not_initialized(repo_root: &Path) -> Self {
+        AppError {
+            category: ErrorCategory::NotInitialized,
+            message: "repository is not initialized".to_string(),
+            context: vec![
+                format!(
+                    "missing required file: {}",
+                    repo_root.join(".agents/manifest.yaml").display()
+                ),
+                "hint: run `agents init`".to_string(),
+            ],
+        }
+    }
+
+    fn exit_code(&self) -> i32 {
+        match self.category {
+            ErrorCategory::InvalidArgs => 2,
+            ErrorCategory::NotInitialized => 3,
+            ErrorCategory::SchemaInvalid => 4,
+            ErrorCategory::Io
+            | ErrorCategory::Conflict
+            | ErrorCategory::PolicyDenied
+            | ErrorCategory::ExternalToolMissing => 5,
+        }
+    }
+}
+
+impl std::fmt::Display for AppError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "error: {}", self.message)?;
+        for line in &self.context {
+            writeln!(f, "{line}")?;
+        }
+        Ok(())
+    }
+}
+
+impl std::error::Error for AppError {}
+
+type AppResult<T> = Result<T, AppError>;
+
+fn dispatch(ctx: &AppContext, cmd: Commands) -> AppResult<()> {
+    match cmd {
+        Commands::Validate { .. } => cmd_validate(ctx),
+
+        // Until feat-loadag, everything else behaves like "not initialized".
+        _ => Err(AppError::not_initialized(&ctx.repo_root)),
+    }
+}
+
+fn cmd_validate(ctx: &AppContext) -> AppResult<()> {
+    let manifest_path = ctx.repo_root.join(".agents/manifest.yaml");
+    if !manifest_path.exists() {
+        return Err(AppError::not_initialized(&ctx.repo_root));
+    }
+
+    // Placeholder until schema validation exists.
+    if ctx.output == OutputMode::Human {
+        println!("ok: .agents initialized");
+    }
+
+    Ok(())
+}
+
+fn main() {
+    let cli = Cli::parse();
+
+    let output = if cli.json {
+        OutputMode::Json
+    } else {
+        OutputMode::Human
+    };
+
+    let repo_root = cli.repo.unwrap_or_else(|| std::env::current_dir().unwrap());
+
+    let ctx = AppContext {
+        repo_root,
+        output,
+        verbose: cli.verbose,
+        quiet: cli.quiet,
+    };
+
+    match dispatch(&ctx, cli.command) {
+        Ok(()) => std::process::exit(0),
+        Err(err) => {
+            eprint!("{err}");
+            std::process::exit(err.exit_code());
+        }
+    }
 }
