@@ -17,12 +17,12 @@ Unblocks: feat-doctor, feat-adtest
 - Validation errors include file path + schema name + a helpful pointer.
 
 ## Implementation Plan
-- [ ] Choose schema validation library
-  - [ ] Evaluate `jsonschema` crate (draft 2020-12 support)
-  - [ ] Confirm it supports:
-    - [ ] basic types, required, enums
-    - [ ] additionalProperties false
-    - [ ] defaults are not required to be applied (OK)
+- [x] Choose schema validation library
+  - [x] Evaluate `jsonschema` crate (draft 2020-12 support)
+  - [x] Confirm it supports:
+    - [x] basic types, required, enums
+    - [x] additionalProperties false
+    - [x] defaults are not required to be applied (OK)
 
 - [ ] Implement schema loader
   - [ ] Load schema JSON from `.agents/schemas/*.schema.json`
