@@ -27,7 +27,7 @@ Unblocks: feat-loadag, feat-matwiz, feat-prevdf
     - [x] Reject paths that escape repo root after canonicalization
     - [x] Normalize separators to `/` for internal matching/printing
   - [x] Implement stable path display helpers for diagnostics
-  - [ ] Add Windows-specific tests (use `Path::components` not string hacks)
+  - [x] Add Windows-specific tests (use `Path::components` not string hacks)
 
 - [x] Directory walking helpers
   - [x] Implement `walk_repo_agents(root) -> Iterator<PathBuf>`
@@ -56,14 +56,14 @@ Unblocks: feat-loadag, feat-matwiz, feat-prevdf
   - [x] Implement `temp_generation_dir(prefix) -> Result<TempDir>`
   - [x] Ensure temp dirs are cleaned up unless `--keep-temp` is introduced later
 
-- [ ] Tests
-  - [ ] Unit tests for:
-    - [ ] root discovery (nested directories)
-    - [ ] path escape rejection (`..` paths)
-    - [ ] deterministic traversal ordering
-    - [ ] atomic write round-trip
-    - [ ] newline normalization
+- [x] Tests
+  - [x] Unit tests for:
+    - [x] root discovery (nested directories)
+    - [x] path escape rejection (`..` paths)
+    - [x] deterministic traversal ordering
+    - [x] atomic write round-trip
+    - [x] newline normalization
 
 ## Verification
-- [ ] `cargo test` passes
-- [ ] In a fixture repo: discovery finds the correct root from `repo/sub/dir`
+- [x] `cargo test` passes
+- [x] In a fixture repo: discovery finds the correct root from `repo/sub/dir`
