@@ -11,11 +11,11 @@ Unblocks: feat-models, feat-initpr, feat-status
 - Centralized error handling and exit codes.
 
 ## Implementation Plan
-- [ ] Create Cargo workspace and crates
-  - [ ] Create workspace `Cargo.toml` (root)
-  - [ ] Create binary crate `crates/agents-cli`
-  - [ ] Create library crate `crates/agents-core` (empty placeholders are fine)
-  - [ ] Ensure `cargo build` works on macOS/Linux/Windows
+- [x] Create Cargo workspace and crates
+  - [x] Create workspace `Cargo.toml` (root)
+  - [x] Create binary crate `crates/agents-cli`
+  - [x] Create library crate `crates/agents-core` (empty placeholders are fine)
+  - [x] Ensure `cargo build` works on macOS/Linux/Windows
 
 - [ ] Add CLI argument parsing (clap)
   - [ ] Define top-level `Cli` struct with global flags

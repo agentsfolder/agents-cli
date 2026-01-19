@@ -1,0 +1,13 @@
+[package]
+name = "agents-cli"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[[bin]]
+name = "agents"
+path = "src/main.rs"
+
+[dependencies]
+agents-core = { path = "../agents-core" }
+
