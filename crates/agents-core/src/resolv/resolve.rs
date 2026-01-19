@@ -1,7 +1,7 @@
 use std::collections::BTreeSet;
 use std::path::PathBuf;
 
-use crate::loadag::RepoConfig;
+use crate::loadag::{load_repo_config, RepoConfig};
 use crate::model::BackendKind;
 use crate::resolv::{match_scopes, EffectiveConfig, ResolutionRequest, ScopeMatch};
 
@@ -108,8 +108,44 @@ impl Resolver {
             }
         }
 
-        // Apply user overlay (lowest precedence). Not implemented yet.
-        let _ = req.enable_user_overlay;
+        // Apply user overlay (lowest precedence).
+        if req.enable_user_overlay {
+            let overlay_root = req
+                .user_overlay_root
+                .clone()
+                .or_else(|| std::env::var_os("HOME").map(PathBuf::from));
+
+            if let Some(home) = overlay_root {
+                let overlay_repo_root = home.join(".agents");
+                let opts = crate::loadag::LoaderOptions {
+                    require_schemas_dir: false,
+                };
+
+                if let Ok((overlay_cfg, _report)) = load_repo_config(&overlay_repo_root, &opts) {
+                    // Lowest precedence: only fill if not already set (but we set defaults first).
+                    // So, overlay acts as a fallback if manifest defaults are missing (rare), or
+                    // can influence lists via union.
+
+                    // Scalars: only if empty
+                    if mode_id.is_empty() {
+                        mode_id = overlay_cfg.manifest.defaults.mode;
+                    }
+                    if policy_id.is_empty() {
+                        policy_id = overlay_cfg.manifest.defaults.policy;
+                    }
+
+                    // Lists: union
+                    for s in overlay_cfg
+                        .modes
+                        .values()
+                        .filter_map(|m| m.frontmatter.as_ref())
+                        .flat_map(|fm| fm.enable_skills.iter())
+                    {
+                        enable_skills.insert(s.clone());
+                    }
+                }
+            }
+        }
 
         // Apply state (if any) unless CLI overrides are provided.
         if let Some(state) = &self.repo.state {
@@ -228,6 +264,7 @@ impl Default for ResolutionRequest {
             override_backend: None,
             override_scopes: vec![],
             enable_user_overlay: false,
+            user_overlay_root: None,
         }
     }
 }

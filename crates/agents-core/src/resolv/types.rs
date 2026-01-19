@@ -19,6 +19,11 @@ pub struct ResolutionRequest {
 
     /// Whether to enable user overlay resolution if present.
     pub enable_user_overlay: bool,
+
+    /// Optional override for where to look for the user overlay directory.
+    ///
+    /// When set, the overlay is loaded from `<user_overlay_root>/.agents/manifest.yaml`.
+    pub user_overlay_root: Option<PathBuf>,
 }
 
 #[derive(Debug, Clone)]

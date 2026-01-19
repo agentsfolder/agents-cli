@@ -38,7 +38,7 @@ Unblocks: feat-prompts, feat-skillpl, feat-status
 
 - [x] Implement precedence layering (PRD)
   - [x] Build a layered set of "overrides" in order:
-    - [ ] user overlay (lowest) (if enabled)
+    - [x] user overlay (lowest) (if enabled)
     - [x] repo base (manifest defaults and repo artifacts)
     - [x] best matching scope override(s) (apply most specific)
     - [x] repo state (if used) (decide exact placement; document)
