@@ -41,10 +41,10 @@ Unblocks: feat-loadag, feat-schemas, feat-resolv
   - [x] Mode frontmatter
     - [x] id/title/policy/enableSkills/disableSkills/includeSnippets/toolIntent
 
-- [ ] Enforce strict deserialization
-  - [ ] Use `#[serde(deny_unknown_fields)]` on structs
-  - [ ] Use `Option<T>` only where schema allows absence
-  - [ ] Add `Default` only where it helps and does not hide missing required fields
+- [x] Enforce strict deserialization
+  - [x] Use `#[serde(deny_unknown_fields)]` on structs
+  - [x] Use `Option<T>` only where schema allows absence
+  - [x] Add `Default` only where it helps and does not hide missing required fields
 
 - [ ] Markdown frontmatter parsing
   - [ ] Define `ModeFile { frontmatter: ModeFrontmatter, body: String }`
