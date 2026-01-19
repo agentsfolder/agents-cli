@@ -53,9 +53,9 @@ Unblocks: feat-loadag, feat-schemas, feat-resolv
     - [x] Fail if frontmatter is present but invalid YAML
     - [x] Preserve body with normalized `\n`
 
-- [ ] ID and path newtypes (optional but recommended)
-  - [ ] `ModeId`, `PolicyId`, `SkillId`, `AdapterId`, `ScopeId` as `String` wrappers
-  - [ ] Add lightweight validation helpers (non-empty, printable)
+- [x] ID and path newtypes (optional but recommended)
+  - [x] `ModeId`, `PolicyId`, `SkillId`, `AdapterId`, `ScopeId` as `String` wrappers
+  - [x] Add lightweight validation helpers (non-empty, printable)
 
 - [ ] Tests
   - [ ] Deserialize fixtures for each entity (minimal valid examples)
