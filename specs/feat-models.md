@@ -66,5 +66,5 @@ Unblocks: feat-loadag, feat-schemas, feat-resolv
   - [x] Unknown field rejection tests
 
 ## Verification
-- [ ] `cargo test` passes
-- [ ] Sample YAML from PRD schemas deserializes cleanly
+- [x] `cargo test` passes
+- [x] Sample YAML from PRD schemas deserializes cleanly
