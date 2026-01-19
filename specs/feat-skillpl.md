@@ -12,9 +12,9 @@ Unblocks: feat-runner, feat-compat
   - compatibility flags (agent/backends) and requirements summaries
 
 ## Implementation Plan
-- [ ] Define types
-  - [ ] `SkillRef { id, dir: PathBuf, skill: Skill }`
-  - [ ] `EffectiveSkills { enabled: Vec<SkillRef>, disabled: Vec<SkillId>, warnings: Vec<String> }`
+- [x] Define types
+  - [x] `SkillRef { id, dir: PathBuf, skill: Skill }`
+  - [x] `EffectiveSkills { enabled: Vec<SkillRef>, disabled: Vec<SkillId>, warnings: Vec<String> }`
 
 - [ ] Compute candidate skill set
   - [ ] Start from manifest `enabled.skills`
