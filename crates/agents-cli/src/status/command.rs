@@ -8,7 +8,7 @@ use crate::status::StatusReport;
 use crate::{AppError, ErrorCategory, OutputMode};
 
 pub fn cmd_status(repo_root: &Path, output: OutputMode) -> Result<(), AppError> {
-    let (repo, _report) = load_repo_config(
+    let (repo, report) = load_repo_config(
         repo_root,
         &LoaderOptions {
             require_schemas_dir: false,
@@ -27,6 +27,12 @@ pub fn cmd_status(repo_root: &Path, output: OutputMode) -> Result<(), AppError> 
     let mut req = ResolutionRequest::default();
     req.repo_root = repo_root.to_path_buf();
 
+    // If state.yaml exists, resolution will likely use it. Expose this as a hint.
+    let state_influences = repo.state.is_some();
+
+    // If the repo warns about missing schemas, we keep it as a hint as well.
+    let has_load_warnings = !report.warnings.is_empty();
+
     let effective = resolver.resolve(&req).map_err(|e| AppError {
         category: ErrorCategory::Io,
         message: e.to_string(),
@@ -40,7 +46,7 @@ pub fn cmd_status(repo_root: &Path, output: OutputMode) -> Result<(), AppError> 
         context: vec![],
     })?;
 
-    let report = StatusReport {
+    let mut report = StatusReport {
         repo_root: repo_root.display().to_string(),
         effective_mode: effective.mode_id,
         effective_policy: effective.policy_id,
@@ -49,7 +55,21 @@ pub fn cmd_status(repo_root: &Path, output: OutputMode) -> Result<(), AppError> 
         scopes_matched: effective.scopes_matched.into_iter().map(|s| s.id).collect(),
         skills_enabled: skills.enabled.into_iter().map(|s| s.id).collect(),
         agent_id: None,
+        hints: vec![],
     };
+
+    if state_influences {
+        report.hints.push(
+            "hint: .agents/state/state.yaml is present and may influence mode/profile/backend"
+                .to_string(),
+        );
+    }
+
+    if has_load_warnings {
+        report.hints.push(
+            "hint: repo has .agents warnings (run `agents validate` for details)".to_string(),
+        );
+    }
 
     match output {
         OutputMode::Human => {

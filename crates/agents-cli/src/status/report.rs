@@ -13,6 +13,8 @@ pub struct StatusReport {
     pub skills_enabled: Vec<String>,
 
     pub agent_id: Option<String>,
+
+    pub hints: Vec<String>,
 }
 
 impl StatusReport {
@@ -48,6 +50,13 @@ impl StatusReport {
 
         if let Some(agent) = &self.agent_id {
             out.push_str(&format!("agent: {agent}\n"));
+        }
+
+        if !self.hints.is_empty() {
+            out.push_str("hints:\n");
+            for h in &self.hints {
+                out.push_str(&format!("  - {h}\n"));
+            }
         }
 
         out

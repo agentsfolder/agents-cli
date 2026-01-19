@@ -33,8 +33,8 @@ Unblocks: feat-compat
 - [x] Render output
   - [x] Keep output stable and grep-friendly
   - [x] Ensure deterministic ordering of lists
-  - [ ] Add hints if:
-    - [ ] `.agents/state/state.yaml` influences mode/profile
+  - [x] Add hints if:
+    - [x] `.agents/state/state.yaml` influences mode/profile
     - [ ] user overlay is enabled
 
 - [x] Tests
