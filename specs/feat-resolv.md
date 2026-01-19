@@ -75,5 +75,5 @@ Unblocks: feat-prompts, feat-skillpl, feat-status
     - [x] stable ordering of skills and snippets
 
 ## Verification
-- [ ] Fixture matrix produces expected effective mode/policy/skills
+- [x] Fixture matrix produces expected effective mode/policy/skills
 - [ ] `agents status --mode <x> --profile <y>` matches expected effective config
