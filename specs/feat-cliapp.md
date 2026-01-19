@@ -17,28 +17,29 @@ Unblocks: feat-models, feat-initpr, feat-status
   - [x] Create library crate `crates/agents-core` (empty placeholders are fine)
   - [x] Ensure `cargo build` works on macOS/Linux/Windows
 
-- [ ] Add CLI argument parsing (clap)
-  - [ ] Define top-level `Cli` struct with global flags
-    - [ ] `--repo <path>` (optional; default: auto-discover)
-    - [ ] `--json` (optional; machine-readable output placeholder)
-    - [ ] `-v/--verbose` and `-q/--quiet` (mutually aware)
-  - [ ] Define `Commands` enum with v1 subcommands and args (stubs):
-    - [ ] `init [--preset <name>]`
-    - [ ] `validate [--profile <name>]`
-    - [ ] `status`
-    - [ ] `set-mode <mode> [--profile <name>]`
-    - [ ] `preview [--agent <id>] [--backend <backend>] [--mode ..] [--profile ..]`
-    - [ ] `diff [--agent <id>]`
-    - [ ] `sync [--agent <id>] [--backend <backend>]`
-    - [ ] `run <agent> [--mode ..] [--profile ..] [--backend ..] [--] <passthrough...>`
-    - [ ] `doctor [--fix] [--ci]`
-    - [ ] `clean [--agent <id>]`
-    - [ ] `import --from <agent> [--path <path>]`
-    - [ ] `explain <path>`
-    - [ ] `compat`
-    - [ ] `test adapters [--agent <id>]`
-  - [ ] Add enums for:
-    - [ ] `Backend` (`vfs_container`, `materialize`, `vfs_mount`) (string parsing + display)
+- [x] Add CLI argument parsing (clap)
+  - [x] Define top-level `Cli` struct with global flags
+    - [x] `--repo <path>` (optional; default: auto-discover)
+    - [x] `--json` (optional; machine-readable output placeholder)
+    - [x] `-v/--verbose` and `-q/--quiet` (mutually aware)
+  - [x] Define `Commands` enum with v1 subcommands and args (stubs):
+    - [x] `init [--preset <name>]`
+    - [x] `validate [--profile <name>]`
+    - [x] `status`
+    - [x] `set-mode <mode> [--profile <profile>]`
+    - [x] `preview [--agent <id>] [--backend ...] [--mode ...] [--profile ...]`
+    - [x] `diff [--agent <id>]`
+    - [x] `sync [--agent <id>] [--backend ...]`
+    - [x] `run <agent> [--mode ...] [--profile ...] [--backend ...] [--] <passthrough...>`
+    - [x] `doctor [--fix] [--ci]`
+    - [x] `clean [--agent <id>]`
+    - [x] `import --from <agent> [--path ...]`
+    - [x] `explain <path>`
+    - [x] `compat`
+    - [x] `test adapters [--agent <id>]`
+  - [x] Add enums for:
+    - [x] `Backend` (`vfs_container`, `materialize`, `vfs_mount`) (string parsing + display)
+
 
 - [ ] Establish app context plumbing
   - [ ] Create `AppContext` with:

@@ -11,3 +11,5 @@ path = "src/main.rs"
 [dependencies]
 agents-core = { path = "../agents-core" }
 
+clap = { version = "4.5.27", features = ["derive"] }
+
