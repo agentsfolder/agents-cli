@@ -57,22 +57,22 @@ Unblocks: feat-prompts, feat-skillpl, feat-status
   - [x] Ensure resolved mode exists and is enabled
   - [x] Ensure resolved policy exists and is enabled
   - [x] Ensure profile exists if specified (once profile model exists)
-  - [ ] Ensure referenced skills/snippets exist (warn vs error; decide and document)
+  - [x] Ensure referenced skills/snippets exist (warn vs error; decide and document)
 
 - [x] Expose public API
   - [x] `Resolver::resolve(req) -> Result<EffectiveConfig>`
   - [ ] `Resolver::resolve_for_agent(req, agent_id) -> Result<EffectiveConfig>` (optional helper)
 
-- [ ] Tests
-  - [ ] Precedence tests:
-    - [ ] CLI override beats scope
-    - [ ] scope beats repo default
+- [x] Tests
+  - [x] Precedence tests:
+    - [x] CLI override beats scope
+    - [x] scope beats repo default
     - [ ] user overlay is lowest
-  - [ ] Specificity tests:
-    - [ ] `apps/web/**` beats `apps/**`
-    - [ ] `priority` breaks ties
-  - [ ] Determinism tests:
-    - [ ] stable ordering of skills and snippets
+  - [x] Specificity tests:
+    - [x] `apps/web/**` beats `apps/**`
+    - [x] `priority` breaks ties
+  - [x] Determinism tests:
+    - [x] stable ordering of skills and snippets
 
 ## Verification
 - [ ] Fixture matrix produces expected effective mode/policy/skills

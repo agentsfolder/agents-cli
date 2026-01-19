@@ -175,6 +175,24 @@ impl Resolver {
         let mut snippet_ids_included: Vec<String> = include_snippets.into_iter().collect();
         snippet_ids_included.sort();
 
+        // Validate referenced skills/snippets (strict for v1).
+        for sid in &skill_ids_enabled {
+            if !self.repo.skills.contains_key(sid) {
+                return Err(ResolveError::MissingId {
+                    kind: "skills",
+                    id: sid.clone(),
+                });
+            }
+        }
+        for snip in &snippet_ids_included {
+            if !self.repo.prompts.snippets.contains_key(snip) {
+                return Err(ResolveError::MissingId {
+                    kind: "snippets",
+                    id: snip.clone(),
+                });
+            }
+        }
+
         Ok(EffectiveConfig {
             mode_id,
             policy_id,
