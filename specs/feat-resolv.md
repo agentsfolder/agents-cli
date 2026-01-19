@@ -26,15 +26,15 @@ Unblocks: feat-prompts, feat-skillpl, feat-status
     - [x] `skill_ids_enabled: Vec<SkillId>`
     - [x] `snippet_ids_included: Vec<String>`
 
-- [ ] Implement scope matching
-  - [ ] Use `globset` to compile `Scope.applyTo` patterns
-  - [ ] Decide match input:
-    - [ ] scope matches if any `applyTo` matches the target path
-  - [ ] Implement specificity scoring:
-    - [ ] higher score for more literal segments
-    - [ ] lower score for `*`, `**`, and `?` wildcards
-    - [ ] tie-breakers: `priority` desc, then `scope.id` asc
-  - [ ] Return sorted list of matches with their score
+- [x] Implement scope matching
+  - [x] Use `globset` to compile `Scope.applyTo` patterns
+  - [x] Decide match input:
+    - [x] scope matches if any `applyTo` matches the target path
+  - [x] Implement specificity scoring:
+    - [x] higher score for more literal segments
+    - [x] lower score for `*`, `**`, and `?` wildcards
+    - [x] tie-breakers: `priority` desc, then `scope.id` asc
+  - [x] Return sorted list of matches with their score
 
 - [ ] Implement precedence layering (PRD)
   - [ ] Build a layered set of "overrides" in order:
