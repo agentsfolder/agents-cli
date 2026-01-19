@@ -46,12 +46,12 @@ Unblocks: feat-loadag, feat-schemas, feat-resolv
   - [x] Use `Option<T>` only where schema allows absence
   - [x] Add `Default` only where it helps and does not hide missing required fields
 
-- [ ] Markdown frontmatter parsing
-  - [ ] Define `ModeFile { frontmatter: ModeFrontmatter, body: String }`
-  - [ ] Implement `parse_frontmatter_markdown(text) -> Result<(Option<ModeFrontmatter>, String)>`
-    - [ ] YAML frontmatter delimited by `---` lines
-    - [ ] Fail if frontmatter is present but invalid YAML
-    - [ ] Preserve body with normalized `\n`
+- [x] Markdown frontmatter parsing
+  - [x] Define `ModeFile { frontmatter: ModeFrontmatter, body: String }`
+  - [x] Implement `parse_frontmatter_markdown(text) -> Result<(Option<ModeFrontmatter>, String)>`
+    - [x] YAML frontmatter delimited by `---` lines
+    - [x] Fail if frontmatter is present but invalid YAML
+    - [x] Preserve body with normalized `\n`
 
 - [ ] ID and path newtypes (optional but recommended)
   - [ ] `ModeId`, `PolicyId`, `SkillId`, `AdapterId`, `ScopeId` as `String` wrappers
