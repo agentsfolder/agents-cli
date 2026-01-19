@@ -11,6 +11,10 @@ Unblocks: feat-loadag, feat-matwiz, feat-prevdf
 - Deterministic file IO helpers (newline normalization only where appropriate).
 
 ## Implementation Plan
+- [x] Module skeleton
+  - [x] Add `agents-core::fsutil` module file
+  - [x] Define `FsError` + `FsResult` and export module via `crates/agents-core/src/lib.rs`
+
 - [ ] Repo root discovery
   - [ ] Implement `discover_repo_root(start: Path) -> Result<PathBuf>`
     - [ ] Walk parents until `.git/` OR `.agents/` is found
