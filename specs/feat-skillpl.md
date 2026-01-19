@@ -44,10 +44,10 @@ Unblocks: feat-runner, feat-compat
   - [x] Ensure stable ordering by skill ID
   - [x] Preserve stable ordering of `tags` etc when printed
 
-- [ ] Tests
-  - [ ] Unit tests for enable/disable precedence
-  - [ ] Unit tests for compatibility filtering
-  - [ ] Determinism test: ordering stable despite input file ordering
+- [x] Tests
+  - [x] Unit tests for enable/disable precedence
+  - [x] Unit tests for compatibility filtering
+  - [x] Determinism test: ordering stable despite input file ordering
 
 ## Verification
 - [ ] `agents status` (once wired) lists enabled skills deterministically
