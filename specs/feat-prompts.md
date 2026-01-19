@@ -58,5 +58,5 @@ Unblocks: feat-templ, feat-shared
   - [x] Unit test: redaction glob matching
 
 ## Verification
-- [ ] Golden test: same fixture produces byte-identical composed prompt
+- [x] Golden test: same fixture produces byte-identical composed prompt
 - [ ] `agents preview` (once implemented) uses composed prompt in templates
