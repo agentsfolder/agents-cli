@@ -18,7 +18,7 @@ Unblocks: feat-schemas, feat-resolv, feat-initpr
     - [ ] prompts (base/project/snippets)
     - [ ] modes (frontmatter + body)
     - [ ] optional state
-  - [ ] Define `LoadWarnings` vs hard errors (e.g., missing optional state)
+  - [x] Define `LoadWarnings` vs hard errors (e.g., missing optional state)
 
 - [ ] Load required core files
   - [ ] Require `.agents/manifest.yaml`
