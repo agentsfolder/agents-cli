@@ -2,6 +2,8 @@ use std::fmt;
 use std::io;
 use std::path::{Component, Path, PathBuf};
 
+use walkdir::WalkDir;
+
 #[derive(Debug)]
 pub enum FsError {
     Io { path: PathBuf, source: io::Error },
@@ -144,4 +146,43 @@ pub fn require_agents_dir(root: &Path) -> FsResult<()> {
             source: io::Error::new(io::ErrorKind::NotFound, ".agents/ not found"),
         })
     }
+}
+
+pub fn walk_repo_agents(root: &Path) -> FsResult<Vec<PathBuf>> {
+    let agents_root = agents_dir(root);
+
+    let mut paths = vec![];
+    for entry in WalkDir::new(&agents_root).follow_links(false) {
+        let entry = entry.map_err(|e| FsError::Io {
+            path: agents_root.clone(),
+            source: io::Error::new(io::ErrorKind::Other, e.to_string()),
+        })?;
+
+        if !entry.file_type().is_file() {
+            continue;
+        }
+
+        let path = entry.path();
+
+        // Skip `.agents/state/**` except `.agents/state/.gitignore` and optional `state.yaml`.
+        if let Ok(rel) = path.strip_prefix(&agents_root) {
+            let is_state = rel
+                .components()
+                .next()
+                .is_some_and(|c| c == Component::Normal("state".as_ref()));
+
+            if is_state {
+                let keep =
+                    rel == Path::new("state/.gitignore") || rel == Path::new("state/state.yaml");
+                if !keep {
+                    continue;
+                }
+            }
+        }
+
+        paths.push(path.to_path_buf());
+    }
+
+    paths.sort_by(|a, b| path_to_forward_slash(a).cmp(&path_to_forward_slash(b)));
+    Ok(paths)
 }

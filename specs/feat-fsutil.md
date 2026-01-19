@@ -29,11 +29,11 @@ Unblocks: feat-loadag, feat-matwiz, feat-prevdf
   - [x] Implement stable path display helpers for diagnostics
   - [ ] Add Windows-specific tests (use `Path::components` not string hacks)
 
-- [ ] Directory walking helpers
-  - [ ] Implement `walk_repo_agents(root) -> Iterator<PathBuf>`
-    - [ ] Skip `.agents/state/state.yaml` if missing (optional)
-    - [ ] Skip `.agents/state/**` except `.gitignore` and optional state.yaml
-  - [ ] Provide a helper to ensure deterministic traversal ordering (sort by normalized path)
+- [x] Directory walking helpers
+  - [x] Implement `walk_repo_agents(root) -> Iterator<PathBuf>`
+    - [x] Skip `.agents/state/state.yaml` if missing (optional)
+    - [x] Skip `.agents/state/**` except `.gitignore` and optional state.yaml
+  - [x] Provide a helper to ensure deterministic traversal ordering (sort by normalized path)
 
 - [ ] Stable file reads
   - [ ] Implement `read_to_string(path) -> Result<String>`
