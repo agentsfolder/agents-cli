@@ -15,12 +15,12 @@ Unblocks: feat-loadag, feat-matwiz, feat-prevdf
   - [x] Add `agents-core::fsutil` module file
   - [x] Define `FsError` + `FsResult` and export module via `crates/agents-core/src/lib.rs`
 
-- [ ] Repo root discovery
-  - [ ] Implement `discover_repo_root(start: Path) -> Result<PathBuf>`
-    - [ ] Walk parents until `.git/` OR `.agents/` is found
-    - [ ] Prefer the nearest parent containing `.agents/` when multiple `.git` ancestors exist
-    - [ ] If none found, default to `start` (or error) based on CLI behavior
-  - [ ] Implement `agents_dir(root) -> PathBuf` and `require_agents_dir(root) -> Result<()>`
+- [x] Repo root discovery
+  - [x] Implement `discover_repo_root(start: Path) -> Result<PathBuf>`
+    - [x] Walk parents until `.git/` OR `.agents/` is found
+    - [x] Prefer the nearest parent containing `.agents/` when multiple `.git` ancestors exist
+    - [x] If none found, default to `start` (or error) based on CLI behavior
+  - [x] Implement `agents_dir(root) -> PathBuf` and `require_agents_dir(root) -> Result<()>`
 
 - [ ] Path normalization and safety
   - [ ] Implement `repo_relpath(root, path) -> Result<RepoPath>`
