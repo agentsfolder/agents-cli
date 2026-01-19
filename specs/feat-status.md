@@ -24,15 +24,15 @@ Unblocks: feat-compat
     - [x] `scopes_matched` (ordered)
     - [x] `skills_enabled` (ordered)
 
-- [ ] Wire resolver + skill planner
-  - [ ] `status` loads repo config
-  - [ ] validates schemas (or relies on validate already)
-  - [ ] resolves effective config with optional CLI overrides
-  - [ ] computes enabled skills
+- [x] Wire resolver + skill planner
+  - [x] `status` loads repo config
+  - [x] validates schemas (or relies on validate already)
+  - [x] resolves effective config with optional CLI overrides
+  - [x] computes enabled skills
 
-- [ ] Render output
-  - [ ] Keep output stable and grep-friendly
-  - [ ] Ensure deterministic ordering of lists
+- [x] Render output
+  - [x] Keep output stable and grep-friendly
+  - [x] Ensure deterministic ordering of lists
   - [ ] Add hints if:
     - [ ] `.agents/state/state.yaml` influences mode/profile
     - [ ] user overlay is enabled

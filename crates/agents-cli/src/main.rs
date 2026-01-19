@@ -206,10 +206,14 @@ type AppResult<T> = Result<T, AppError>;
 fn dispatch(ctx: &AppContext, cmd: Commands) -> AppResult<()> {
     match cmd {
         Commands::Validate { .. } => cmd_validate(ctx),
+        Commands::Status => cmd_status(ctx),
 
-        // Until feat-loadag, everything else behaves like "not initialized".
         _ => Err(AppError::not_initialized(&ctx.repo_root)),
     }
+}
+
+fn cmd_status(ctx: &AppContext) -> AppResult<()> {
+    crate::status::cmd_status(&ctx.repo_root, ctx.output)
 }
 
 fn cmd_validate(ctx: &AppContext) -> AppResult<()> {
