@@ -99,6 +99,9 @@ impl Resolver {
             }
         }
 
+        // Apply user overlay (lowest precedence). Not implemented yet.
+        let _ = req.enable_user_overlay;
+
         // Apply state (if any) unless CLI overrides are provided.
         if let Some(state) = &self.repo.state {
             mode_id = state.mode.clone();

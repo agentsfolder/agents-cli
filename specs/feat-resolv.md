@@ -67,7 +67,7 @@ Unblocks: feat-prompts, feat-skillpl, feat-status
   - [x] Precedence tests:
     - [x] CLI override beats scope
     - [x] scope beats repo default
-    - [ ] user overlay is lowest
+    - [x] user overlay is lowest
   - [x] Specificity tests:
     - [x] `apps/web/**` beats `apps/**`
     - [x] `priority` breaks ties
