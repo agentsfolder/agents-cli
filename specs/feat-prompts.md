@@ -22,35 +22,35 @@ Unblocks: feat-templ, feat-shared
     - [x] `snippets: Vec<Snippet { id, path, md }>`
     - [x] `composed_md: String` (base + project + snippets)
 
-- [ ] Select snippets
-  - [ ] Collect snippet IDs from:
-    - [ ] resolved mode frontmatter `includeSnippets`
-    - [ ] scope overrides `includeSnippets`
+- [x] Select snippets
+  - [x] Collect snippet IDs from:
+    - [x] resolved mode frontmatter `includeSnippets`
+    - [x] scope overrides `includeSnippets`
     - [ ] (optional) profile overrides if supported
-  - [ ] Deduplicate and stable-sort snippet IDs
-  - [ ] Load snippet content from `RepoConfig.prompts.snippets`
-  - [ ] Define behavior for unknown snippet IDs:
-    - [ ] default: error (prefer correctness)
+  - [x] Deduplicate and stable-sort snippet IDs
+  - [x] Load snippet content from `RepoConfig.prompts.snippets`
+  - [x] Define behavior for unknown snippet IDs:
+    - [x] default: error (prefer correctness)
     - [ ] optionally `--on-missing warn` later
 
-- [ ] Compose deterministic markdown
-  - [ ] Decide separator conventions:
-    - [ ] ensure exactly one blank line between sections
-    - [ ] include headings or banners only if adapters/templates need them (avoid duplicating)
-  - [ ] Normalize newlines to `\n`
-  - [ ] Ensure trailing newline
+- [x] Compose deterministic markdown
+  - [x] Decide separator conventions:
+    - [x] ensure exactly one blank line between sections
+    - [x] include headings or banners only if adapters/templates need them (avoid duplicating)
+  - [x] Normalize newlines to `\n`
+  - [x] Ensure trailing newline
 
-- [ ] Apply redaction
-  - [ ] Interpret `policy.paths.redact` as glob patterns
-  - [ ] Define redaction scope:
-    - [ ] For this feature, only redact referenced file-inclusions if prompt templates support inclusion.
-    - [ ] If v1 prompt composition does not embed file contents, redaction still applies when generating instruction surfaces that may embed file excerpts.
-  - [ ] Provide a helper `is_redacted(path) -> bool` for later use
-  - [ ] Define placeholder string for redacted content (deterministic, no leaks)
+- [x] Apply redaction
+  - [x] Interpret `policy.paths.redact` as glob patterns
+  - [x] Define redaction scope:
+    - [x] For this feature, only redact referenced file-inclusions if prompt templates support inclusion.
+    - [x] If v1 prompt composition does not embed file contents, redaction still applies when generating instruction surfaces that may embed file excerpts.
+  - [x] Provide a helper `is_redacted(path) -> bool` for later use
+  - [x] Define placeholder string for redacted content (deterministic, no leaks)
 
-- [ ] Source map hooks
-  - [ ] Provide `PromptSource` records listing which files contributed to the composed prompt
-  - [ ] Keep order stable (base, project, snippets...)
+- [x] Source map hooks
+  - [x] Provide `PromptSource` records listing which files contributed to the composed prompt
+  - [x] Keep order stable (base, project, snippets...)
 
 - [ ] Tests
   - [ ] Unit test: snippet selection ordering is stable
