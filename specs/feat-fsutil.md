@@ -26,7 +26,7 @@ Unblocks: feat-loadag, feat-matwiz, feat-prevdf
   - [x] Implement `repo_relpath(root, path) -> Result<RepoPath>`
     - [x] Reject paths that escape repo root after canonicalization
     - [x] Normalize separators to `/` for internal matching/printing
-  - [ ] Implement stable path display helpers for diagnostics
+  - [x] Implement stable path display helpers for diagnostics
   - [ ] Add Windows-specific tests (use `Path::components` not string hacks)
 
 - [ ] Directory walking helpers

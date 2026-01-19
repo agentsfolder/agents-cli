@@ -130,6 +130,10 @@ pub fn discover_repo_root(start: &Path) -> FsResult<PathBuf> {
     }
 }
 
+pub fn display_repo_path(root: &Path, path: &Path) -> FsResult<String> {
+    repo_relpath(root, path).map(|p| p.to_string())
+}
+
 pub fn require_agents_dir(root: &Path) -> FsResult<()> {
     let dir = agents_dir(root);
     if dir.is_dir() {
