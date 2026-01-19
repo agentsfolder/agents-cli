@@ -20,39 +20,39 @@ Unblocks: feat-schemas, feat-resolv, feat-initpr
     - [x] optional state
   - [x] Define `LoadWarnings` vs hard errors (e.g., missing optional state)
 
-- [ ] Load required core files
-  - [ ] Require `.agents/manifest.yaml`
-  - [ ] Require `.agents/prompts/base.md` and `.agents/prompts/project.md`
-  - [ ] Require `.agents/schemas/**` presence OR define behavior (error until feat-initpr populates)
+- [x] Load required core files
+  - [x] Require `.agents/manifest.yaml`
+  - [x] Require `.agents/prompts/base.md` and `.agents/prompts/project.md`
+  - [x] Require `.agents/schemas/**` presence OR define behavior (error until feat-initpr populates)
 
-- [ ] Load collections with deterministic ordering
-  - [ ] Policies: `.agents/policies/*.yaml`
-    - [ ] Parse to `Policy`, key by `policy.id`
-    - [ ] Error on duplicate IDs
-  - [ ] Skills: `.agents/skills/*/skill.yaml`
-    - [ ] Parse to `Skill`, key by `skill.id`
-    - [ ] Record base directory for skill assets
-  - [ ] Scopes: `.agents/scopes/*.yaml`
-    - [ ] Parse to `Scope`, key by `scope.id`
-  - [ ] Modes: `.agents/modes/*.md`
-    - [ ] Parse frontmatter/body
-    - [ ] Determine mode ID:
-      - [ ] `frontmatter.id` if present else derive from filename
-    - [ ] Error on duplicate mode IDs
-  - [ ] Adapters: `.agents/adapters/*/adapter.yaml`
-    - [ ] Parse to `Adapter`, key by `agentId`
-    - [ ] Record templates directory path
-  - [ ] Profiles (if present): `.agents/profiles/*.yaml`
-    - [ ] Decide minimal schema (even if not in PRD, treat as freeform overrides)
+- [x] Load collections with deterministic ordering
+  - [x] Policies: `.agents/policies/*.yaml`
+    - [x] Parse to `Policy`, key by `policy.id`
+    - [x] Error on duplicate IDs
+  - [x] Skills: `.agents/skills/*/skill.yaml`
+    - [x] Parse to `Skill`, key by `skill.id`
+    - [x] Record base directory for skill assets
+  - [x] Scopes: `.agents/scopes/*.yaml`
+    - [x] Parse to `Scope`, key by `scope.id`
+  - [x] Modes: `.agents/modes/*.md`
+    - [x] Parse frontmatter/body
+    - [x] Determine mode ID:
+      - [x] `frontmatter.id` if present else derive from filename
+    - [x] Error on duplicate mode IDs
+  - [x] Adapters: `.agents/adapters/*/adapter.yaml`
+    - [x] Parse to `Adapter`, key by `agentId`
+    - [x] Record templates directory path
+  - [x] Profiles (if present): `.agents/profiles/*.yaml`
+    - [x] Decide minimal schema (even if not in PRD, treat as freeform overrides)
 
-- [ ] Load prompt snippet library
-  - [ ] Load `.agents/prompts/snippets/*.md`
-  - [ ] Key by filename stem (snippet id)
-  - [ ] Preserve deterministic ordering for later composition
+- [x] Load prompt snippet library
+  - [x] Load `.agents/prompts/snippets/*.md`
+  - [x] Key by filename stem (snippet id)
+  - [x] Preserve deterministic ordering for later composition
 
-- [ ] Load optional state
-  - [ ] If `.agents/state/state.yaml` exists, parse to `State`
-  - [ ] If missing, treat as None
+- [x] Load optional state
+  - [x] If `.agents/state/state.yaml` exists, parse to `State`
+  - [x] If missing, treat as None
 
 - [ ] Referential integrity checks (lightweight)
   - [ ] Ensure manifest enabled IDs refer to loaded entities
