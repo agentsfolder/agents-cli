@@ -54,13 +54,13 @@ Unblocks: feat-schemas, feat-resolv, feat-initpr
   - [x] If `.agents/state/state.yaml` exists, parse to `State`
   - [x] If missing, treat as None
 
-- [ ] Referential integrity checks (lightweight)
-  - [ ] Ensure manifest enabled IDs refer to loaded entities
-    - [ ] enabled.modes exist
-    - [ ] enabled.policies exist
-    - [ ] enabled.skills exist
-    - [ ] enabled.adapters exist
-  - [ ] Ensure manifest defaults refer to existing entities
+- [x] Referential integrity checks (lightweight)
+  - [x] Ensure manifest enabled IDs refer to loaded entities
+    - [x] enabled.modes exist
+    - [x] enabled.policies exist
+    - [x] enabled.skills exist
+    - [x] enabled.adapters exist
+  - [x] Ensure manifest defaults refer to existing entities
 
 - [ ] Error reporting
   - [ ] Include file path in all load/parse errors

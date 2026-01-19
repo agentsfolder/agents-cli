@@ -145,6 +145,8 @@ pub fn load_repo_config(
         state,
     };
 
+    crate::loadag::check_referential_integrity(&cfg)?;
+
     Ok((cfg, report))
 }
 
