@@ -36,31 +36,31 @@ Unblocks: feat-prompts, feat-skillpl, feat-status
     - [x] tie-breakers: `priority` desc, then `scope.id` asc
   - [x] Return sorted list of matches with their score
 
-- [ ] Implement precedence layering (PRD)
-  - [ ] Build a layered set of "overrides" in order:
+- [x] Implement precedence layering (PRD)
+  - [x] Build a layered set of "overrides" in order:
     - [ ] user overlay (lowest) (if enabled)
-    - [ ] repo base (manifest defaults and repo artifacts)
-    - [ ] best matching scope override(s) (apply most specific)
-    - [ ] repo state (if used) (decide exact placement; document)
-    - [ ] CLI overrides (highest)
-  - [ ] Decide rule for multiple matching scopes:
-    - [ ] apply in deterministic order (least specific to most specific) so most specific wins
+    - [x] repo base (manifest defaults and repo artifacts)
+    - [x] best matching scope override(s) (apply most specific)
+    - [x] repo state (if used) (decide exact placement; document)
+    - [x] CLI overrides (highest)
+  - [x] Decide rule for multiple matching scopes:
+    - [x] apply in deterministic order (least specific to most specific) so most specific wins
 
-- [ ] Implement deep merge semantics
-  - [ ] Define merge for:
-    - [ ] scalar fields (mode/policy/profile/backend): last writer wins
-    - [ ] lists (enableSkills/disableSkills/includeSnippets): union + stable sort
-    - [ ] policies: "deny beats allow" evaluation rule
-  - [ ] For authoritative singletons (e.g., specVersion conflicts across overlays): error by default
+- [x] Implement deep merge semantics
+  - [x] Define merge for:
+    - [x] scalar fields (mode/policy/profile/backend): last writer wins
+    - [x] lists (enableSkills/disableSkills/includeSnippets): union + stable sort
+    - [x] policies: "deny beats allow" evaluation rule
+  - [x] For authoritative singletons (e.g., specVersion conflicts across overlays): error by default
 
-- [ ] Validate resolved references
-  - [ ] Ensure resolved mode exists and is enabled
-  - [ ] Ensure resolved policy exists and is enabled
-  - [ ] Ensure profile exists if specified (once profile model exists)
+- [x] Validate resolved references
+  - [x] Ensure resolved mode exists and is enabled
+  - [x] Ensure resolved policy exists and is enabled
+  - [x] Ensure profile exists if specified (once profile model exists)
   - [ ] Ensure referenced skills/snippets exist (warn vs error; decide and document)
 
-- [ ] Expose public API
-  - [ ] `Resolver::resolve(req) -> Result<EffectiveConfig>`
+- [x] Expose public API
+  - [x] `Resolver::resolve(req) -> Result<EffectiveConfig>`
   - [ ] `Resolver::resolve_for_agent(req, agent_id) -> Result<EffectiveConfig>` (optional helper)
 
 - [ ] Tests

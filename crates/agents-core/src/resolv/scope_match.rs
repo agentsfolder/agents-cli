@@ -62,7 +62,7 @@ fn compile_apply_to(scope_id: &str, apply_to: &[String]) -> Result<GlobSet, Scop
     })
 }
 
-fn specificity_score(patterns: &[String]) -> i64 {
+pub(crate) fn specificity_score(patterns: &[String]) -> i64 {
     // Take the best (most specific) applyTo glob.
     patterns.iter().map(|p| score_one(p)).max().unwrap_or(0)
 }
