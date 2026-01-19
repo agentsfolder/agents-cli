@@ -1,0 +1,51 @@
+# feat-explnx: `agents explain <path>` (Source Map)
+
+Goal: Explain how a generated output was produced: which prompts/snippets/mode/policy/skills and which adapter template contributed.
+
+Depends on: feat-outputs, feat-prompts
+Unblocks: debugging and trust
+
+## Deliverables
+- `agents explain <path>` prints a source map:
+  - selected adapter
+  - output definition (surface/path)
+  - template used
+  - contributing prompt files and snippet IDs
+  - effective mode/policy/profile/scopes
+
+## Implementation Plan
+- [ ] Decide where to store source maps
+  - [ ] Option A: embed in stamp metadata (limited)
+  - [ ] Option B: write sidecar file under `.agents/state/` (gitignored) during preview/sync
+  - [ ] Prefer B: `.agents/state/explain/<hash>.json` keyed by output path
+
+- [ ] Implement source map generation
+  - [ ] During planning/rendering, build `SourceMap`:
+    - [ ] output path
+    - [ ] adapter id
+    - [ ] renderer type and template path
+    - [ ] mode/policy/profile/backend
+    - [ ] scopes matched
+    - [ ] prompt source file paths
+    - [ ] enabled skills
+  - [ ] Persist source map when:
+    - [ ] `agents preview`
+    - [ ] `agents sync`
+
+- [ ] Implement explain lookup
+  - [ ] Input: a path in repo
+  - [ ] Find matching stored source map by normalized repo-relative path
+  - [ ] If not found:
+    - [ ] attempt to parse stamp and provide minimal explanation
+    - [ ] else report "unmanaged file"
+
+- [ ] Render explain output
+  - [ ] Human-readable stable format
+  - [ ] Optionally `--json`
+
+- [ ] Tests
+  - [ ] After preview/sync, explain returns expected components
+  - [ ] Unmanaged path returns helpful message
+
+## Verification
+- [ ] `agents explain AGENTS.md` prints contributing sources

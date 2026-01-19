@@ -1,0 +1,71 @@
+# feat-outputs: Adapter Output Planning
+
+Goal: Given an adapter definition and an effective configuration, compute a concrete list of outputs to render, including collision checks, conditional outputs, and renderer selection.
+
+Depends on: feat-templ, feat-resolv
+Unblocks: feat-prevdf, feat-syncer, feat-stamps
+
+## Deliverables
+- `OutputPlan` listing outputs with:
+  - target path
+  - logical surface (optional)
+  - renderer type + inputs
+  - write policy and drift detection settings
+  - source map skeleton
+- Deterministic collision handling per PRD.
+
+## Implementation Plan
+- [ ] Define planning types
+  - [ ] `PlannedOutput`:
+    - [ ] `path: RepoPath` (repo-relative)
+    - [ ] `format`
+    - [ ] `surface: Option<String>`
+    - [ ] `collision`
+    - [ ] `renderer`
+    - [ ] `write_policy`
+    - [ ] `drift_detection`
+    - [ ] `render_context: RenderContext` (or pointer)
+  - [ ] `OutputPlan`:
+    - [ ] `agent_id`
+    - [ ] `backend`
+    - [ ] `outputs: Vec<PlannedOutput>`
+
+- [ ] Evaluate output conditions
+  - [ ] Implement `condition.backendIn` filtering
+  - [ ] Implement `condition.profileIn` filtering
+  - [ ] Stable ordering of outputs (by `path`, then `surface`)
+
+- [ ] Collision detection
+  - [ ] Detect physical path collisions within the same plan
+  - [ ] Detect logical surface collisions within the same plan
+  - [ ] Apply collision policies:
+    - [ ] `error`: fail with details
+    - [ ] `overwrite`: allow a single winner; define deterministic winner or require explicit ordering
+    - [ ] `merge`: produce a combined planned output (concat) with stable ordering
+    - [ ] `shared_owner`: enforce manifest `defaults.sharedSurfacesOwner`
+
+- [ ] Renderer dispatch specification
+  - [ ] Validate renderer config fields:
+    - [ ] `template` requires `template` path
+    - [ ] `concat` requires `sources`
+    - [ ] `copy` requires `sources` (or a `source`)
+    - [ ] `json_merge` requires `sources` and `jsonMergeStrategy`
+  - [ ] Validate sources resolve to known canonical inputs or adapter templates
+
+- [ ] Source map skeleton
+  - [ ] Track for each planned output:
+    - [ ] adapter id, template path
+    - [ ] contributing prompt/snippet file paths
+    - [ ] mode/policy/skill IDs
+  - [ ] Store enough info to later implement `agents explain` (feat-explnx)
+
+- [ ] Tests
+  - [ ] Condition filtering tests
+  - [ ] Collision tests:
+    - [ ] physical path collision error
+    - [ ] logical surface collision with shared_owner
+    - [ ] merge collision produces deterministic output ordering
+
+## Verification
+- [ ] A fixture adapter renders a plan with deterministic output ordering
+- [ ] Colliding outputs fail with actionable diagnostics
