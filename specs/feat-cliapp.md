@@ -68,10 +68,10 @@ Unblocks: feat-models, feat-initpr, feat-status
     - [x] one-line summary
     - [x] optional context lines (path, schema, hint)
 
-- [ ] Logging/tracing setup
-  - [ ] Add `tracing` + `tracing_subscriber`
-  - [ ] Honor `--verbose` and `RUST_LOG`
-  - [ ] Keep default output clean (no debug logs unless enabled)
+- [x] Logging/tracing setup
+  - [x] Add `tracing` + `tracing_subscriber`
+  - [x] Honor `--verbose` and `RUST_LOG`
+  - [x] Keep default output clean (no debug logs unless enabled)
 
 - [x] Basic command UX and placeholders
   - [x] Implement `agents --help` and `agents <cmd> --help` output sanity

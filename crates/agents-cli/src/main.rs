@@ -221,8 +221,24 @@ fn cmd_validate(ctx: &AppContext) -> AppResult<()> {
     Ok(())
 }
 
+fn init_tracing(verbose: bool, quiet: bool) {
+    let default_level = if quiet {
+        "error"
+    } else if verbose {
+        "debug"
+    } else {
+        "info"
+    };
+
+    let env_filter = tracing_subscriber::EnvFilter::try_from_default_env()
+        .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new(default_level));
+
+    tracing_subscriber::fmt().with_env_filter(env_filter).init();
+}
+
 fn main() {
     let cli = Cli::parse();
+    init_tracing(cli.verbose, cli.quiet);
 
     let output = if cli.json {
         OutputMode::Json
