@@ -30,38 +30,42 @@ Unblocks: feat-outputs, feat-shared, all adapters
     - [x] `adapter.agentId`
   - [x] Ensure fields are stable (avoid hashmaps; prefer BTreeMap)
 
-- [ ] Implement helpers
-  - [ ] `indent(text, n)`
-    - [ ] preserve trailing newline behavior
-    - [ ] handle multi-line input deterministically
-  - [ ] `join(list, sep)`
-    - [ ] stringify list items deterministically
-  - [ ] `toJson(obj)`
-    - [ ] stable ordering (convert maps to BTreeMap before serialize)
-    - [ ] compact or pretty? decide and standardize
-  - [ ] `toJsonc(obj)`
-    - [ ] output JSON text; JSONC differences are usually stamping comments
-  - [ ] `toYaml(obj)`
-    - [ ] stable key ordering
-    - [ ] no anchors, deterministic formatting
-  - [ ] `frontmatter(obj)`
-    - [ ] emit `---\n<yaml>---\n` deterministically
-  - [ ] `generatedStamp(meta)`
-    - [ ] produce deterministic stamp block used by feat-stamps
+- [x] Implement helpers
+  - [x] `indent(text, n)`
+    - [x] preserve trailing newline behavior
+    - [x] handle multi-line input deterministically
+  - [x] `join(list, sep)`
+    - [x] stringify list items deterministically
+  - [x] `toJson(obj)`
+    - [x] stable ordering (convert maps to BTreeMap before serialize)
+    - [x] compact or pretty? decide and standardize
+  - [x] `toJsonc(obj)`
+    - [x] output JSON text; JSONC differences are usually stamping comments
+  - [x] `toYaml(obj)`
+    - [x] stable key ordering
+    - [x] no anchors, deterministic formatting
+  - [x] `frontmatter(obj)`
+    - [x] emit `---
+<yaml>---
+` deterministically
+  - [x] `generatedStamp(meta)`
+    - [x] produce deterministic stamp block used by feat-stamps
 
-- [ ] Template loading and caching
-  - [ ] Load template files under `.agents/adapters/<id>/templates/**`
+- [x] Template loading and caching
+  - [x] Load template files under `.agents/adapters/<id>/templates/**`
   - [ ] Cache compiled templates per adapter per run
-  - [ ] Ensure deterministic partial registration order (sorted paths)
+  - [x] Ensure deterministic partial registration order (sorted paths)
 
-- [ ] Output normalization
-  - [ ] Normalize newlines to `\n` after render
-  - [ ] Ensure trailing newline for text/markdown outputs
+- [x] Output normalization
+  - [x] Normalize newlines to `
+` after render
+  - [x] Ensure trailing newline for text/markdown outputs
 
-- [ ] Tests
-  - [ ] Unit tests for each helper with snapshot outputs
-  - [ ] Integration test: render a minimal adapter template against a fixture context
-  - [ ] Determinism test: render twice and compare bytes
+- [x] Tests
+  - [x] Unit tests for each helper with snapshot outputs
+  - [x] Integration test: render a minimal adapter template against a fixture context
+  - [x] Determinism test: render twice and compare bytes
+
 
 ## Verification
 - [ ] `agents preview` (once available) renders templates without missing-variable surprises
