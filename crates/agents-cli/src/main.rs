@@ -217,7 +217,6 @@ fn cmd_validate(ctx: &AppContext) -> AppResult<()> {
 
     match agents_core::loadag::load_repo_config(&ctx.repo_root, &opts) {
         Ok((_cfg, report)) => {
-            // Placeholder until schema validation exists.
             if ctx.output == OutputMode::Human {
                 if report.warnings.is_empty() {
                     println!("ok: .agents loaded");
@@ -232,7 +231,26 @@ fn cmd_validate(ctx: &AppContext) -> AppResult<()> {
                     }
                 }
             }
-            Ok(())
+
+            match agents_core::schemas::validate_repo(&ctx.repo_root) {
+                Ok(()) => {
+                    if ctx.output == OutputMode::Human {
+                        println!("ok: schemas valid");
+                    }
+                    Ok(())
+                }
+                Err(err) => Err(AppError {
+                    category: ErrorCategory::SchemaInvalid,
+                    message: format!("schema invalid: {} ({})", err.path.display(), err.schema),
+                    context: {
+                        let mut c = vec![format!("pointer: {}", err.pointer), err.message];
+                        if let Some(h) = err.hint {
+                            c.push(h);
+                        }
+                        c
+                    },
+                }),
+            }
         }
         Err(agents_core::loadag::LoadError::NotInitialized { .. }) => {
             Err(AppError::not_initialized(&ctx.repo_root))

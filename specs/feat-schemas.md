@@ -49,11 +49,11 @@ Unblocks: feat-doctor, feat-adtest
   - [x] Prefer stable, readable pointers (JSON Pointer) for where the error occurred
   - [x] Include "hint" lines for common issues (unknown enum, missing required field)
 
-- [ ] Integrate into `agents validate`
-  - [ ] `validate` runs:
-    - [ ] load repo config (feat-loadag)
-    - [ ] schema validation (this feature)
-    - [ ] referential integrity checks (can remain in load stage or here)
+- [x] Integrate into `agents validate`
+  - [x] `validate` runs:
+    - [x] load repo config (feat-loadag)
+    - [x] schema validation (this feature)
+    - [x] referential integrity checks (can remain in load stage or here)
 
 - [ ] Tests
   - [ ] Valid fixture passes
