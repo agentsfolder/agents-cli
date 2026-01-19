@@ -69,4 +69,4 @@ Unblocks: feat-outputs, feat-shared, all adapters
 
 ## Verification
 - [ ] `agents preview` (once available) renders templates without missing-variable surprises
-- [ ] Helper outputs are byte-identical across runs
+- [x] Helper outputs are byte-identical across runs
