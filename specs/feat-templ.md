@@ -53,7 +53,7 @@ Unblocks: feat-outputs, feat-shared, all adapters
 
 - [x] Template loading and caching
   - [x] Load template files under `.agents/adapters/<id>/templates/**`
-  - [ ] Cache compiled templates per adapter per run
+  - [x] Cache compiled templates per adapter per run
   - [x] Ensure deterministic partial registration order (sorted paths)
 
 - [x] Output normalization
