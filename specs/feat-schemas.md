@@ -34,14 +34,14 @@ Unblocks: feat-doctor, feat-adtest
   - [x] For mode frontmatter: serialize `ModeFrontmatter` to JSON value
   - [x] For state: YAML -> JSON
 
-- [ ] Validate each file type
-  - [ ] Manifest: `.agents/manifest.yaml`
-  - [ ] Policies: all `.agents/policies/*.yaml`
-  - [ ] Skills: all `.agents/skills/*/skill.yaml`
-  - [ ] Scopes: all `.agents/scopes/*.yaml`
-  - [ ] Adapters: all `.agents/adapters/*/adapter.yaml`
-  - [ ] State: `.agents/state/state.yaml` if present
-  - [ ] Modes: validate frontmatter if present, skip if absent
+- [x] Validate each file type
+  - [x] Manifest: `.agents/manifest.yaml`
+  - [x] Policies: all `.agents/policies/*.yaml`
+  - [x] Skills: all `.agents/skills/*/skill.yaml`
+  - [x] Scopes: all `.agents/scopes/*.yaml`
+  - [x] Adapters: all `.agents/adapters/*/adapter.yaml`
+  - [x] State: `.agents/state/state.yaml` if present
+  - [x] Modes: validate frontmatter if present, skip if absent
 
 - [ ] Error shaping
   - [ ] Translate validator output into:
