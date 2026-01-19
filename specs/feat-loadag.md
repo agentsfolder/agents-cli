@@ -10,14 +10,14 @@ Unblocks: feat-schemas, feat-resolv, feat-initpr
 - Clear diagnostics for missing files, duplicate IDs, unreadable YAML/MD.
 
 ## Implementation Plan
-- [ ] Define configuration container types
-  - [ ] `RepoConfig` containing:
-    - [ ] repo root path
-    - [ ] manifest
-    - [ ] maps: policies, skills, scopes, profiles (if implemented), adapters
-    - [ ] prompts (base/project/snippets)
-    - [ ] modes (frontmatter + body)
-    - [ ] optional state
+- [x] Define configuration container types
+  - [x] `RepoConfig` containing:
+    - [x] repo root path
+    - [x] manifest
+    - [x] maps: policies, skills, scopes, profiles (if implemented), adapters
+    - [x] prompts (base/project/snippets)
+    - [x] modes (frontmatter + body)
+    - [x] optional state
   - [x] Define `LoadWarnings` vs hard errors (e.g., missing optional state)
 
 - [ ] Load required core files
