@@ -62,9 +62,9 @@ Unblocks: feat-schemas, feat-resolv, feat-initpr
     - [x] enabled.adapters exist
   - [x] Ensure manifest defaults refer to existing entities
 
-- [ ] Error reporting
-  - [ ] Include file path in all load/parse errors
-  - [ ] Distinguish YAML parse error vs schema invalid (schema is feat-schemas)
+- [x] Error reporting
+  - [x] Include file path in all load/parse errors
+  - [x] Distinguish YAML parse error vs schema invalid (schema is feat-schemas)
 
 - [ ] Tests
   - [ ] Create a minimal fixture `.agents` tree under `crates/agents-core/tests/fixtures/...`
