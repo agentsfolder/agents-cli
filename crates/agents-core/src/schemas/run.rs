@@ -72,6 +72,7 @@ pub fn validate_repo_config(repo_root: &Path, cfg: &RepoConfig) -> Result<(), Sc
             schema: SchemaKind::ModeFrontmatter.schema_file_name().to_string(),
             pointer: "".to_string(),
             message: e.to_string(),
+            hint: None,
         })?;
 
         let (frontmatter, _body) =
@@ -80,6 +81,7 @@ pub fn validate_repo_config(repo_root: &Path, cfg: &RepoConfig) -> Result<(), Sc
                 schema: SchemaKind::ModeFrontmatter.schema_file_name().to_string(),
                 pointer: "".to_string(),
                 message: e.to_string(),
+                hint: None,
             })?;
 
         if let Some(fm) = frontmatter {
@@ -88,6 +90,7 @@ pub fn validate_repo_config(repo_root: &Path, cfg: &RepoConfig) -> Result<(), Sc
                 schema: SchemaKind::ModeFrontmatter.schema_file_name().to_string(),
                 pointer: "".to_string(),
                 message: e,
+                hint: None,
             })?;
             validate_json(&mut store, SchemaKind::ModeFrontmatter, &path, &json)?;
         }
@@ -106,6 +109,7 @@ fn validate_yaml_file(
         schema: kind.schema_file_name().to_string(),
         pointer: "".to_string(),
         message: e.to_string(),
+        hint: None,
     })?;
 
     let json = yaml_to_json_value(&text).map_err(|e| SchemaInvalid {
@@ -113,6 +117,7 @@ fn validate_yaml_file(
         schema: kind.schema_file_name().to_string(),
         pointer: "".to_string(),
         message: e,
+        hint: None,
     })?;
 
     validate_json(store, kind, path, &json)

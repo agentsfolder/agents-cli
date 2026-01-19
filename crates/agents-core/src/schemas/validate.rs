@@ -11,6 +11,7 @@ pub struct SchemaInvalid {
     pub schema: String,
     pub pointer: String,
     pub message: String,
+    pub hint: Option<String>,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -68,6 +69,7 @@ impl SchemaStore {
             schema: kind.schema_file_name().to_string(),
             pointer: "".to_string(),
             message: e.to_string(),
+            hint: None,
         })?;
 
         let schema_json: serde_json::Value =
@@ -76,6 +78,7 @@ impl SchemaStore {
                 schema: kind.schema_file_name().to_string(),
                 pointer: "".to_string(),
                 message: format!("invalid schema json: {e}"),
+                hint: None,
             })?;
 
         let compiled = JSONSchema::options()
@@ -86,6 +89,7 @@ impl SchemaStore {
                 schema: kind.schema_file_name().to_string(),
                 pointer: "".to_string(),
                 message: format!("failed to compile schema: {e}"),
+                hint: None,
             })?;
 
         self.compiled.insert(key.clone(), compiled);
@@ -116,14 +120,37 @@ pub fn validate_json(
     if let Err(errors) = result {
         // Choose the first error for v1 (fail-fast).
         if let Some(err) = errors.into_iter().next() {
+            let msg = err.to_string();
+            let hint = hint_for_message(&msg);
+
             return Err(SchemaInvalid {
                 path: path.to_path_buf(),
                 schema: kind.schema_file_name().to_string(),
                 pointer: err.instance_path.to_string(),
-                message: err.to_string(),
+                message: msg,
+                hint,
             });
         }
     }
 
     Ok(())
+}
+
+fn hint_for_message(message: &str) -> Option<String> {
+    // Keep hints stable and conservative; avoid depending on upstream error wording too much.
+    if message.contains("unknown field") {
+        return Some(
+            "hint: remove unknown fields (schemas use additionalProperties: false)".to_string(),
+        );
+    }
+
+    if message.contains("is a required property") {
+        return Some("hint: add the missing required field".to_string());
+    }
+
+    if message.contains("is not one of") {
+        return Some("hint: value must be one of the allowed enum options".to_string());
+    }
+
+    None
 }

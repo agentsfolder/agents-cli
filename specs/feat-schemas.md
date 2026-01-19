@@ -43,11 +43,11 @@ Unblocks: feat-doctor, feat-adtest
   - [x] State: `.agents/state/state.yaml` if present
   - [x] Modes: validate frontmatter if present, skip if absent
 
-- [ ] Error shaping
-  - [ ] Translate validator output into:
-    - [ ] `SchemaInvalid { path, schema, pointer, message }`
-  - [ ] Prefer stable, readable pointers (JSON Pointer) for where the error occurred
-  - [ ] Include "hint" lines for common issues (unknown enum, missing required field)
+- [x] Error shaping
+  - [x] Translate validator output into:
+    - [x] `SchemaInvalid { path, schema, pointer, message }`
+  - [x] Prefer stable, readable pointers (JSON Pointer) for where the error occurred
+  - [x] Include "hint" lines for common issues (unknown enum, missing required field)
 
 - [ ] Integrate into `agents validate`
   - [ ] `validate` runs:
