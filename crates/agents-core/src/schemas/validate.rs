@@ -98,6 +98,12 @@ pub fn yaml_to_json_value(text: &str) -> Result<serde_json::Value, String> {
     serde_json::to_value(y).map_err(|e| e.to_string())
 }
 
+pub fn frontmatter_to_json_value(
+    fm: &crate::model::ModeFrontmatter,
+) -> Result<serde_json::Value, String> {
+    serde_json::to_value(fm).map_err(|e| e.to_string())
+}
+
 pub fn validate_json(
     store: &mut SchemaStore,
     kind: SchemaKind,

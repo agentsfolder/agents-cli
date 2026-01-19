@@ -31,7 +31,7 @@ Unblocks: feat-doctor, feat-adtest
 
 - [x] Implement YAML/MD -> JSON conversion
   - [x] For YAML files: parse YAML -> `serde_json::Value`
-  - [ ] For mode frontmatter: serialize `ModeFrontmatter` to JSON value
+  - [x] For mode frontmatter: serialize `ModeFrontmatter` to JSON value
   - [x] For state: YAML -> JSON
 
 - [ ] Validate each file type
