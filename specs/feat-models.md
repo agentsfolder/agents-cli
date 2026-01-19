@@ -10,9 +10,9 @@ Unblocks: feat-loadag, feat-schemas, feat-resolv
 - Unknown fields are rejected (defense-in-depth, aligns with `additionalProperties: false`).
 
 ## Implementation Plan
-- [ ] Create module layout
-  - [ ] `agents_core::model::{manifest, policy, skill, scope, adapter, state, mode}`
-  - [ ] Re-export a small prelude (`use agents_core::model::*`) to reduce churn
+- [x] Create module layout
+  - [x] `agents_core::model::{manifest, policy, skill, scope, adapter, state, mode}`
+  - [x] Re-export a small prelude (`use agents_core::model::*`) to reduce churn
 
 - [ ] Implement core structs (serde)
   - [ ] Manifest
