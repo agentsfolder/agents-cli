@@ -86,6 +86,6 @@ Unblocks: feat-models, feat-initpr, feat-status
   - [x] Add unit tests for exit code mapping
 
 ## Verification
-- [ ] `cargo test` passes
-- [ ] `cargo run -p agents-cli -- --help` lists all v1 commands
-- [ ] In an empty temp directory: `agents validate` exits with `NotInitialized` and a clear hint
+- [x] `cargo test` passes
+- [x] `cargo run -p agents-cli -- --help` lists all v1 commands
+- [x] In an empty temp directory: `agents validate` exits with `NotInitialized` and a clear hint
