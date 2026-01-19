@@ -57,13 +57,13 @@ Unblocks: feat-loadag, feat-schemas, feat-resolv
   - [x] `ModeId`, `PolicyId`, `SkillId`, `AdapterId`, `ScopeId` as `String` wrappers
   - [x] Add lightweight validation helpers (non-empty, printable)
 
-- [ ] Tests
-  - [ ] Deserialize fixtures for each entity (minimal valid examples)
-  - [ ] Frontmatter parsing tests:
-    - [ ] no frontmatter
-    - [ ] valid frontmatter
-    - [ ] malformed frontmatter
-  - [ ] Unknown field rejection tests
+- [x] Tests
+  - [x] Deserialize fixtures for each entity (minimal valid examples)
+  - [x] Frontmatter parsing tests:
+    - [x] no frontmatter
+    - [x] valid frontmatter
+    - [x] malformed frontmatter
+  - [x] Unknown field rejection tests
 
 ## Verification
 - [ ] `cargo test` passes
