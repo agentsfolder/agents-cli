@@ -81,8 +81,8 @@ Unblocks: feat-models, feat-initpr, feat-status
     - [x] return `NotInitialized` with a hint to run `agents init`
   - [x] Ensure all other commands also fail with `NotInitialized` until feat-loadag is done
 
-- [ ] Tests
-  - [ ] Add a minimal CLI snapshot test (help text stable) OR a smoke test that command parsing works
+- [x] Tests
+  - [x] Add a minimal CLI snapshot test (help text stable) OR a smoke test that command parsing works
   - [ ] Add unit tests for exit code mapping
 
 ## Verification
