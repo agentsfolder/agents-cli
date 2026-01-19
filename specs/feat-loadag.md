@@ -66,12 +66,12 @@ Unblocks: feat-schemas, feat-resolv, feat-initpr
   - [x] Include file path in all load/parse errors
   - [x] Distinguish YAML parse error vs schema invalid (schema is feat-schemas)
 
-- [ ] Tests
-  - [ ] Create a minimal fixture `.agents` tree under `crates/agents-core/tests/fixtures/...`
-  - [ ] Unit tests:
-    - [ ] missing manifest => NotInitialized
-    - [ ] duplicate IDs => error
-    - [ ] deterministic ordering of loaded collections
+- [x] Tests
+  - [x] Create a minimal fixture `.agents` tree under `crates/agents-core/tests/fixtures/...`
+  - [x] Unit tests:
+    - [x] missing manifest => NotInitialized
+    - [x] duplicate IDs => error
+    - [x] deterministic ordering of loaded collections
 
 ## Verification
 - [x] `agents validate` can load `.agents` and reach the next stage (schema validation comes in feat-schemas)
