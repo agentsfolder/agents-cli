@@ -42,4 +42,4 @@ Unblocks: feat-compat
   - [x] Ensure ordering is stable
 
 ## Verification
-- [ ] `agents status` matches expected output for fixture repos
+- [x] `agents status` matches expected output for fixture repos
