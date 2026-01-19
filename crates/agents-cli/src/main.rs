@@ -211,17 +211,38 @@ fn dispatch(ctx: &AppContext, cmd: Commands) -> AppResult<()> {
 }
 
 fn cmd_validate(ctx: &AppContext) -> AppResult<()> {
-    let manifest_path = ctx.repo_root.join(".agents/manifest.yaml");
-    if !manifest_path.exists() {
-        return Err(AppError::not_initialized(&ctx.repo_root));
-    }
+    let opts = agents_core::loadag::LoaderOptions {
+        require_schemas_dir: false,
+    };
 
-    // Placeholder until schema validation exists.
-    if ctx.output == OutputMode::Human {
-        println!("ok: .agents initialized");
+    match agents_core::loadag::load_repo_config(&ctx.repo_root, &opts) {
+        Ok((_cfg, report)) => {
+            // Placeholder until schema validation exists.
+            if ctx.output == OutputMode::Human {
+                if report.warnings.is_empty() {
+                    println!("ok: .agents loaded");
+                } else {
+                    println!("ok: .agents loaded (with warnings)");
+                    for w in report.warnings {
+                        if let Some(path) = w.path {
+                            eprintln!("warning: {}: {}", path.display(), w.message);
+                        } else {
+                            eprintln!("warning: {}", w.message);
+                        }
+                    }
+                }
+            }
+            Ok(())
+        }
+        Err(agents_core::loadag::LoadError::NotInitialized { .. }) => {
+            Err(AppError::not_initialized(&ctx.repo_root))
+        }
+        Err(err) => Err(AppError {
+            category: ErrorCategory::Io,
+            message: err.to_string(),
+            context: vec![],
+        }),
     }
-
-    Ok(())
 }
 
 fn init_tracing(verbose: bool, quiet: bool) {

@@ -74,4 +74,4 @@ Unblocks: feat-schemas, feat-resolv, feat-initpr
     - [ ] deterministic ordering of loaded collections
 
 ## Verification
-- [ ] `agents validate` can load `.agents` and reach the next stage (schema validation comes in feat-schemas)
+- [x] `agents validate` can load `.agents` and reach the next stage (schema validation comes in feat-schemas)
