@@ -30,6 +30,18 @@ pub fn cmd_status(repo_root: &Path, output: OutputMode) -> Result<(), AppError> 
     // If state.yaml exists, resolution will likely use it. Expose this as a hint.
     let state_influences = repo.state.is_some();
 
+    // If user overlay is enabled, mention it. (The actual overlay root resolution is handled in agents-core.)
+    let user_overlay_enabled = repo
+        .manifest
+        .resolution
+        .as_ref()
+        .map(|r| r.enable_user_overlay)
+        .unwrap_or(true);
+
+    if user_overlay_enabled {
+        req.enable_user_overlay = true;
+    }
+
     // If the repo warns about missing schemas, we keep it as a hint as well.
     let has_load_warnings = !report.warnings.is_empty();
 
@@ -62,6 +74,18 @@ pub fn cmd_status(repo_root: &Path, output: OutputMode) -> Result<(), AppError> 
         report.hints.push(
             "hint: .agents/state/state.yaml is present and may influence mode/profile/backend"
                 .to_string(),
+        );
+    }
+
+    if user_overlay_enabled {
+        report
+            .hints
+            .push("hint: user overlay is enabled (disable via manifest.resolution.enableUserOverlay=false)".to_string());
+    }
+
+    if has_load_warnings {
+        report.hints.push(
+            "hint: repo has .agents warnings (run `agents validate` for details)".to_string(),
         );
     }
 

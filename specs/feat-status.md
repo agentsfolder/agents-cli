@@ -35,7 +35,7 @@ Unblocks: feat-compat
   - [x] Ensure deterministic ordering of lists
   - [x] Add hints if:
     - [x] `.agents/state/state.yaml` influences mode/profile
-    - [ ] user overlay is enabled
+    - [x] user overlay is enabled
 
 - [x] Tests
   - [x] Snapshot test for status output on a fixture
