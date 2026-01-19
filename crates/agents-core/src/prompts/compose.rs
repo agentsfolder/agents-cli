@@ -53,7 +53,9 @@ impl PromptComposer {
                 path: self
                     .repo_root
                     .join(".agents/prompts/snippets")
-                    .join(format!("{id}.md")),
+                    .join(format!("{id}.md"))
+                    .display()
+                    .to_string(),
                 md,
             });
         }
@@ -66,11 +68,19 @@ impl PromptComposer {
         // Build stable sources list.
         let mut sources: Vec<PromptSource> = vec![
             PromptSource {
-                path: self.repo_root.join(".agents/prompts/base.md"),
+                path: self
+                    .repo_root
+                    .join(".agents/prompts/base.md")
+                    .display()
+                    .to_string(),
                 kind: "base",
             },
             PromptSource {
-                path: self.repo_root.join(".agents/prompts/project.md"),
+                path: self
+                    .repo_root
+                    .join(".agents/prompts/project.md")
+                    .display()
+                    .to_string(),
                 kind: "project",
             },
         ];

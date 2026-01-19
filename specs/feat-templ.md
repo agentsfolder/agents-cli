@@ -12,23 +12,23 @@ Unblocks: feat-outputs, feat-shared, all adapters
 - Stable serialization for JSON/YAML.
 
 ## Implementation Plan
-- [ ] Choose and configure template engine
-  - [ ] Use `handlebars` crate
-  - [ ] Enable strict mode / error on missing variables
-  - [ ] Register partials from adapter `templates/**` directory
-  - [ ] Define template lookup conventions (paths relative to templates dir)
+- [x] Choose and configure template engine
+  - [x] Use `handlebars` crate
+  - [x] Enable strict mode / error on missing variables
+  - [x] Register partials from adapter `templates/**` directory
+  - [x] Define template lookup conventions (paths relative to templates dir)
 
-- [ ] Define standard render context
-  - [ ] `RenderContext` struct serializable via `serde`:
-    - [ ] `effective.mode` (frontmatter + body)
-    - [ ] `effective.policy`
-    - [ ] `effective.skills` (IDs + optional summaries)
-    - [ ] `effective.prompts` (base/project/snippets/composed)
-    - [ ] `profile`
-    - [ ] `scopesMatched` (ids + metadata)
-    - [ ] `generation.stamp` (meta)
-    - [ ] `adapter.agentId`
-  - [ ] Ensure fields are stable (avoid hashmaps; prefer BTreeMap)
+- [x] Define standard render context
+  - [x] `RenderContext` struct serializable via `serde`:
+    - [x] `effective.mode` (frontmatter + body)
+    - [x] `effective.policy`
+    - [x] `effective.skills` (IDs + optional summaries)
+    - [x] `effective.prompts` (base/project/snippets/composed)
+    - [x] `profile`
+    - [x] `scopesMatched` (ids + metadata)
+    - [x] `generation.stamp` (meta)
+    - [x] `adapter.agentId`
+  - [x] Ensure fields are stable (avoid hashmaps; prefer BTreeMap)
 
 - [ ] Implement helpers
   - [ ] `indent(text, n)`
