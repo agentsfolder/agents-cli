@@ -1,6 +1,6 @@
 use std::fmt;
 use std::io;
-use std::path::{Path, PathBuf};
+use std::path::{Component, Path, PathBuf};
 
 #[derive(Debug)]
 pub enum FsError {
@@ -34,6 +34,71 @@ impl std::error::Error for FsError {
 }
 
 pub type FsResult<T> = Result<T, FsError>;
+
+/// A repo-relative path normalized to use `/` separators.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct RepoPath(String);
+
+impl RepoPath {
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+}
+
+impl fmt::Display for RepoPath {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(&self.0)
+    }
+}
+
+/// Convert `path` to a repo-relative normalized `RepoPath`.
+///
+/// This rejects paths that escape the repo root.
+pub fn repo_relpath(root: &Path, path: &Path) -> FsResult<RepoPath> {
+    let root_abs = root.canonicalize().map_err(|e| FsError::Io {
+        path: root.to_path_buf(),
+        source: e,
+    })?;
+
+    let candidate_abs = if path.is_absolute() {
+        path.to_path_buf()
+    } else {
+        root_abs.join(path)
+    };
+
+    let candidate_abs = candidate_abs.canonicalize().map_err(|e| FsError::Io {
+        path: candidate_abs.clone(),
+        source: e,
+    })?;
+
+    let rel = candidate_abs
+        .strip_prefix(&root_abs)
+        .map_err(|_| FsError::PathEscapesRepo {
+            root: root_abs.clone(),
+            path: candidate_abs.clone(),
+        })?;
+
+    Ok(RepoPath(path_to_forward_slash(rel)))
+}
+
+fn path_to_forward_slash(path: &Path) -> String {
+    let mut out = String::new();
+    for comp in path.components() {
+        if !out.is_empty() {
+            out.push('/');
+        }
+
+        match comp {
+            Component::Normal(os) => out.push_str(&os.to_string_lossy()),
+            Component::CurDir => out.push('.'),
+            Component::ParentDir => out.push_str(".."),
+            Component::RootDir => {}
+            Component::Prefix(prefix) => out.push_str(&prefix.as_os_str().to_string_lossy()),
+        }
+    }
+
+    out
+}
 
 pub fn agents_dir(root: &Path) -> PathBuf {
     root.join(".agents")

@@ -22,10 +22,10 @@ Unblocks: feat-loadag, feat-matwiz, feat-prevdf
     - [x] If none found, default to `start` (or error) based on CLI behavior
   - [x] Implement `agents_dir(root) -> PathBuf` and `require_agents_dir(root) -> Result<()>`
 
-- [ ] Path normalization and safety
-  - [ ] Implement `repo_relpath(root, path) -> Result<RepoPath>`
-    - [ ] Reject paths that escape repo root after canonicalization
-    - [ ] Normalize separators to `/` for internal matching/printing
+- [x] Path normalization and safety
+  - [x] Implement `repo_relpath(root, path) -> Result<RepoPath>`
+    - [x] Reject paths that escape repo root after canonicalization
+    - [x] Normalize separators to `/` for internal matching/printing
   - [ ] Implement stable path display helpers for diagnostics
   - [ ] Add Windows-specific tests (use `Path::components` not string hacks)
 
