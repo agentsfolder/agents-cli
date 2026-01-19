@@ -2,6 +2,9 @@ use std::path::{Path, PathBuf};
 
 use clap::{Parser, Subcommand, ValueEnum};
 
+#[cfg(test)]
+mod main_tests;
+
 #[derive(Debug, Clone, ValueEnum)]
 enum Backend {
     VfsContainer,
@@ -139,7 +142,7 @@ struct AppContext {
 }
 
 #[derive(Debug)]
-enum ErrorCategory {
+pub(crate) enum ErrorCategory {
     NotInitialized,
     InvalidArgs,
     Io,
@@ -150,7 +153,7 @@ enum ErrorCategory {
 }
 
 #[derive(Debug)]
-struct AppError {
+pub(crate) struct AppError {
     category: ErrorCategory,
     message: String,
     context: Vec<String>,
@@ -171,7 +174,7 @@ impl AppError {
         }
     }
 
-    fn exit_code(&self) -> i32 {
+    pub(crate) fn exit_code(&self) -> i32 {
         match self.category {
             ErrorCategory::InvalidArgs => 2,
             ErrorCategory::NotInitialized => 3,

@@ -83,7 +83,7 @@ Unblocks: feat-models, feat-initpr, feat-status
 
 - [x] Tests
   - [x] Add a minimal CLI snapshot test (help text stable) OR a smoke test that command parsing works
-  - [ ] Add unit tests for exit code mapping
+  - [x] Add unit tests for exit code mapping
 
 ## Verification
 - [ ] `cargo test` passes
