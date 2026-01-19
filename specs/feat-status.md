@@ -14,15 +14,15 @@ Unblocks: feat-compat
   - target agent + backend (if provided)
 
 ## Implementation Plan
-- [ ] Define status output model
-  - [ ] `StatusReport` struct that can be rendered as:
-    - [ ] human-readable text
+- [x] Define status output model
+  - [x] `StatusReport` struct that can be rendered as:
+    - [x] human-readable text
     - [ ] json (optional placeholder)
-  - [ ] Include fields:
-    - [ ] `repo_root`
-    - [ ] `effective_mode`, `effective_policy`, `effective_profile`, `effective_backend`
-    - [ ] `scopes_matched` (ordered)
-    - [ ] `skills_enabled` (ordered)
+  - [x] Include fields:
+    - [x] `repo_root`
+    - [x] `effective_mode`, `effective_policy`, `effective_profile`, `effective_backend`
+    - [x] `scopes_matched` (ordered)
+    - [x] `skills_enabled` (ordered)
 
 - [ ] Wire resolver + skill planner
   - [ ] `status` loads repo config

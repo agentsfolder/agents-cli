@@ -5,6 +5,8 @@ use clap::{Parser, Subcommand, ValueEnum};
 #[cfg(test)]
 mod main_tests;
 
+mod status;
+
 #[derive(Debug, Clone, ValueEnum)]
 enum Backend {
     VfsContainer,
