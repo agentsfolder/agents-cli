@@ -14,17 +14,17 @@ Unblocks: feat-prompts, feat-skillpl, feat-status
 - Deterministic deep-merge and scope specificity.
 
 ## Implementation Plan
-- [ ] Define resolution inputs/outputs
-  - [ ] `ResolutionRequest`:
-    - [ ] repo root
-    - [ ] optional target path (repo-relative) for scope matching (default: ".")
-    - [ ] cli overrides: mode/policy/profile/backend/scopes
-    - [ ] enable/disable user overlay (from manifest)
-  - [ ] `EffectiveConfig`:
-    - [ ] `mode_id`, `policy_id`, `profile` (optional), `backend`
-    - [ ] `scopes_matched: Vec<ScopeMatch>` (sorted)
-    - [ ] `skill_ids_enabled: Vec<SkillId>`
-    - [ ] `snippet_ids_included: Vec<String>`
+- [x] Define resolution inputs/outputs
+  - [x] `ResolutionRequest`:
+    - [x] repo root
+    - [x] optional target path (repo-relative) for scope matching (default: ".")
+    - [x] cli overrides: mode/policy/profile/backend/scopes
+    - [x] enable/disable user overlay (from manifest)
+  - [x] `EffectiveConfig`:
+    - [x] `mode_id`, `policy_id`, `profile` (optional), `backend`
+    - [x] `scopes_matched: Vec<ScopeMatch>` (sorted)
+    - [x] `skill_ids_enabled: Vec<SkillId>`
+    - [x] `snippet_ids_included: Vec<String>`
 
 - [ ] Implement scope matching
   - [ ] Use `globset` to compile `Scope.applyTo` patterns
