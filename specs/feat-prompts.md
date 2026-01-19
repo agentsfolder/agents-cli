@@ -14,13 +14,13 @@ Unblocks: feat-templ, feat-shared
 - Redaction applied according to effective policy.
 
 ## Implementation Plan
-- [ ] Define prompt structures
-  - [ ] `PromptId` (string) for snippets
-  - [ ] `EffectivePrompts`:
-    - [ ] `base_md: String`
-    - [ ] `project_md: String`
-    - [ ] `snippets: Vec<Snippet { id, path, md }>`
-    - [ ] `composed_md: String` (base + project + snippets)
+- [x] Define prompt structures
+  - [x] `PromptId` (string) for snippets
+  - [x] `EffectivePrompts`:
+    - [x] `base_md: String`
+    - [x] `project_md: String`
+    - [x] `snippets: Vec<Snippet { id, path, md }>`
+    - [x] `composed_md: String` (base + project + snippets)
 
 - [ ] Select snippets
   - [ ] Collect snippet IDs from:
