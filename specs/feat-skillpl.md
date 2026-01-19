@@ -51,4 +51,4 @@ Unblocks: feat-runner, feat-compat
 
 ## Verification
 - [ ] `agents status` (once wired) lists enabled skills deterministically
-- [ ] Fixture where a skill is incompatible fails with actionable diagnostics
+- [x] Fixture where a skill is incompatible fails with actionable diagnostics
