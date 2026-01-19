@@ -61,7 +61,7 @@ Unblocks: feat-prompts, feat-skillpl, feat-status
 
 - [x] Expose public API
   - [x] `Resolver::resolve(req) -> Result<EffectiveConfig>`
-  - [ ] `Resolver::resolve_for_agent(req, agent_id) -> Result<EffectiveConfig>` (optional helper)
+  - [x] `Resolver::resolve_for_agent(req, agent_id) -> Result<EffectiveConfig>` (optional helper)
 
 - [x] Tests
   - [x] Precedence tests:

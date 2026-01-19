@@ -21,6 +21,15 @@ impl Resolver {
         Self { repo }
     }
 
+    pub fn resolve_for_agent(
+        &self,
+        req: &ResolutionRequest,
+        _agent_id: &str,
+    ) -> Result<EffectiveConfig, ResolveError> {
+        // v1: agent_id does not affect resolution yet.
+        self.resolve(req)
+    }
+
     pub fn resolve(&self, req: &ResolutionRequest) -> Result<EffectiveConfig, ResolveError> {
         let target_path = req.target_path.clone().unwrap_or_else(|| ".".to_string());
 
