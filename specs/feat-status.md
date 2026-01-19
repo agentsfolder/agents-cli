@@ -37,9 +37,9 @@ Unblocks: feat-compat
     - [ ] `.agents/state/state.yaml` influences mode/profile
     - [ ] user overlay is enabled
 
-- [ ] Tests
-  - [ ] Snapshot test for status output on a fixture
-  - [ ] Ensure ordering is stable
+- [x] Tests
+  - [x] Snapshot test for status output on a fixture
+  - [x] Ensure ordering is stable
 
 ## Verification
 - [ ] `agents status` matches expected output for fixture repos
