@@ -14,32 +14,32 @@ Unblocks: feat-loadag, feat-schemas, feat-resolv
   - [x] `agents_core::model::{manifest, policy, skill, scope, adapter, state, mode}`
   - [x] Re-export a small prelude (`use agents_core::model::*`) to reduce churn
 
-- [ ] Implement core structs (serde)
-  - [ ] Manifest
-    - [ ] `spec_version`, `project`, `defaults`, `enabled`, `resolution`, `backends`, `x`
-    - [ ] Enums for backend values
-  - [ ] Policy
-    - [ ] capabilities (filesystem/exec/network/mcp)
-    - [ ] paths (allow/deny/redact)
-    - [ ] confirmations (requiredFor)
-    - [ ] limits
-  - [ ] Skill
-    - [ ] `activation` enum
-    - [ ] `interface` struct with `type`, `entrypoint`, `args`, `env`
-    - [ ] `requirements` with capabilities and optional paths
-    - [ ] `assets` and `compatibility`
-  - [ ] Scope
-    - [ ] `applyTo` list
-    - [ ] `priority`
-    - [ ] overrides (mode/policy/enableSkills/disableSkills/includeSnippets)
-  - [ ] Adapter
-    - [ ] backend defaults
-    - [ ] outputs: path/format/surface/collision/condition/renderer/writePolicy/driftDetection
-    - [ ] renderer enum (template/concat/copy/json_merge)
-  - [ ] State
-    - [ ] mode/profile/backend/scopes
-  - [ ] Mode frontmatter
-    - [ ] id/title/policy/enableSkills/disableSkills/includeSnippets/toolIntent
+- [x] Implement core structs (serde)
+  - [x] Manifest
+    - [x] `spec_version`, `project`, `defaults`, `enabled`, `resolution`, `backends`, `x`
+    - [x] Enums for backend values
+  - [x] Policy
+    - [x] capabilities (filesystem/exec/network/mcp)
+    - [x] paths (allow/deny/redact)
+    - [x] confirmations (requiredFor)
+    - [x] limits
+  - [x] Skill
+    - [x] `activation` enum
+    - [x] `interface` struct with `type`, `entrypoint`, `args`, `env`
+    - [x] `requirements` with capabilities and optional paths
+    - [x] `assets` and `compatibility`
+  - [x] Scope
+    - [x] `applyTo` list
+    - [x] `priority`
+    - [x] overrides (mode/policy/enableSkills/disableSkills/includeSnippets)
+  - [x] Adapter
+    - [x] backend defaults
+    - [x] outputs: path/format/surface/collision/condition/renderer/writePolicy/driftDetection
+    - [x] renderer enum (template/concat/copy/json_merge)
+  - [x] State
+    - [x] mode/profile/backend/scopes
+  - [x] Mode frontmatter
+    - [x] id/title/policy/enableSkills/disableSkills/includeSnippets/toolIntent
 
 - [ ] Enforce strict deserialization
   - [ ] Use `#[serde(deny_unknown_fields)]` on structs
