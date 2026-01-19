@@ -52,10 +52,10 @@ Unblocks: feat-templ, feat-shared
   - [x] Provide `PromptSource` records listing which files contributed to the composed prompt
   - [x] Keep order stable (base, project, snippets...)
 
-- [ ] Tests
-  - [ ] Unit test: snippet selection ordering is stable
-  - [ ] Unit test: composed markdown separators are stable
-  - [ ] Unit test: redaction glob matching
+- [x] Tests
+  - [x] Unit test: snippet selection ordering is stable
+  - [x] Unit test: composed markdown separators are stable
+  - [x] Unit test: redaction glob matching
 
 ## Verification
 - [ ] Golden test: same fixture produces byte-identical composed prompt
