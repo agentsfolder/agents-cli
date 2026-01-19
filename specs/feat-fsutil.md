@@ -35,11 +35,14 @@ Unblocks: feat-loadag, feat-matwiz, feat-prevdf
     - [x] Skip `.agents/state/**` except `.gitignore` and optional state.yaml
   - [x] Provide a helper to ensure deterministic traversal ordering (sort by normalized path)
 
-- [ ] Stable file reads
-  - [ ] Implement `read_to_string(path) -> Result<String>`
-    - [ ] Preserve exact bytes where possible
-    - [ ] Normalize `\r\n` to `\n` for text formats (md/yaml/json/jsonc/text)
-  - [ ] Implement `read_bytes(path) -> Result<Vec<u8>>` for non-text (future)
+- [x] Stable file reads
+  - [x] Implement `read_to_string(path) -> Result<String>`
+    - [x] Preserve exact bytes where possible
+    - [x] Normalize `
+` to `
+` for text formats (md/yaml/json/jsonc/text)
+  - [x] Implement `read_bytes(path) -> Result<Vec<u8>>` for non-text (future)
+
 
 - [ ] Atomic file writes
   - [ ] Implement `atomic_write(path, bytes)`

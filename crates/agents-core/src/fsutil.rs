@@ -148,6 +148,26 @@ pub fn require_agents_dir(root: &Path) -> FsResult<()> {
     }
 }
 
+pub fn read_bytes(path: &Path) -> FsResult<Vec<u8>> {
+    std::fs::read(path).map_err(|e| FsError::Io {
+        path: path.to_path_buf(),
+        source: e,
+    })
+}
+
+/// Read a text file and normalize Windows newlines (`\r\n`) to `\n`.
+///
+/// For non-text/binary inputs, prefer `read_bytes`.
+pub fn read_to_string(path: &Path) -> FsResult<String> {
+    let bytes = read_bytes(path)?;
+    let s = String::from_utf8(bytes).map_err(|e| FsError::Io {
+        path: path.to_path_buf(),
+        source: io::Error::new(io::ErrorKind::InvalidData, e),
+    })?;
+
+    Ok(s.replace("\r\n", "\n"))
+}
+
 pub fn walk_repo_agents(root: &Path) -> FsResult<Vec<PathBuf>> {
     let agents_root = agents_dir(root);
 
