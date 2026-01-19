@@ -25,6 +25,8 @@ pub struct EffectiveSkills {
     pub disabled: Vec<String>,
     pub warnings: Vec<String>,
 
+    pub requirements: Vec<SkillRequirementsSummary>,
+
     pub backend: BackendKind,
     pub agent_id: Option<String>,
 }

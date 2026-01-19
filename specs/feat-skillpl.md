@@ -35,10 +35,10 @@ Unblocks: feat-runner, feat-compat
     - [x] default error (strict)
     - [ ] optionally warn+drop skill (future)
 
-- [ ] Summarize requirements for later policy checks
-  - [ ] Extract required capabilities (filesystem/exec/network)
-  - [ ] Extract required paths (needs/writes)
-  - [ ] Provide a `SkillRequirementsSummary` used by feat-runner and feat-compat
+- [x] Summarize requirements for later policy checks
+  - [x] Extract required capabilities (filesystem/exec/network)
+  - [x] Extract required paths (needs/writes)
+  - [x] Provide a `SkillRequirementsSummary` used by feat-runner and feat-compat
 
 - [x] Deterministic ordering
   - [x] Ensure stable ordering by skill ID

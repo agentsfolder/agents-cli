@@ -3,7 +3,7 @@ use std::collections::BTreeSet;
 use crate::loadag::RepoConfig;
 use crate::model::{BackendKind, Skill};
 use crate::resolv::{EffectiveConfig, ScopeMatch};
-use crate::skillpl::{EffectiveSkills, SkillRef};
+use crate::skillpl::{EffectiveSkills, SkillRef, SkillRequirementsSummary};
 
 #[derive(Debug, thiserror::Error)]
 pub enum SkillPlanError {
@@ -130,13 +130,40 @@ impl SkillPlanner {
             });
         }
 
+        let requirements = enabled
+            .iter()
+            .map(|sr| summarize_requirements(&sr.skill))
+            .collect::<Vec<_>>();
+
         // Already stable-sorted by BTreeSet collection.
         Ok(EffectiveSkills {
             enabled,
             disabled: vec![],
             warnings: vec![],
+            requirements,
             backend: effective.backend,
             agent_id: agent_id.map(|s| s.to_string()),
         })
+    }
+}
+
+fn summarize_requirements(skill: &Skill) -> SkillRequirementsSummary {
+    let caps = &skill.requirements.capabilities;
+
+    let mut needs_paths = vec![];
+    let mut writes_paths = vec![];
+    if let Some(paths) = &skill.requirements.paths {
+        needs_paths = paths.needs.clone();
+        writes_paths = paths.writes.clone();
+        needs_paths.sort();
+        writes_paths.sort();
+    }
+
+    SkillRequirementsSummary {
+        filesystem: format!("{:?}", caps.filesystem),
+        exec: format!("{:?}", caps.exec),
+        network: format!("{:?}", caps.network),
+        needs_paths,
+        writes_paths,
     }
 }
