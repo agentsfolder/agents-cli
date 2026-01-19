@@ -76,4 +76,4 @@ Unblocks: feat-prompts, feat-skillpl, feat-status
 
 ## Verification
 - [x] Fixture matrix produces expected effective mode/policy/skills
-- [ ] `agents status --mode <x> --profile <y>` matches expected effective config
+- [ ] `agents status --mode <x> --profile <y>` matches expected effective config (blocked on feat-status)
