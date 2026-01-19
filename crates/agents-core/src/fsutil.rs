@@ -2,6 +2,7 @@ use std::fmt;
 use std::io;
 use std::path::{Component, Path, PathBuf};
 
+use tempfile::TempDir;
 use walkdir::WalkDir;
 
 #[derive(Debug)]
@@ -166,6 +167,64 @@ pub fn read_to_string(path: &Path) -> FsResult<String> {
     })?;
 
     Ok(s.replace("\r\n", "\n"))
+}
+
+pub fn ensure_trailing_newline(text: &str) -> String {
+    if text.ends_with('\n') {
+        text.to_string()
+    } else {
+        format!("{}\n", text)
+    }
+}
+
+pub fn atomic_write(path: &Path, bytes: &[u8]) -> FsResult<()> {
+    let parent = path.parent().unwrap_or_else(|| Path::new("."));
+    std::fs::create_dir_all(parent).map_err(|e| FsError::Io {
+        path: parent.to_path_buf(),
+        source: e,
+    })?;
+
+    let tmp_name = format!(
+        ".{}.tmp",
+        path.file_name()
+            .and_then(|n| n.to_str())
+            .unwrap_or("agents")
+    );
+    let tmp_path = parent.join(tmp_name);
+
+    {
+        use std::io::Write;
+
+        let mut f = std::fs::File::create(&tmp_path).map_err(|e| FsError::Io {
+            path: tmp_path.clone(),
+            source: e,
+        })?;
+
+        f.write_all(bytes).map_err(|e| FsError::Io {
+            path: tmp_path.clone(),
+            source: e,
+        })?;
+
+        // Best-effort sync.
+        let _ = f.sync_all();
+    }
+
+    std::fs::rename(&tmp_path, path).map_err(|e| FsError::Io {
+        path: path.to_path_buf(),
+        source: e,
+    })?;
+
+    Ok(())
+}
+
+pub fn temp_generation_dir(prefix: &str) -> FsResult<TempDir> {
+    tempfile::Builder::new()
+        .prefix(prefix)
+        .tempdir()
+        .map_err(|e| FsError::Io {
+            path: PathBuf::from("<tempdir>"),
+            source: e,
+        })
 }
 
 pub fn walk_repo_agents(root: &Path) -> FsResult<Vec<PathBuf>> {

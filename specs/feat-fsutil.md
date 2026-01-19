@@ -44,17 +44,17 @@ Unblocks: feat-loadag, feat-matwiz, feat-prevdf
   - [x] Implement `read_bytes(path) -> Result<Vec<u8>>` for non-text (future)
 
 
-- [ ] Atomic file writes
-  - [ ] Implement `atomic_write(path, bytes)`
-    - [ ] Create parent directories if needed
-    - [ ] Write to a temp file in the same directory
-    - [ ] `fsync` best-effort (platform-dependent)
-    - [ ] Replace target via rename
-  - [ ] Implement `ensure_trailing_newline(text) -> String` for generated text files
+- [x] Atomic file writes
+  - [x] Implement `atomic_write(path, bytes)`
+    - [x] Create parent directories if needed
+    - [x] Write to a temp file in the same directory
+    - [x] `fsync` best-effort (platform-dependent)
+    - [x] Replace target via rename
+  - [x] Implement `ensure_trailing_newline(text) -> String` for generated text files
 
-- [ ] Temp directory utilities
-  - [ ] Implement `temp_generation_dir(prefix) -> Result<TempDir>`
-  - [ ] Ensure temp dirs are cleaned up unless `--keep-temp` is introduced later
+- [x] Temp directory utilities
+  - [x] Implement `temp_generation_dir(prefix) -> Result<TempDir>`
+  - [x] Ensure temp dirs are cleaned up unless `--keep-temp` is introduced later
 
 - [ ] Tests
   - [ ] Unit tests for:
