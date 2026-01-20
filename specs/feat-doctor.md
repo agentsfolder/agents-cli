@@ -55,4 +55,4 @@ Unblocks: feat-adtest
   - [x] Doctor `--fix` creates missing gitignore
 
 ## Verification
-- [ ] `agents doctor --ci` fails on drift/collisions and succeeds when clean
+- [x] `agents doctor --ci` fails on drift/collisions and succeeds when clean
