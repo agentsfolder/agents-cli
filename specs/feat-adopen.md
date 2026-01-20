@@ -12,8 +12,8 @@ Unblocks: feat-adtest
   - shared surface reference
 
 ## Implementation Plan
-- [ ] Confirm OpenCode discovery order and supported files
-  - [ ] Decide which shared surface to emit for OpenCode (prefer `AGENTS.md` to share)
+- [x] Confirm OpenCode discovery order and supported files
+  - [x] Decide which shared surface to emit for OpenCode (prefer `AGENTS.md` to share)
 
 - [ ] Implement adapter YAML
   - [ ] Outputs:
