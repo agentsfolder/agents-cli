@@ -1,4 +1,5 @@
 pub mod driftx;
+pub mod cleanup;
 pub mod fsutil;
 pub mod loadag;
 pub mod matwiz;
