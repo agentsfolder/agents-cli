@@ -33,8 +33,8 @@ Unblocks: debugging and trust
     - [x] `agents sync`
 
 - [ ] Implement explain lookup
-  - [ ] Input: a path in repo
-  - [ ] Find matching stored source map by normalized repo-relative path
+  - [x] Input: a path in repo
+  - [x] Find matching stored source map by normalized repo-relative path
   - [ ] If not found:
     - [ ] attempt to parse stamp and provide minimal explanation
     - [ ] else report "unmanaged file"

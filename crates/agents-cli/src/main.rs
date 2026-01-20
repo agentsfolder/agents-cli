@@ -300,6 +300,8 @@ fn dispatch(ctx: &AppContext, cmd: Commands) -> AppResult<()> {
             }
         },
 
+        Commands::Explain { path } => crate::explnx::cmd_explain(&ctx.repo_root, &path, ctx.output),
+
         _ => Err(AppError::not_initialized(&ctx.repo_root)),
     }
 }
