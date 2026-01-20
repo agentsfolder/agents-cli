@@ -11,10 +11,11 @@ Unblocks: CI gate for adapter changes
 - Snapshot comparison with clear diffs on failure.
 
 ## Implementation Plan
-- [ ] Define fixture repository format
-  - [ ] `fixtures/<name>/repo/**` contains a `.agents/` tree and any other files needed
-  - [ ] `fixtures/<name>/expect/<agent-id>/**` contains expected rendered outputs
-  - [ ] Optionally `fixtures/<name>/matrix.yaml` describing profiles/modes/backends to test
+- [x] Define fixture repository format
+  - [x] `fixtures/<name>/repo/**` contains a `.agents/` tree and any other files needed
+  - [x] `fixtures/<name>/expect/<agent-id>/**` contains expected rendered outputs
+  - [x] Optionally `fixtures/<name>/matrix.yaml` describing profiles/modes/backends to test
+  - [x] Add `fixtures/README.md` describing the layout
 
 - [ ] Implement test runner API (agents-testutil)
   - [ ] `run_fixture(fixture_path, agent_filter) -> TestReport`
