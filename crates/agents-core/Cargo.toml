@@ -15,6 +15,7 @@ thiserror = "2.0.11"
 jsonschema = "0.18.0"
 globset = "0.4.15"
 handlebars = "6.3.2"
+sha2 = "0.10.8"
 
 [dev-dependencies]
 tempfile = "3.14.0"
