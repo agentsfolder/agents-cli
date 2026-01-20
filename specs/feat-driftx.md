@@ -36,10 +36,10 @@ Unblocks: feat-prevdf, feat-doctor
   - [x] Identify stamped generated outputs that are no longer planned
     - [x] used by `clean` and `doctor`
 
-- [ ] Tests
-  - [ ] Fixture where planned == existing => Noop
-  - [ ] Fixture where existing differs => Update + diff
-  - [ ] Fixture where unmanaged file exists => UnmanagedExists
+- [x] Tests
+  - [x] Fixture where planned == existing => Noop
+  - [x] Fixture where existing differs => Update + diff
+  - [x] Fixture where unmanaged file exists => UnmanagedExists
 
 ## Verification
 - [ ] `agents diff` shows clean/no-op after `agents sync`
