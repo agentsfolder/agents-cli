@@ -1,0 +1,14 @@
+agentId: copilot
+version: '0.1'
+backendDefaults: { preferred: materialize, fallback: materialize }
+outputs:
+  - path: .github/copilot-instructions.md
+    format: md
+    collision: error
+    renderer: { type: template, template: copilot-instructions.md.hbs }
+    driftDetection: { method: sha256, stamp: comment }
+  - path: .github/instructions/{{scopeId}}.instructions.md
+    format: md
+    collision: error
+    renderer: { type: template, template: scope.instructions.md.hbs }
+    driftDetection: { method: sha256, stamp: frontmatter }

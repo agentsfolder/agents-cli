@@ -1,0 +1,4 @@
+id: api.v2
+applyTo: ["packages/api/**"]
+priority: 0
+overrides: {}

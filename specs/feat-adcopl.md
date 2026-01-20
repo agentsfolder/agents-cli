@@ -22,16 +22,16 @@ Notes:
 - Path-specific instructions live under `.github/instructions/` and must be named `NAME.instructions.md`.
 - Path-specific files require a YAML frontmatter block with `applyTo: "glob,glob"`.
 
-- [ ] Implement adapter YAML
-  - [ ] Output `.github/copilot-instructions.md`
-    - [ ] `format: md`
-    - [ ] stamp via comment
+- [x] Implement adapter YAML
+  - [x] Output `.github/copilot-instructions.md`
+    - [x] `format: md`
+    - [x] stamp via comment
     - [ ] include current mode banner
-    - [ ] collision: error (unique path)
-  - [ ] Optional outputs:
-    - [ ] `*.instructions.md` for selected scopes
-    - [ ] include `applyTo` frontmatter if required by Copilot format
-  - [ ] Backend defaults: preferred `materialize`
+    - [x] collision: error (unique path)
+  - [x] Optional outputs:
+    - [x] `*.instructions.md` for selected scopes
+    - [x] include `applyTo` frontmatter (stamp via `frontmatter`)
+  - [x] Backend defaults: preferred `materialize`
 
 - [ ] Implement templates
   - [ ] Base instructions file:

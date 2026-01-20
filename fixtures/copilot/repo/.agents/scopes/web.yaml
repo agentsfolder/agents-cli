@@ -1,0 +1,4 @@
+id: web
+applyTo: ["packages/web/**", "packages/ui/**"]
+priority: 0
+overrides: {}
