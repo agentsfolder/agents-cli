@@ -36,9 +36,9 @@ Unblocks: feat-syncer
   - [x] Use feat-fsutil temp dir helper
   - [x] Add `--keep-temp` (optional) for debugging
 
-- [ ] Tests
-  - [ ] Preview produces files with expected names in temp dir
-  - [ ] Diff report matches fixture expectations
+- [x] Tests
+  - [x] Preview produces files with expected names in temp dir
+  - [x] Diff report matches fixture expectations
 
 ## Verification
 - [ ] `agents preview --agent <id>` renders deterministic temp outputs
