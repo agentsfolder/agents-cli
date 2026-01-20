@@ -20,7 +20,7 @@ Notes:
 - Per-directory precedence: `AGENTS.override.md` then `AGENTS.md` (then optional fallbacks).
 - Files are concatenated with blank lines; later (deeper) files override earlier guidance.
 
-- [ ] Implement adapter definition
+- [x] Implement adapter definition
   - [x] Create `.agents/adapters/codex/adapter.yaml` (fixture)
   - [x] Outputs:
     - [x] Reference shared surface `shared:AGENTS.md`
@@ -30,7 +30,7 @@ Notes:
     - [x] preferred `vfs_container`
     - [x] fallback `materialize`
 
-- [ ] Implement templates (if any)
+- [x] Implement templates (if any)
   - [x] Implement `templates/AGENTS.md.hbs` for Codex
   - [x] Keep deterministic and minimal
 
