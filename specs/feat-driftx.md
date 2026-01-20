@@ -27,10 +27,10 @@ Unblocks: feat-prevdf, feat-doctor
   - [x] Decide treatment for unmanaged existing file at target path:
     - [x] show as conflict; require explicit action in sync
 
-- [ ] Unified diff generation
-  - [ ] Choose a diff library or implement simple line diff
-  - [ ] Ensure stable diff output (normalize newlines)
-  - [ ] Include context lines, but keep output bounded (later add `--full`)
+- [x] Unified diff generation
+  - [x] Choose a diff library or implement simple line diff
+  - [x] Ensure stable diff output (normalize newlines)
+  - [x] Include context lines, but keep output bounded (later add `--full`)
 
 - [ ] Deletion detection (optional for v1)
   - [ ] Identify stamped generated outputs that are no longer planned

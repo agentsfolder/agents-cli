@@ -5,7 +5,7 @@ use crate::outputs::{OutputPlan, PlannedOutput};
 use crate::stamps::{classify, strip_existing_stamp, DriftStatus};
 use crate::templ::TemplateEngine;
 
-use super::{DiffEntry, DiffKind, DiffReport};
+use super::{unified_diff_for, DiffEntry, DiffKind, DiffReport};
 
 #[derive(Debug, thiserror::Error)]
 pub enum DriftxError {
@@ -74,8 +74,31 @@ fn diff_one(repo_root: &Path, out: &PlannedOutput) -> Result<DiffEntry, DriftxEr
         DriftStatus::Drifted => (DiffKind::Drifted, None),
     };
 
-    // Unified diff generation is deferred to the next task.
-    let unified_diff = None;
+    let unified_diff = match kind {
+        DiffKind::Noop => None,
+        DiffKind::Create => {
+            // Diff against empty.
+            Some(unified_diff_for(
+                "",
+                &planned_without_stamp,
+                "(missing)",
+                out.path.as_str(),
+            ))
+        }
+        DiffKind::Update | DiffKind::Drifted => Some(unified_diff_for(
+            &existing_without_stamp,
+            &planned_without_stamp,
+            "(existing)",
+            out.path.as_str(),
+        )),
+        DiffKind::UnmanagedExists => Some(unified_diff_for(
+            &existing_without_stamp,
+            &planned_without_stamp,
+            "(unmanaged)",
+            out.path.as_str(),
+        )),
+        DiffKind::Delete => None,
+    };
 
     Ok(DiffEntry {
         path: out.path.as_str().to_string(),
