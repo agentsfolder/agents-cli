@@ -14,14 +14,15 @@ Unblocks: feat-adtest
   - safe cleanup suggestions
 
 ## Implementation Plan
-- [ ] Define check framework
-  - [ ] `DoctorCheck` trait with:
-    - [ ] `name`
-    - [ ] `run(ctx) -> CheckResult`
-    - [ ] optional `fix(ctx) -> FixResult`
-  - [ ] `DoctorReport` with:
-    - [ ] errors, warnings, infos
-    - [ ] exit code mapping (`--ci` makes warnings fail if desired)
+- [x] Define check framework
+  - [x] `DoctorCheck` trait with:
+    - [x] `name`
+    - [x] `run(ctx) -> CheckResult`
+    - [x] optional `fix(ctx) -> FixResult`
+  - [x] `DoctorReport` with:
+    - [x] errors, warnings, infos
+    - [x] exit code mapping (`--ci` makes warnings fail if desired)
+
 
 - [ ] Implement checks
   - [ ] Schema check

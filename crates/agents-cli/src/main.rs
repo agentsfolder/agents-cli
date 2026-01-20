@@ -9,6 +9,7 @@ mod prevdf;
 mod status;
 mod syncer;
 mod cleanup;
+mod doctor;
 
 #[derive(Debug, Clone, ValueEnum)]
 enum Backend {
