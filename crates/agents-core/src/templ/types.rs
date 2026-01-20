@@ -6,6 +6,14 @@ use crate::model::{BackendKind, ModeFrontmatter, Policy};
 use crate::prompts::EffectivePrompts;
 
 #[derive(Debug, Clone, Serialize)]
+pub struct ScopeCtx {
+    pub id: String,
+
+    #[serde(rename = "applyTo")]
+    pub apply_to: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct EffectiveModeCtx {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub frontmatter: Option<ModeFrontmatter>,
@@ -54,6 +62,9 @@ pub struct RenderContext {
 
     #[serde(rename = "scopesMatched")]
     pub scopes_matched: Vec<String>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub scope: Option<ScopeCtx>,
 
     pub generation: GenerationCtx,
 

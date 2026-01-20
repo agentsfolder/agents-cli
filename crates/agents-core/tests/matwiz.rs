@@ -61,6 +61,7 @@ fn dummy_render_context() -> RenderContext {
         backend: agents_core::model::manifest::BackendKind::Materialize,
         profile: None,
         scopes_matched: vec![],
+        scope: None,
         generation: GenerationCtx {
             stamp: GenerationStampCtx {
                 generator: "agents".to_string(),

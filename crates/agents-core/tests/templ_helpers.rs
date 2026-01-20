@@ -41,6 +41,7 @@ fn minimal_ctx() -> RenderContext {
         backend: agents_core::model::BackendKind::VfsContainer,
         profile: None,
         scopes_matched: vec!["s".to_string()],
+        scope: None,
         generation: agents_core::templ::GenerationCtx {
             stamp: agents_core::templ::GenerationStampCtx {
                 generator: "agents".to_string(),

@@ -110,6 +110,7 @@ pub fn plan_outputs(
             .iter()
             .map(|s| s.id.clone())
             .collect(),
+        scope: None,
         generation: GenerationCtx {
             stamp: GenerationStampCtx {
                 generator: "agents".to_string(),
