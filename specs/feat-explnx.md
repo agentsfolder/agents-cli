@@ -44,8 +44,8 @@ Unblocks: debugging and trust
   - [x] Optionally `--json`
 
 - [ ] Tests
-  - [ ] After preview/sync, explain returns expected components
-  - [ ] Unmanaged path returns helpful message
+  - [x] After preview/sync, explain returns expected components
+  - [x] Unmanaged path returns helpful message
 
 ## Verification
-- [ ] `agents explain AGENTS.md` prints contributing sources
+- [x] `agents explain AGENTS.md` prints contributing sources
