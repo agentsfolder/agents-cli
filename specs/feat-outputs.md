@@ -15,20 +15,20 @@ Unblocks: feat-prevdf, feat-syncer, feat-stamps
 - Deterministic collision handling per PRD.
 
 ## Implementation Plan
-- [ ] Define planning types
-  - [ ] `PlannedOutput`:
-    - [ ] `path: RepoPath` (repo-relative)
-    - [ ] `format`
-    - [ ] `surface: Option<String>`
-    - [ ] `collision`
-    - [ ] `renderer`
-    - [ ] `write_policy`
-    - [ ] `drift_detection`
-    - [ ] `render_context: RenderContext` (or pointer)
-  - [ ] `OutputPlan`:
-    - [ ] `agent_id`
-    - [ ] `backend`
-    - [ ] `outputs: Vec<PlannedOutput>`
+- [x] Define planning types
+  - [x] `PlannedOutput`:
+    - [x] `path: RepoPath` (repo-relative)
+    - [x] `format`
+    - [x] `surface: Option<String>`
+    - [x] `collision`
+    - [x] `renderer`
+    - [x] `write_policy`
+    - [x] `drift_detection`
+    - [x] `render_context: RenderContext` (or pointer)
+  - [x] `OutputPlan`:
+    - [x] `agent_id`
+    - [x] `backend`
+    - [x] `outputs: Vec<PlannedOutput>`
 
 - [ ] Evaluate output conditions
   - [ ] Implement `condition.backendIn` filtering
