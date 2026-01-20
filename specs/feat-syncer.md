@@ -30,9 +30,9 @@ Unblocks: feat-runner, feat-doctor
   - [x] Print written/skipped/conflict counts
   - [x] In verbose mode, print per-path actions
 
-- [ ] Tests
-  - [ ] Sync then diff yields no changes (requires feat-driftx integration)
-  - [ ] Sync fails when unmanaged file exists at output path and writePolicy is `if_generated`
+- [x] Tests
+  - [x] Sync then diff yields no changes (requires feat-driftx integration)
+  - [x] Sync fails when unmanaged file exists at output path and writePolicy is `if_generated`
 
 ## Verification
 - [ ] `agents sync` followed by `agents diff` yields no changes
