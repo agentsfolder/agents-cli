@@ -26,9 +26,9 @@ Unblocks: feat-runner, feat-doctor
     - [x] return non-zero
     - [x] print actionable hint (run diff, adjust writePolicy)
 
-- [ ] Reporting
-  - [ ] Print written/skipped/conflict counts
-  - [ ] In verbose mode, print per-path actions
+- [x] Reporting
+  - [x] Print written/skipped/conflict counts
+  - [x] In verbose mode, print per-path actions
 
 - [ ] Tests
   - [ ] Sync then diff yields no changes (requires feat-driftx integration)

@@ -60,6 +60,9 @@ pub fn cmd_sync(repo_root: &Path, opts: SyncOptions) -> Result<(), AppError> {
     match selected_backend {
         BackendKind::Materialize => {
             // v1: materialize directly to repo.
+            let mut written = 0usize;
+            let mut skipped = 0usize;
+
             for out in &plan_res.plan.outputs {
                 let rendered = render_planned_output(repo_root, out).map_err(|e| AppError {
                     category: ErrorCategory::Io,
@@ -72,6 +75,7 @@ pub fn cmd_sync(repo_root: &Path, opts: SyncOptions) -> Result<(), AppError> {
                 // v1: honor writePolicy modes.
                 let mode = out.write_policy.mode.unwrap_or(WriteMode::IfGenerated);
                 if mode == WriteMode::Never {
+                    skipped += 1;
                     if opts.verbose {
                         println!("skip: {} (writePolicy=never)", out.path.as_str());
                     }
@@ -106,11 +110,13 @@ pub fn cmd_sync(repo_root: &Path, opts: SyncOptions) -> Result<(), AppError> {
                         context: vec![],
                     })?;
 
+                written += 1;
                 if opts.verbose {
                     println!("write: {}", out.path.as_str());
                 }
             }
 
+            println!("sync: written={} skipped={} conflict=0", written, skipped);
             Ok(())
         }
         BackendKind::VfsContainer | BackendKind::VfsMount => Err(AppError {
