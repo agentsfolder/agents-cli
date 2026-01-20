@@ -61,7 +61,7 @@ Unblocks: feat-prevdf, feat-syncer, feat-stamps
   - [x] Store enough info to later implement `agents explain` (feat-explnx)
 
 - [ ] Tests
-  - [ ] Condition filtering tests
+  - [x] Condition filtering tests
   - [ ] Collision tests:
     - [ ] physical path collision error
     - [ ] logical surface collision with shared_owner
