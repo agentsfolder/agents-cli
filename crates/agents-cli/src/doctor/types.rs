@@ -75,6 +75,13 @@ pub trait DoctorCheck {
 
 #[derive(Debug, Clone)]
 pub struct DoctorContext {
+    pub repo_root: PathBuf,
+    pub repo: Option<RepoConfig>,
+    pub effective: Option<EffectiveConfig>,
     pub ci: bool,
     pub fix: bool,
 }
+use std::path::PathBuf;
+
+use agents_core::loadag::RepoConfig;
+use agents_core::resolv::EffectiveConfig;

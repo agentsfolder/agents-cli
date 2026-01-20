@@ -284,6 +284,11 @@ fn dispatch(ctx: &AppContext, cmd: Commands) -> AppResult<()> {
             },
         ),
 
+        Commands::Doctor { fix, ci } => crate::doctor::cmd_doctor(
+            &ctx.repo_root,
+            crate::doctor::DoctorOptions { fix, ci },
+        ),
+
         _ => Err(AppError::not_initialized(&ctx.repo_root)),
     }
 }
