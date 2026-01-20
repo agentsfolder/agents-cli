@@ -38,10 +38,10 @@ Unblocks: feat-adtest
   - [x] State file check
     - [x] ensure `.agents/state/.gitignore` exists and ignores `state.yaml`
 
-- [ ] Implement safe fixes (`--fix`)
-  - [ ] Create missing `.agents/state/.gitignore`
-  - [ ] Remove stale generated files that are no longer planned (optional; careful)
-  - [ ] Do NOT overwrite unmanaged files
+- [x] Implement safe fixes (`--fix`)
+  - [x] Create missing `.agents/state/.gitignore`
+  - [x] Remove stale generated files that are no longer planned (optional; careful)
+  - [x] Do NOT overwrite unmanaged files
 
 - [ ] `--ci` semantics
   - [ ] In `--ci` mode:

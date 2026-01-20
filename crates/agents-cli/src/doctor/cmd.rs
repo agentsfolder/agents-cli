@@ -6,6 +6,8 @@ use agents_core::outputs::{plan_outputs, PlanError};
 use agents_core::resolv::{ResolutionRequest, Resolver};
 use agents_core::{driftx, driftx::DiffKind};
 use agents_core::model::BackendKind;
+use agents_core::cleanup;
+use std::collections::BTreeSet;
 
 use crate::{AppError, ErrorCategory};
 
@@ -56,6 +58,10 @@ pub fn cmd_doctor(repo_root: &Path, opts: DoctorOptions) -> Result<(), AppError>
     report.items.extend(drift_check(&ctx));
     report.items.extend(prereqs_check(&ctx));
     report.items.extend(state_file_check(&ctx));
+
+    if opts.fix {
+        report.items.extend(apply_fixes(&ctx));
+    }
     report.normalize_order();
 
     for item in &report.items {
@@ -87,6 +93,118 @@ pub fn cmd_doctor(repo_root: &Path, opts: DoctorOptions) -> Result<(), AppError>
     }
 
     Ok(())
+}
+
+fn apply_fixes(ctx: &DoctorContext) -> Vec<DoctorItem> {
+    let mut items = vec![];
+
+    // Fix: ensure `.agents/state/.gitignore` exists and contains `state.yaml`.
+    match fix_state_gitignore(&ctx.repo_root) {
+        Ok(changed) => {
+            if changed {
+                items.push(DoctorItem {
+                    level: DoctorLevel::Info,
+                    check: "fix".to_string(),
+                    message: "updated .agents/state/.gitignore".to_string(),
+                    context: vec!["path: .agents/state/.gitignore".to_string()],
+                });
+            }
+        }
+        Err(e) => items.push(DoctorItem {
+            level: DoctorLevel::Error,
+            check: "fix".to_string(),
+            message: "failed to update .agents/state/.gitignore".to_string(),
+            context: vec![e.to_string()],
+        }),
+    }
+
+    // Fix (optional): remove stale generated outputs that are no longer planned.
+    if let (Some(repo), Some(effective)) = (&ctx.repo, &ctx.effective) {
+        let mut agent_ids = repo.manifest.enabled.adapters.clone();
+        agent_ids.sort();
+
+        let mut deleted_paths: Vec<fsutil::RepoPath> = vec![];
+        for agent_id in &agent_ids {
+            let plan = match plan_outputs(&ctx.repo_root, repo.clone(), effective, agent_id) {
+                Ok(p) => p.plan,
+                Err(_) => continue,
+            };
+
+            let planned: BTreeSet<String> =
+                plan.outputs.iter().map(|o| o.path.as_str().to_string()).collect();
+            let stale = match driftx::detect_stale_generated(&ctx.repo_root, agent_id, &planned) {
+                Ok(s) => s,
+                Err(_) => continue,
+            };
+
+            for e in stale {
+                let rp = match fsutil::repo_relpath_noexist(&ctx.repo_root, std::path::Path::new(&e.path)) {
+                    Ok(p) => p,
+                    Err(_) => continue,
+                };
+                deleted_paths.push(rp);
+            }
+        }
+
+        deleted_paths.sort();
+        deleted_paths.dedup();
+        if !deleted_paths.is_empty() {
+            match cleanup::delete_paths(&ctx.repo_root, &deleted_paths, false) {
+                Ok(rep) => {
+                    for p in rep.deleted {
+                        items.push(DoctorItem {
+                            level: DoctorLevel::Info,
+                            check: "fix".to_string(),
+                            message: "deleted stale generated file".to_string(),
+                            context: vec![format!("path: {}", p.as_str())],
+                        });
+                    }
+                }
+                Err(e) => items.push(DoctorItem {
+                    level: DoctorLevel::Error,
+                    check: "fix".to_string(),
+                    message: "failed to delete stale generated files".to_string(),
+                    context: vec![e.to_string()],
+                }),
+            }
+        }
+    }
+
+    items
+}
+
+fn fix_state_gitignore(repo_root: &Path) -> Result<bool, fsutil::FsError> {
+    let dir = repo_root.join(".agents/state");
+    std::fs::create_dir_all(&dir).map_err(|e| fsutil::FsError::Io {
+        path: dir.clone(),
+        source: e,
+    })?;
+
+    let p = dir.join(".gitignore");
+    let mut changed = false;
+    let mut content = if p.is_file() {
+        fsutil::read_to_string(&p)?
+    } else {
+        changed = true;
+        String::new()
+    };
+
+    let has = content
+        .lines()
+        .any(|l| l.trim() == "state.yaml" || l.trim() == "/state.yaml");
+    if !has {
+        if !content.is_empty() && !content.ends_with('\n') {
+            content.push('\n');
+        }
+        content.push_str("state.yaml\n");
+        changed = true;
+    }
+
+    if changed {
+        fsutil::atomic_write(&p, content.as_bytes())?;
+    }
+
+    Ok(changed)
 }
 
 fn schema_check(ctx: &DoctorContext) -> Vec<DoctorItem> {
