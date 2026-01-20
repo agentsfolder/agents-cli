@@ -27,14 +27,14 @@ Unblocks: CI gate for adapter changes
     - [x] write to temp dir
     - [x] compare temp outputs to golden expected directory
 
-- [ ] Snapshot comparison
-  - [ ] Ensure comparison is deterministic:
-    - [ ] stable file list
-    - [ ] compare bytes exactly
-  - [ ] On mismatch:
-    - [ ] print which files differ
-    - [ ] print a small unified diff for text files
-    - [ ] write actual outputs to a temp dir and print path for inspection
+- [x] Snapshot comparison
+  - [x] Ensure comparison is deterministic:
+    - [x] stable file list
+    - [x] compare bytes exactly
+  - [x] On mismatch:
+    - [x] print which files differ
+    - [x] print a small unified diff for text files
+    - [x] write actual outputs to a temp dir and print path for inspection
 
 - [ ] CLI integration
   - [ ] Add command `agents test adapters [--agent <id>]`

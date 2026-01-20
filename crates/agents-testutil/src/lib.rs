@@ -22,6 +22,29 @@ pub struct FixtureFailure {
     pub mismatches: Vec<FileMismatch>,
 }
 
+impl FixtureFailure {
+    pub fn render_human(&self) -> String {
+        let mut out = String::new();
+        out.push_str(&format!(
+            "fixture {} (agent {}): {} mismatches\n",
+            self.fixture,
+            self.agent_id,
+            self.mismatches.len()
+        ));
+        for m in &self.mismatches {
+            out.push_str(&format!("- {}: {}\n", m.kind, m.path));
+            if let Some(d) = &m.diff {
+                out.push_str(d);
+                if !d.ends_with('\n') {
+                    out.push('\n');
+                }
+            }
+        }
+        out.push_str(&format!("actual outputs: {}\n", self.actual_dir.display()));
+        out
+    }
+}
+
 #[derive(Debug, Clone, Default)]
 pub struct TestReport {
     pub passed: usize,
@@ -167,6 +190,7 @@ fn compare_dirs(expect_dir: &Path, actual_dir: &Path) -> Result<Vec<FileMismatch
         }
     }
 
+    mismatches.sort_by(|a, b| a.path.cmp(&b.path).then_with(|| a.kind.cmp(&b.kind)));
     Ok(mismatches)
 }
 
