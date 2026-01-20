@@ -27,6 +27,12 @@ pub struct IdentifyReport {
     pub skipped: Vec<SkippedPath>,
 }
 
+#[derive(Debug, Clone, Default)]
+pub struct DeleteReport {
+    pub deleted: Vec<RepoPath>,
+    pub pruned_dirs: Vec<RepoPath>,
+}
+
 #[derive(Debug, thiserror::Error)]
 pub enum CleanupError {
     #[error("outputs plan error: {0}")]
@@ -34,6 +40,84 @@ pub enum CleanupError {
 
     #[error("fs error: {0}")]
     Fs(#[from] fsutil::FsError),
+}
+
+pub fn delete_paths(
+    repo_root: &Path,
+    paths: &[RepoPath],
+    dry_run: bool,
+) -> Result<DeleteReport, CleanupError> {
+    let mut report = DeleteReport::default();
+
+    for rp in paths {
+        let abs = repo_root.join(rp.as_str());
+        if !abs.exists() {
+            continue;
+        }
+
+        // Safety: ensure we are deleting inside the repo root.
+        let _ = fsutil::repo_relpath(repo_root, &abs)?;
+
+        if !dry_run {
+            std::fs::remove_file(&abs).map_err(|e| fsutil::FsError::Io {
+                path: abs.clone(),
+                source: e,
+            })?;
+        }
+
+        report.deleted.push(rp.clone());
+
+        if !dry_run {
+            prune_empty_parents(repo_root, &abs, &mut report.pruned_dirs)?;
+        }
+    }
+
+    Ok(report)
+}
+
+fn prune_empty_parents(
+    repo_root: &Path,
+    deleted_file: &Path,
+    pruned: &mut Vec<RepoPath>,
+) -> Result<(), CleanupError> {
+    let root_abs = repo_root.canonicalize().map_err(|e| fsutil::FsError::Io {
+        path: repo_root.to_path_buf(),
+        source: e,
+    })?;
+
+    let mut cur = deleted_file.parent().map(Path::to_path_buf);
+    while let Some(dir) = cur {
+        let dir_abs = dir.canonicalize().map_err(|e| fsutil::FsError::Io {
+            path: dir.clone(),
+            source: e,
+        })?;
+
+        if dir_abs == root_abs {
+            break;
+        }
+
+        let mut it = std::fs::read_dir(&dir).map_err(|e| fsutil::FsError::Io {
+            path: dir.clone(),
+            source: e,
+        })?;
+        let is_empty = it.next().is_none();
+        if !is_empty {
+            break;
+        }
+
+        std::fs::remove_dir(&dir).map_err(|e| fsutil::FsError::Io {
+            path: dir.clone(),
+            source: e,
+        })?;
+
+        if let Ok(rp) = fsutil::repo_relpath(&root_abs, &dir_abs) {
+            pruned.push(rp);
+        }
+
+        cur = dir.parent().map(Path::to_path_buf);
+    }
+
+    Ok(())
 }
 
 /// Identify generated files that are safe to delete.
