@@ -35,11 +35,11 @@ Unblocks: feat-syncer, feat-cleanup
   - [x] `never`:
     - [x] never write; report skipped
 
-- [ ] Implement conflict reporting
-  - [ ] Provide actionable error:
-    - [ ] which path
-    - [ ] why blocked (unmanaged, drifted)
-    - [ ] suggested next step (`agents diff`, `agents doctor`, or change collision/writePolicy)
+- [x] Implement conflict reporting
+  - [x] Provide actionable error:
+    - [x] which path
+    - [x] why blocked (unmanaged, drifted)
+    - [x] suggested next step (`agents diff`, `agents doctor`, or change collision/writePolicy)
 
 - [ ] `.gitignore` integration
   - [ ] If output writePolicy sets `gitignore=true`:

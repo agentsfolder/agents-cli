@@ -16,11 +16,29 @@ pub struct RenderedOutput {
     pub drift_status: DriftStatus,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ConflictReason {
+    Unmanaged,
+    Drifted,
+    Other(String),
+}
+
+#[derive(Debug, Clone)]
+pub struct ConflictDetail {
+    pub path: RepoPath,
+    pub reason: ConflictReason,
+    pub message: String,
+    pub hints: Vec<String>,
+}
+
 #[derive(Debug, Clone, Default)]
 pub struct ApplyReport {
     pub written: Vec<RepoPath>,
     pub skipped: Vec<RepoPath>,
     pub conflicts: Vec<RepoPath>,
+
+    #[allow(dead_code)]
+    pub conflict_details: Vec<ConflictDetail>,
 }
 
 #[derive(Debug, Clone)]

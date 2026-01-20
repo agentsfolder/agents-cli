@@ -6,7 +6,7 @@ use crate::model::OutputFormat;
 use crate::outputs::OutputPlan;
 use crate::stamps::parse_stamp;
 
-use super::{ApplyReport, Backend, BackendError, BackendSession, RenderedOutput};
+use super::{ApplyReport, Backend, BackendError, BackendSession, ConflictDetail, ConflictReason, RenderedOutput};
 
 #[derive(Debug, Default, Clone)]
 pub struct MaterializeBackend;
@@ -62,11 +62,33 @@ impl Backend for MaterializeBackend {
                     let managed_by_agents = stamp.as_ref().is_some_and(|s| s.meta.generator == "agents");
                     if !managed_by_agents {
                         report.conflicts.push(out.path.clone());
+                        report.conflict_details.push(ConflictDetail {
+                            path: out.path.clone(),
+                            reason: ConflictReason::Unmanaged,
+                            message: "refusing to overwrite unmanaged file (writePolicy=if_generated)"
+                                .to_string(),
+                            hints: vec![
+                                format!("hint: run `agents diff --agent {}`", session.plan.agent_id),
+                                "hint: change output.writePolicy.mode to `always` to force overwrite"
+                                    .to_string(),
+                            ],
+                        });
                         continue;
                     }
 
                     if out.drift_status == crate::stamps::DriftStatus::Drifted {
                         report.conflicts.push(out.path.clone());
+                        report.conflict_details.push(ConflictDetail {
+                            path: out.path.clone(),
+                            reason: ConflictReason::Drifted,
+                            message: "refusing to overwrite drifted generated file (writePolicy=if_generated)"
+                                .to_string(),
+                            hints: vec![
+                                format!("hint: run `agents diff --agent {}`", session.plan.agent_id),
+                                "hint: reconcile manual edits or change output.writePolicy.mode"
+                                    .to_string(),
+                            ],
+                        });
                         continue;
                     }
                 }
