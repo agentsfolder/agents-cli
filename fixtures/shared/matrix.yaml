@@ -1,0 +1,8 @@
+cases:
+  - name: single
+  - name: scoped
+    targetPath: packages/foo
+  - name: alt_mode
+    mode: alt
+  - name: dev_profile
+    profile: dev

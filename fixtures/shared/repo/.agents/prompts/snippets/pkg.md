@@ -1,0 +1,1 @@
+Scoped snippet for packages/*.

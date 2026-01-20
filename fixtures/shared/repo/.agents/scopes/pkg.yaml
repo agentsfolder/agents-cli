@@ -1,0 +1,5 @@
+id: pkg
+applyTo: ["packages/*"]
+priority: 0
+overrides:
+  includeSnippets: ["pkg"]

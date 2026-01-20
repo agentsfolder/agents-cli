@@ -47,10 +47,10 @@ Unblocks: feat-adcodx, feat-adopen, feat-adcopl
     - [x] planning fails with actionable error
 
 - [ ] Tests
-  - [ ] Golden test rendering `AGENTS.md` for:
-    - [ ] single repo
-    - [ ] monorepo with scopes
-    - [ ] different modes/profiles
+  - [x] Golden test rendering `AGENTS.md` for:
+    - [x] single repo
+    - [x] monorepo with scopes
+    - [x] different modes/profiles
   - [ ] Collision test: two adapters try to own `shared:AGENTS.md` => error
 
 ## Verification
