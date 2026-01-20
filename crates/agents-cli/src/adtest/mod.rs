@@ -26,25 +26,46 @@ pub fn cmd_test_adapters(root: &Path, agent: Option<String>) -> Result<(), AppEr
         .collect();
     fixtures.sort();
 
-    let agent_filter = agent.as_deref();
+    let agent_filter = agent.map(|s| s.to_string());
+
+    // Run fixtures in parallel to keep runtime reasonable.
+    let mut handles = vec![];
+    for fixture in fixtures {
+        let fixture_clone = fixture.clone();
+        let agent_filter = agent_filter.clone();
+
+        let h = std::thread::spawn(move || {
+            run_fixture(&fixture_clone, agent_filter.as_deref())
+                .map(|r| (fixture_clone, r))
+        });
+        handles.push(h);
+    }
 
     let mut passed = 0usize;
     let mut failed = 0usize;
     let mut failures: Vec<String> = vec![];
 
-    for fixture in fixtures {
-        let report = run_fixture(&fixture, agent_filter).map_err(|e| AppError {
-            category: ErrorCategory::Io,
-            message: e.to_string(),
-            context: vec![format!("fixture: {}", fixture.display())],
-        })?;
+    for h in handles {
+        let (fixture, report) = h
+            .join()
+            .map_err(|_| AppError {
+                category: ErrorCategory::Io,
+                message: "fixture thread panicked".to_string(),
+                context: vec![],
+            })?
+            .map_err(|e| AppError {
+                category: ErrorCategory::Io,
+                message: e.to_string(),
+                context: vec![],
+            })?;
 
         passed += report.passed;
         failed += report.failed;
-
         for f in report.failures {
             failures.push(f.render_human());
         }
+
+        let _ = fixture;
     }
 
     if failures.is_empty() {

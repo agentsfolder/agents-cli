@@ -40,9 +40,9 @@ Unblocks: CI gate for adapter changes
   - [x] Add command `agents test adapters [--agent <id>]`
   - [ ] Add `--update` flag (optional) to rewrite goldens (guarded)
 
-- [ ] CI integration guidance
-  - [ ] Ensure exit code non-zero on any mismatch
-  - [ ] Keep runtime reasonable (parallelize fixtures if possible)
+- [x] CI integration guidance
+  - [x] Ensure exit code non-zero on any mismatch
+  - [x] Keep runtime reasonable (parallelize fixtures if possible)
 
 - [ ] Tests
   - [ ] Unit tests for file discovery and compare logic
