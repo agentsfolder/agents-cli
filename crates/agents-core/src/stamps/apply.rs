@@ -82,11 +82,8 @@ pub fn apply_stamp(
 ) -> Result<String, StampError> {
     match method {
         StampMethod::Comment => {
-            let json = encode_stamp_meta_json(meta)?;
-            Ok(format!(
-                "{}{}{}\n{}",
-                COMMENT_STAMP_PREFIX, json, COMMENT_STAMP_SUFFIX, content_without_stamp
-            ))
+            let line = super::encoding::encode_comment_stamp_line(meta)?;
+            Ok(format!("{}{}", line, content_without_stamp))
         }
         StampMethod::Frontmatter => {
             let json = encode_stamp_meta_json(meta)?;
@@ -326,13 +323,10 @@ fn parse_json_field_stamp(content: &str) -> Option<StampMeta> {
 fn strip_json_field_stamp(content: &str) -> Option<(String, StampMeta)> {
     // Very small JSON scanner: find a top-level `"x_generated"` field and remove it.
     let bytes = content.as_bytes();
-    let mut i = 0usize;
 
-    // Find opening '{'
-    while i < bytes.len() && (bytes[i] as char).is_whitespace() {
-        i += 1;
-    }
-    if i >= bytes.len() || bytes[i] != b'{' {
+    // Find opening '{' (allow leading JSONC comments).
+    let i = skip_ws_and_jsonc_comments(bytes, 0)?;
+    if bytes.get(i) != Some(&b'{') {
         return None;
     }
 

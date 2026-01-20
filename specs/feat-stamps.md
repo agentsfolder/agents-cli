@@ -43,18 +43,18 @@ Unblocks: feat-driftx, feat-cleanup, feat-doctor
   - [x] Hash canonical content *without* stamp
   - [x] Normalize newlines before hashing
 
-- [ ] Implement drift detection
-  - [ ] `classify(path, planned_content_without_stamp) -> DriftStatus`
-    - [ ] if file missing: `Missing`
-    - [ ] if no valid stamp: `Unmanaged`
-    - [ ] if stamp present and hash matches planned: `Clean`
-    - [ ] if stamp present and hash differs: `Drifted`
-  - [ ] Allow adapter setting `mtime_only` and `none` (honor but keep sha256 default)
+- [x] Implement drift detection
+  - [x] `classify(path, planned_content_without_stamp) -> DriftStatus`
+    - [x] if file missing: `Missing`
+    - [x] if no valid stamp: `Unmanaged`
+    - [x] if stamp present and hash matches planned: `Clean`
+    - [x] if stamp present and hash differs: `Drifted`
+  - [x] Allow adapter setting `mtime_only` and `none` (honor but keep sha256 default)
 
-- [ ] Tests
-  - [ ] Stamp parse/apply round-trip tests for each method
-  - [ ] Drift classification tests
-  - [ ] Determinism test: stamping same inputs yields identical bytes
+- [x] Tests
+  - [x] Stamp parse/apply round-trip tests for each method
+  - [x] Drift classification tests
+  - [x] Determinism test: stamping same inputs yields identical bytes
 
 ## Verification
 - [ ] Generated files contain valid stamp blocks/fields
