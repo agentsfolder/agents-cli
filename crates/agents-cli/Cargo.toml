@@ -15,6 +15,7 @@ agents-testutil = { path = "../agents-testutil" }
 clap = { version = "4.5.27", features = ["derive"] }
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
+walkdir = "2"
 
 [dev-dependencies]
 assert_cmd = "2.0.16"

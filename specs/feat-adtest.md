@@ -38,7 +38,7 @@ Unblocks: CI gate for adapter changes
 
 - [x] CLI integration
   - [x] Add command `agents test adapters [--agent <id>]`
-  - [ ] Add `--update` flag (optional) to rewrite goldens (guarded)
+  - [x] Add `--update` flag (optional) to rewrite goldens (guarded)
 
 - [x] CI integration guidance
   - [x] Ensure exit code non-zero on any mismatch

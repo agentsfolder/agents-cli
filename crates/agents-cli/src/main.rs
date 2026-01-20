@@ -295,14 +295,7 @@ fn dispatch(ctx: &AppContext, cmd: Commands) -> AppResult<()> {
 
         Commands::Test { command } => match command {
             TestCommands::Adapters { agent, update } => {
-                if update {
-                    return Err(AppError {
-                        category: ErrorCategory::InvalidArgs,
-                        message: "--update not implemented yet".to_string(),
-                        context: vec![],
-                    });
-                }
-                crate::adtest::cmd_test_adapters(&ctx.repo_root, agent)
+                crate::adtest::cmd_test_adapters(&ctx.repo_root, agent, update)
             }
         },
 
