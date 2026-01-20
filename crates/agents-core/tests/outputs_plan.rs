@@ -1,4 +1,5 @@
 use std::fs;
+use std::path::PathBuf;
 
 use agents_core::loadag::{load_repo_config, LoaderOptions};
 use agents_core::model::BackendKind;
@@ -219,4 +220,26 @@ outputs:
     assert_eq!(out.surface.as_deref(), Some("s"));
     assert_eq!(out.renderer.type_, agents_core::model::RendererType::Concat);
     assert_eq!(out.renderer.sources, vec!["template:a.hbs", "template:b.hbs"]);
+}
+
+#[test]
+fn fixture_plan_ordering_is_deterministic() {
+    let repo_root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../../fixtures/outputs-plan/repo");
+
+    let (cfg, _report) = load_repo_config(
+        &repo_root,
+        &LoaderOptions {
+            require_schemas_dir: false,
+        },
+    )
+    .unwrap();
+
+    let resolver = Resolver::new(cfg.clone());
+    let mut req = ResolutionRequest::default();
+    req.repo_root = repo_root.clone();
+    let eff = resolver.resolve(&req).unwrap();
+
+    let plan_res = plan_outputs(&repo_root, cfg, &eff, "a").unwrap();
+    assert_eq!(plan_paths(&plan_res.plan), vec!["a.md", "m.md", "z.md"]);
 }

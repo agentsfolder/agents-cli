@@ -68,5 +68,5 @@ Unblocks: feat-prevdf, feat-syncer, feat-stamps
     - [x] merge collision produces deterministic output ordering
 
 ## Verification
-- [ ] A fixture adapter renders a plan with deterministic output ordering
+- [x] A fixture adapter renders a plan with deterministic output ordering
 - [ ] Colliding outputs fail with actionable diagnostics

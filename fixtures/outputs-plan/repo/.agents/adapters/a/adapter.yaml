@@ -1,0 +1,11 @@
+agentId: a
+version: '0.1'
+backendDefaults: { preferred: vfs_container, fallback: materialize }
+outputs:
+  - path: z.md
+    renderer: { type: template, template: z.hbs }
+  - path: a.md
+    renderer: { type: template, template: a.hbs }
+  - path: m.md
+    surface: some:surface
+    renderer: { type: template, template: m.hbs }
