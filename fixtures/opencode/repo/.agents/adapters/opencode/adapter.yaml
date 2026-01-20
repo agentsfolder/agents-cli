@@ -1,0 +1,14 @@
+agentId: opencode
+version: '0.1'
+backendDefaults: { preferred: vfs_container, fallback: materialize }
+outputs:
+  - path: opencode.jsonc
+    format: jsonc
+    renderer: { type: template, template: opencode.jsonc.hbs }
+    driftDetection: { method: sha256, stamp: json_field }
+  - path: AGENTS.md
+    format: md
+    surface: shared:AGENTS.md
+    collision: shared_owner
+    renderer: { type: template, template: AGENTS.md.hbs }
+    driftDetection: { method: sha256, stamp: comment }

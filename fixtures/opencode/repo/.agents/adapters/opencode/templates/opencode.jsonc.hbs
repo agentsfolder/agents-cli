@@ -1,0 +1,11 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["AGENTS.md"],
+
+  "x_agents": {
+    "backend": "{{backend}}",
+    "mode": "{{generation.stamp.mode}}",
+    "policy": "{{effective.policy.id}}"{{#if profile}},
+    "profile": "{{profile}}"{{/if}}
+  }
+}

@@ -15,14 +15,14 @@ Unblocks: feat-adtest
 - [x] Confirm OpenCode discovery order and supported files
   - [x] Decide which shared surface to emit for OpenCode (prefer `AGENTS.md` to share)
 
-- [ ] Implement adapter YAML
-  - [ ] Outputs:
-    - [ ] `opencode.jsonc`
-      - [ ] `format: jsonc`
-      - [ ] `driftDetection.stamp: comment` or `json_field` (choose)
-    - [ ] Shared surface reference:
-      - [ ] use `surface: shared:AGENTS.md` and path `AGENTS.md`
-  - [ ] Backend defaults: preferred `vfs_container`
+- [x] Implement adapter YAML
+  - [x] Outputs:
+    - [x] `opencode.jsonc`
+      - [x] `format: jsonc`
+      - [x] `driftDetection.stamp: json_field` (chosen)
+    - [x] Shared surface reference:
+      - [x] use `surface: shared:AGENTS.md` and path `AGENTS.md`
+  - [x] Backend defaults: preferred `vfs_container`
 
 - [ ] Implement opencode.jsonc rendering
   - [ ] Decide configuration mapping for v1:
