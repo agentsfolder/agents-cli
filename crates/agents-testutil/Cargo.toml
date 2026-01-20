@@ -1,0 +1,10 @@
+[package]
+name = "agents-testutil"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+agents-core = { path = "../agents-core" }
+tempfile = "3"
+walkdir = "2"
+thiserror = "2"

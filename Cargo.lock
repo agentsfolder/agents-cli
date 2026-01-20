@@ -33,6 +33,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "agents-testutil"
+version = "0.1.0"
+dependencies = [
+ "agents-core",
+ "tempfile",
+ "thiserror",
+ "walkdir",
+]
+
+[[package]]
 name = "ahash"
 version = "0.8.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"

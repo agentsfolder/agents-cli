@@ -17,15 +17,15 @@ Unblocks: CI gate for adapter changes
   - [x] Optionally `fixtures/<name>/matrix.yaml` describing profiles/modes/backends to test
   - [x] Add `fixtures/README.md` describing the layout
 
-- [ ] Implement test runner API (agents-testutil)
-  - [ ] `run_fixture(fixture_path, agent_filter) -> TestReport`
-  - [ ] For each fixture case:
-    - [ ] load repo config
-    - [ ] validate schemas
+- [x] Implement test runner API (agents-testutil)
+  - [x] `run_fixture(fixture_path, agent_filter) -> TestReport`
+  - [x] For each fixture case:
+    - [x] load repo config
+    - [x] validate schemas
     - [ ] resolve effective config for each matrix entry
-    - [ ] plan + render outputs
-    - [ ] write to temp dir
-    - [ ] compare temp outputs to golden expected directory
+    - [x] plan + render outputs
+    - [x] write to temp dir
+    - [x] compare temp outputs to golden expected directory
 
 - [ ] Snapshot comparison
   - [ ] Ensure comparison is deterministic:

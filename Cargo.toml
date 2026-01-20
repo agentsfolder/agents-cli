@@ -2,5 +2,6 @@
 members = [
   "crates/agents-cli",
   "crates/agents-core",
+  "crates/agents-testutil",
 ]
 resolver = "2"
