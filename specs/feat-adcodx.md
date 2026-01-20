@@ -34,8 +34,8 @@ Notes:
   - [x] Implement `templates/AGENTS.md.hbs` for Codex
   - [x] Keep deterministic and minimal
 
-- [ ] Validate collision behavior
-  - [ ] Ensure Codex adapter does not attempt to own shared surface unless configured as owner
+- [x] Validate collision behavior
+  - [x] Ensure Codex adapter does not attempt to own shared surface unless configured as owner
 
 - [ ] Tests
   - [ ] Add golden fixture output for `agents preview --agent codex`
