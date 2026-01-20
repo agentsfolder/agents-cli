@@ -5,6 +5,7 @@ use agents_core::fsutil;
 use agents_core::outputs::{plan_outputs, PlanError};
 use agents_core::resolv::{ResolutionRequest, Resolver};
 use agents_core::{driftx, driftx::DiffKind};
+use agents_core::model::BackendKind;
 
 use crate::{AppError, ErrorCategory};
 
@@ -53,6 +54,7 @@ pub fn cmd_doctor(repo_root: &Path, opts: DoctorOptions) -> Result<(), AppError>
     report.items.extend(schema_check(&ctx));
     report.items.extend(collision_check(&ctx));
     report.items.extend(drift_check(&ctx));
+    report.items.extend(prereqs_check(&ctx));
     report.normalize_order();
 
     for item in &report.items {
@@ -262,4 +264,79 @@ fn drift_check(ctx: &DoctorContext) -> Vec<DoctorItem> {
     }
 
     items
+}
+
+fn prereqs_check(ctx: &DoctorContext) -> Vec<DoctorItem> {
+    let Some(repo) = &ctx.repo else {
+        return vec![];
+    };
+    let Some(effective) = &ctx.effective else {
+        return vec![];
+    };
+
+    let mut needs_docker = false;
+
+    // Current effective backend.
+    if effective.backend == BackendKind::VfsContainer {
+        needs_docker = true;
+    }
+
+    // Manifest defaults/byAgent.
+    if repo.manifest.defaults.backend == Some(BackendKind::VfsContainer) {
+        needs_docker = true;
+    }
+    if let Some(backends) = &repo.manifest.backends {
+        if backends.default == Some(BackendKind::VfsContainer) {
+            needs_docker = true;
+        }
+        if backends.by_agent.values().any(|b| *b == BackendKind::VfsContainer) {
+            needs_docker = true;
+        }
+    }
+
+    // Adapter defaults.
+    if repo
+        .adapters
+        .values()
+        .any(|a| a.backend_defaults.preferred == BackendKind::VfsContainer)
+    {
+        needs_docker = true;
+    }
+
+    if !needs_docker {
+        return vec![DoctorItem {
+            level: DoctorLevel::Info,
+            check: "prereqs".to_string(),
+            message: "docker not required".to_string(),
+            context: vec![],
+        }];
+    }
+
+    let ok = std::process::Command::new("docker")
+        .arg("--version")
+        .output()
+        .is_ok();
+
+    if ok {
+        vec![DoctorItem {
+            level: DoctorLevel::Info,
+            check: "prereqs".to_string(),
+            message: "docker available".to_string(),
+            context: vec![],
+        }]
+    } else {
+        vec![DoctorItem {
+            level: if ctx.ci {
+                DoctorLevel::Error
+            } else {
+                DoctorLevel::Warning
+            },
+            check: "prereqs".to_string(),
+            message: "docker is required for vfs_container backend".to_string(),
+            context: vec![
+                "hint: install Docker Desktop (or docker CLI)".to_string(),
+                "hint: run `docker --version`".to_string(),
+            ],
+        }]
+    }
 }

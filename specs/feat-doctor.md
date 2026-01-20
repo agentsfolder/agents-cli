@@ -33,8 +33,8 @@ Unblocks: feat-adtest
   - [x] Drift check
     - [x] for each adapter, compute planned outputs and compare to disk
     - [x] report drifted files and unmanaged conflicts
-  - [ ] Prerequisites check
-    - [ ] if any adapter/backends require docker, confirm docker available
+  - [x] Prerequisites check
+    - [x] if any adapter/backends require docker, confirm docker available
   - [ ] State file check
     - [ ] ensure `.agents/state/.gitignore` exists and ignores `state.yaml`
 
