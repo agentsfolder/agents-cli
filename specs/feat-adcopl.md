@@ -12,10 +12,15 @@ Unblocks: feat-adtest
   - optional scoped instruction files
 
 ## Implementation Plan
-- [ ] Confirm Copilot repository instruction support
-  - [ ] `.github/copilot-instructions.md` required
-  - [ ] Decide strategy for path-specific instructions:
-    - [ ] optional v1: emit from `.agents/scopes` if supported
+- [x] Confirm Copilot repository instruction support
+  - [x] `.github/copilot-instructions.md` required
+  - [x] Decide strategy for path-specific instructions:
+    - [x] optional v1: emit from `.agents/scopes` into `.github/instructions/<scope>.instructions.md`
+
+Notes:
+- Repository-wide instructions live at `.github/copilot-instructions.md`.
+- Path-specific instructions live under `.github/instructions/` and must be named `NAME.instructions.md`.
+- Path-specific files require a YAML frontmatter block with `applyTo: "glob,glob"`.
 
 - [ ] Implement adapter YAML
   - [ ] Output `.github/copilot-instructions.md`
