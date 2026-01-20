@@ -36,8 +36,8 @@ Unblocks: CI gate for adapter changes
     - [x] print a small unified diff for text files
     - [x] write actual outputs to a temp dir and print path for inspection
 
-- [ ] CLI integration
-  - [ ] Add command `agents test adapters [--agent <id>]`
+- [x] CLI integration
+  - [x] Add command `agents test adapters [--agent <id>]`
   - [ ] Add `--update` flag (optional) to rewrite goldens (guarded)
 
 - [ ] CI integration guidance

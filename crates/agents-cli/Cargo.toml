@@ -10,6 +10,7 @@ path = "src/main.rs"
 
 [dependencies]
 agents-core = { path = "../agents-core" }
+agents-testutil = { path = "../agents-testutil" }
 
 clap = { version = "4.5.27", features = ["derive"] }
 tracing = "0.1.41"

@@ -10,6 +10,7 @@ mod status;
 mod syncer;
 mod cleanup;
 mod doctor;
+mod adtest;
 
 #[derive(Debug, Clone, ValueEnum)]
 enum Backend {
@@ -140,6 +141,9 @@ enum TestCommands {
     Adapters {
         #[arg(long)]
         agent: Option<String>,
+
+        #[arg(long, default_value_t = false)]
+        update: bool,
     },
 }
 
@@ -288,6 +292,19 @@ fn dispatch(ctx: &AppContext, cmd: Commands) -> AppResult<()> {
             &ctx.repo_root,
             crate::doctor::DoctorOptions { fix, ci },
         ),
+
+        Commands::Test { command } => match command {
+            TestCommands::Adapters { agent, update } => {
+                if update {
+                    return Err(AppError {
+                        category: ErrorCategory::InvalidArgs,
+                        message: "--update not implemented yet".to_string(),
+                        context: vec![],
+                    });
+                }
+                crate::adtest::cmd_test_adapters(&ctx.repo_root, agent)
+            }
+        },
 
         _ => Err(AppError::not_initialized(&ctx.repo_root)),
     }

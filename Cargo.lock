@@ -7,6 +7,7 @@ name = "agents-cli"
 version = "0.1.0"
 dependencies = [
  "agents-core",
+ "agents-testutil",
  "assert_cmd",
  "clap",
  "predicates",
