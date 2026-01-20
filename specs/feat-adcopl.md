@@ -47,4 +47,4 @@ Notes:
   - [x] Test deterministic naming and ordering of scope instruction files
 
 ## Verification
-- [ ] `agents preview --agent copilot` produces required outputs
+- [x] `agents preview --agent copilot` produces required outputs
