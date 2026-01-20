@@ -14,15 +14,15 @@ Unblocks: feat-syncer
   - optionally prints unified diffs
 
 ## Implementation Plan
-- [ ] Implement preview pipeline
-  - [ ] Load repo config + validate schemas
-  - [ ] Resolve effective config (mode/profile/scope/backend)
-  - [ ] Plan outputs for selected agent
+- [x] Implement preview pipeline
+  - [x] Load repo config + validate schemas
+  - [x] Resolve effective config (mode/profile/scope/backend)
+  - [x] Plan outputs for selected agent
   - [x] Render outputs (template/concat/copy/json_merge)
   - [x] Apply stamps (but write only into temp dir)
-  - [ ] Print:
-    - [ ] temp directory path
-    - [ ] list of outputs with repo-relative destination
+  - [x] Print:
+    - [x] temp directory path
+    - [x] list of outputs with repo-relative destination
 
 - [ ] Implement diff pipeline
   - [ ] Same as preview until planned stamped content is available
@@ -32,9 +32,9 @@ Unblocks: feat-syncer
     - [ ] per-path status lines
     - [ ] optional `--show` to print unified diffs
 
-- [ ] Temp directory handling
-  - [ ] Use feat-fsutil temp dir helper
-  - [ ] Add `--keep-temp` (optional) for debugging
+- [x] Temp directory handling
+  - [x] Use feat-fsutil temp dir helper
+  - [x] Add `--keep-temp` (optional) for debugging
 
 - [ ] Tests
   - [ ] Preview produces files with expected names in temp dir

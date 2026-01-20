@@ -5,6 +5,7 @@ use clap::{Parser, Subcommand, ValueEnum};
 #[cfg(test)]
 mod main_tests;
 
+mod prevdf;
 mod status;
 
 #[derive(Debug, Clone, ValueEnum)]
@@ -73,6 +74,8 @@ enum Commands {
         mode: Option<String>,
         #[arg(long)]
         profile: Option<String>,
+        #[arg(long, default_value_t = false)]
+        keep_temp: bool,
     },
     Diff {
         #[arg(long)]
@@ -207,6 +210,32 @@ fn dispatch(ctx: &AppContext, cmd: Commands) -> AppResult<()> {
     match cmd {
         Commands::Validate { .. } => cmd_validate(ctx),
         Commands::Status => cmd_status(ctx),
+
+        Commands::Preview {
+            agent,
+            backend,
+            mode,
+            profile,
+            keep_temp,
+        } => {
+            let agent = agent.unwrap_or_else(|| "core".to_string());
+            let backend = backend.map(|b| match b {
+                Backend::VfsContainer => agents_core::model::BackendKind::VfsContainer,
+                Backend::Materialize => agents_core::model::BackendKind::Materialize,
+                Backend::VfsMount => agents_core::model::BackendKind::VfsMount,
+            });
+
+            crate::prevdf::cmd_preview(
+                &ctx.repo_root,
+                crate::prevdf::PreviewOptions {
+                    agent,
+                    backend,
+                    mode,
+                    profile,
+                    keep_temp,
+                },
+            )
+        }
 
         _ => Err(AppError::not_initialized(&ctx.repo_root)),
     }
