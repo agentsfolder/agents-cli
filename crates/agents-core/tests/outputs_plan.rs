@@ -309,3 +309,53 @@ enabled: { modes: [default], policies: [safe], skills: [], adapters: [core] }\n"
         other => panic!("expected SharedOwnerViolation, got: {other:?}"),
     }
 }
+
+#[test]
+fn collision_test_two_adapters_try_to_own_shared_agents_md_errors_for_non_owner() {
+    let tmp = tempfile::tempdir().unwrap();
+    let repo = tmp.path();
+
+    write_file(
+        &repo.join(".agents/manifest.yaml"),
+        "specVersion: '0.1'\n\
+defaults: { mode: default, policy: safe, sharedSurfacesOwner: core }\n\
+enabled: { modes: [default], policies: [safe], skills: [], adapters: [core, a] }\n",
+    );
+    write_file(&repo.join(".agents/prompts/base.md"), "base\n");
+    write_file(&repo.join(".agents/prompts/project.md"), "project\n");
+    write_file(&repo.join(".agents/modes/default.md"), "---\nid: default\n---\n\n");
+    write_file(
+        &repo.join(".agents/policies/safe.yaml"),
+        "id: safe\ndescription: safe\ncapabilities: {}\npaths: {}\nconfirmations: {}\n",
+    );
+
+    // Adapter a incorrectly attempts to own the shared surface.
+    write_file(
+        &repo.join(".agents/adapters/a/adapter.yaml"),
+        r#"agentId: a
+version: '0.1'
+backendDefaults: { preferred: vfs_container, fallback: materialize }
+outputs:
+  - path: AGENTS.md
+    surface: shared:AGENTS.md
+    collision: shared_owner
+    renderer: { type: template, template: t.hbs }
+"#,
+    );
+    write_file(&repo.join(".agents/adapters/a/templates/t.hbs"), "bad\n");
+
+    let (cfg, eff) = load_and_resolve(repo, None, None);
+
+    // Core owner plans successfully.
+    assert!(plan_outputs(repo, cfg.clone(), &eff, "core").is_ok());
+
+    // Non-owner fails.
+    let err = plan_outputs(repo, cfg, &eff, "a").unwrap_err();
+    match err {
+        agents_core::outputs::PlanError::SharedOwnerViolation { owner, agent_id, .. } => {
+            assert_eq!(owner, "core");
+            assert_eq!(agent_id, "a");
+        }
+        other => panic!("expected SharedOwnerViolation, got: {other:?}"),
+    }
+}

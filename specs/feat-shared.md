@@ -51,7 +51,7 @@ Unblocks: feat-adcodx, feat-adopen, feat-adcopl
     - [x] single repo
     - [x] monorepo with scopes
     - [x] different modes/profiles
-  - [ ] Collision test: two adapters try to own `shared:AGENTS.md` => error
+  - [x] Collision test: two adapters try to own `shared:AGENTS.md` => error
 
 ## Verification
 - [ ] `agents preview --agent codex` (later) uses shared `AGENTS.md`
