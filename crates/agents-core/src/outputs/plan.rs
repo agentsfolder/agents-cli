@@ -13,8 +13,10 @@ use crate::resolv::EffectiveConfig;
 use crate::skillpl::SkillPlanner;
 use crate::templ::{
     AdapterCtx, EffectiveCtx, EffectiveModeCtx, EffectiveSkillsCtx, GenerationCtx,
-    GenerationStampCtx, RenderContext,
+    GenerationStampCtx, RenderContext, ScopeCtx,
 };
+
+const SCOPE_ID_PLACEHOLDER: &str = "{{scopeId}}";
 
 #[derive(Debug, thiserror::Error)]
 pub enum PlanError {
@@ -166,6 +168,41 @@ fn evaluate_outputs(
 
         validate_renderer(out)?;
 
+        if out.path.contains(SCOPE_ID_PLACEHOLDER) {
+            let mut scope_ids: Vec<String> = repo.scopes.keys().cloned().collect();
+            scope_ids.sort();
+
+            for scope_id in scope_ids {
+                let scope = repo
+                    .scopes
+                    .get(&scope_id)
+                    .expect("scope id collected from map");
+
+                let mut scoped_out = out.clone();
+                let safe = sanitize_scope_id_for_path(&scope.id);
+                scoped_out.path = scoped_out.path.replace(SCOPE_ID_PLACEHOLDER, &safe);
+
+                let mut scoped_ctx = render_ctx.clone();
+                scoped_ctx.scope = Some(ScopeCtx {
+                    id: scope.id.clone(),
+                    apply_to: scope.apply_to.clone(),
+                });
+
+                let planned_out = build_planned_output(
+                    repo_root,
+                    agent_id,
+                    &scoped_out,
+                    template_dir.clone(),
+                    scoped_ctx,
+                )?;
+
+                validate_renderer_sources(repo_root, repo, effective, &planned_out)?;
+                planned.push(planned_out);
+            }
+
+            continue;
+        }
+
         let planned_out = build_planned_output(
             repo_root,
             agent_id,
@@ -191,6 +228,25 @@ fn evaluate_outputs(
     let planned = resolve_collisions(repo, agent_id, planned)?;
 
     Ok(planned)
+}
+
+fn sanitize_scope_id_for_path(id: &str) -> String {
+    let mut out: String = id
+        .chars()
+        .map(|c| {
+            if c.is_ascii_alphanumeric() || c == '-' || c == '_' {
+                c
+            } else {
+                '_'
+            }
+        })
+        .collect();
+
+    if out.is_empty() {
+        out = "scope".to_string();
+    }
+
+    out
 }
 
 fn condition_allows(out: &AdapterOutput, effective: &EffectiveConfig) -> bool {
