@@ -30,9 +30,9 @@ Unblocks: feat-adtest
   - [x] Collision check
     - [x] plan outputs for each enabled adapter (or selected agent)
     - [x] surface/path collisions reported with details
-  - [ ] Drift check
-    - [ ] for each adapter, compute planned outputs and compare to disk
-    - [ ] report drifted files and unmanaged conflicts
+  - [x] Drift check
+    - [x] for each adapter, compute planned outputs and compare to disk
+    - [x] report drifted files and unmanaged conflicts
   - [ ] Prerequisites check
     - [ ] if any adapter/backends require docker, confirm docker available
   - [ ] State file check

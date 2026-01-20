@@ -4,6 +4,7 @@ use agents_core::loadag::{load_repo_config, LoadError, LoaderOptions};
 use agents_core::fsutil;
 use agents_core::outputs::{plan_outputs, PlanError};
 use agents_core::resolv::{ResolutionRequest, Resolver};
+use agents_core::{driftx, driftx::DiffKind};
 
 use crate::{AppError, ErrorCategory};
 
@@ -51,6 +52,7 @@ pub fn cmd_doctor(repo_root: &Path, opts: DoctorOptions) -> Result<(), AppError>
     let mut report = DoctorReport::default();
     report.items.extend(schema_check(&ctx));
     report.items.extend(collision_check(&ctx));
+    report.items.extend(drift_check(&ctx));
     report.normalize_order();
 
     for item in &report.items {
@@ -157,6 +159,104 @@ fn collision_check(ctx: &DoctorContext) -> Vec<DoctorItem> {
             level: DoctorLevel::Info,
             check: "collisions".to_string(),
             message: "no collisions detected".to_string(),
+            context: vec![],
+        });
+    }
+
+    items
+}
+
+fn drift_check(ctx: &DoctorContext) -> Vec<DoctorItem> {
+    let Some(repo) = &ctx.repo else {
+        return vec![];
+    };
+    let Some(effective) = &ctx.effective else {
+        return vec![];
+    };
+
+    let mut agent_ids = repo.manifest.enabled.adapters.clone();
+    agent_ids.sort();
+
+    let mut drifted: Vec<String> = vec![];
+    let mut unmanaged: Vec<String> = vec![];
+    let mut stale: Vec<String> = vec![];
+    let mut errors: Vec<String> = vec![];
+
+    for agent_id in &agent_ids {
+        let plan = match plan_outputs(&ctx.repo_root, repo.clone(), effective, agent_id) {
+            Ok(p) => p.plan,
+            Err(e) => {
+                errors.push(format!("{agent_id}: {e}"));
+                continue;
+            }
+        };
+
+        let report = match driftx::diff_plan(&ctx.repo_root, &plan) {
+            Ok(r) => r,
+            Err(e) => {
+                errors.push(format!("{agent_id}: {e}"));
+                continue;
+            }
+        };
+
+        for entry in report.entries {
+            match entry.kind {
+                DiffKind::Drifted => drifted.push(format!("{agent_id}:{}", entry.path)),
+                DiffKind::UnmanagedExists => unmanaged.push(format!("{agent_id}:{}", entry.path)),
+                DiffKind::Delete => stale.push(format!("{agent_id}:{}", entry.path)),
+                _ => {}
+            }
+        }
+    }
+
+    drifted.sort();
+    unmanaged.sort();
+    stale.sort();
+    errors.sort();
+
+    let mut items: Vec<DoctorItem> = vec![];
+    if !errors.is_empty() {
+        items.push(DoctorItem {
+            level: DoctorLevel::Error,
+            check: "drift".to_string(),
+            message: "drift check failed".to_string(),
+            context: errors,
+        });
+        return items;
+    }
+
+    if !unmanaged.is_empty() {
+        items.push(DoctorItem {
+            level: if ctx.ci { DoctorLevel::Error } else { DoctorLevel::Warning },
+            check: "drift".to_string(),
+            message: "unmanaged files block sync".to_string(),
+            context: unmanaged,
+        });
+    }
+
+    if !drifted.is_empty() {
+        items.push(DoctorItem {
+            level: if ctx.ci { DoctorLevel::Error } else { DoctorLevel::Warning },
+            check: "drift".to_string(),
+            message: "generated files drifted".to_string(),
+            context: drifted,
+        });
+    }
+
+    if !stale.is_empty() {
+        items.push(DoctorItem {
+            level: DoctorLevel::Warning,
+            check: "drift".to_string(),
+            message: "stale generated files can be removed".to_string(),
+            context: stale,
+        });
+    }
+
+    if items.is_empty() {
+        items.push(DoctorItem {
+            level: DoctorLevel::Info,
+            check: "drift".to_string(),
+            message: "no drift detected".to_string(),
             context: vec![],
         });
     }
