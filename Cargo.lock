@@ -38,6 +38,8 @@ name = "agents-testutil"
 version = "0.1.0"
 dependencies = [
  "agents-core",
+ "serde",
+ "serde_yaml",
  "tempfile",
  "thiserror",
  "walkdir",

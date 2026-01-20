@@ -13,3 +13,5 @@ Optional:
 
 - `fixtures/<name>/matrix.yaml`
   - A future extension describing multiple (mode/profile/backend) cases.
+  - When present, expected outputs should be placed under:
+    - `fixtures/<name>/expect/<agent-id>/<case-name>/**`

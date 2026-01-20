@@ -8,3 +8,5 @@ agents-core = { path = "../agents-core" }
 tempfile = "3"
 walkdir = "2"
 thiserror = "2"
+serde = { version = "1", features = ["derive"] }
+serde_yaml = "0.9"

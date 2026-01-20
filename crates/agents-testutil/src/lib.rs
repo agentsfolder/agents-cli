@@ -6,6 +6,7 @@ use agents_core::loadag::{load_repo_config, LoaderOptions};
 use agents_core::outputs::{plan_outputs, render_planned_output};
 use agents_core::resolv::{ResolutionRequest, Resolver};
 use agents_core::{fsutil, schemas};
+use serde::Deserialize;
 
 #[derive(Debug, Clone)]
 pub struct FileMismatch {
@@ -18,6 +19,7 @@ pub struct FileMismatch {
 pub struct FixtureFailure {
     pub fixture: String,
     pub agent_id: String,
+    pub case: String,
     pub actual_dir: PathBuf,
     pub mismatches: Vec<FileMismatch>,
 }
@@ -26,9 +28,10 @@ impl FixtureFailure {
     pub fn render_human(&self) -> String {
         let mut out = String::new();
         out.push_str(&format!(
-            "fixture {} (agent {}): {} mismatches\n",
+            "fixture {} (agent {}, case {}): {} mismatches\n",
             self.fixture,
             self.agent_id,
+            self.case,
             self.mismatches.len()
         ));
         for m in &self.mismatches {
@@ -73,6 +76,7 @@ pub enum TestError {
 pub fn run_fixture(fixture_root: &Path, agent_filter: Option<&str>) -> Result<TestReport, TestError> {
     let repo_root = fixture_root.join("repo");
     let expect_root = fixture_root.join("expect");
+    let matrix_path = fixture_root.join("matrix.yaml");
 
     let (repo, _report) = load_repo_config(
         &repo_root,
@@ -86,9 +90,8 @@ pub fn run_fixture(fixture_root: &Path, agent_filter: Option<&str>) -> Result<Te
     let _ = schemas::validate_repo(&repo_root);
 
     let resolver = Resolver::new(repo.clone());
-    let mut req = ResolutionRequest::default();
-    req.repo_root = repo_root.clone();
-    let effective = resolver.resolve(&req).map_err(|e| TestError::Resolve(e.to_string()))?;
+
+    let (cases, use_case_subdir) = load_matrix(&matrix_path)?;
 
     let mut agent_ids: Vec<String> = repo.manifest.enabled.adapters.clone();
     agent_ids.sort();
@@ -98,45 +101,109 @@ pub fn run_fixture(fixture_root: &Path, agent_filter: Option<&str>) -> Result<Te
 
     let mut out = TestReport::default();
     for agent_id in agent_ids {
-        let plan = plan_outputs(&repo_root, repo.clone(), &effective, &agent_id)
-            .map_err(|e| TestError::Plan(e.to_string()))?
-            .plan;
+        for case in &cases {
+            let mut req = ResolutionRequest::default();
+            req.repo_root = repo_root.clone();
+            req.override_mode = case.mode.clone();
+            req.override_profile = case.profile.clone();
+            req.override_backend = case.backend;
 
-        let tmp = fsutil::temp_generation_dir("agents-fixture").map_err(TestError::Fs)?;
-        let tmp_path = tmp.path().to_path_buf();
+            let effective = resolver
+                .resolve(&req)
+                .map_err(|e| TestError::Resolve(e.to_string()))?;
 
-        // Render outputs into temp dir.
-        for p in &plan.outputs {
-            let rendered = render_planned_output(&repo_root, p)
-                .map_err(|e| TestError::Render(e.to_string()))?;
-            let dest = tmp_path.join(p.path.as_str());
-            fsutil::atomic_write(&dest, rendered.content_with_stamp.as_bytes())?;
-        }
+            let plan = plan_outputs(&repo_root, repo.clone(), &effective, &agent_id)
+                .map_err(|e| TestError::Plan(e.to_string()))?
+                .plan;
 
-        let expect_dir = expect_root.join(&agent_id);
-        let mismatches = compare_dirs(&expect_dir, &tmp_path)?;
+            let tmp = fsutil::temp_generation_dir("agents-fixture").map_err(TestError::Fs)?;
+            let tmp_path = tmp.path().to_path_buf();
 
-        if mismatches.is_empty() {
-            out.passed += 1;
-        } else {
-            out.failed += 1;
-            out.failures.push(FixtureFailure {
-                fixture: fixture_root
-                    .file_name()
-                    .and_then(|s| s.to_str())
-                    .unwrap_or("<fixture>")
-                    .to_string(),
-                agent_id,
-                actual_dir: tmp_path,
-                mismatches,
-            });
+            // Render outputs into temp dir.
+            for p in &plan.outputs {
+                let rendered = render_planned_output(&repo_root, p)
+                    .map_err(|e| TestError::Render(e.to_string()))?;
+                let dest = tmp_path.join(p.path.as_str());
+                fsutil::atomic_write(&dest, rendered.content_with_stamp.as_bytes())?;
+            }
 
-            // Keep tmp dir for inspection when failing.
-            std::mem::forget(tmp);
+            let expect_dir = if use_case_subdir {
+                expect_root.join(&agent_id).join(&case.name)
+            } else {
+                expect_root.join(&agent_id)
+            };
+            let mismatches = compare_dirs(&expect_dir, &tmp_path)?;
+
+            if mismatches.is_empty() {
+                out.passed += 1;
+            } else {
+                out.failed += 1;
+                out.failures.push(FixtureFailure {
+                    fixture: fixture_root
+                        .file_name()
+                        .and_then(|s| s.to_str())
+                        .unwrap_or("<fixture>")
+                        .to_string(),
+                    agent_id: agent_id.clone(),
+                    case: case.name.clone(),
+                    actual_dir: tmp_path,
+                    mismatches,
+                });
+
+                // Keep tmp dir for inspection when failing.
+                std::mem::forget(tmp);
+            }
         }
     }
 
     Ok(out)
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct FixtureMatrix {
+    #[serde(default)]
+    cases: Vec<FixtureCase>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct FixtureCase {
+    name: String,
+    #[serde(default)]
+    mode: Option<String>,
+    #[serde(default)]
+    profile: Option<String>,
+    #[serde(default)]
+    backend: Option<agents_core::model::BackendKind>,
+}
+
+fn load_matrix(path: &Path) -> Result<(Vec<FixtureCase>, bool), TestError> {
+    if !path.is_file() {
+        return Ok((
+            vec![FixtureCase {
+                name: "default".to_string(),
+                mode: None,
+                profile: None,
+                backend: None,
+            }],
+            false,
+        ));
+    }
+
+    let s = fsutil::read_to_string(path)?;
+    let m: FixtureMatrix = serde_yaml::from_str(&s)
+        .map_err(|e| TestError::Load(format!("invalid matrix.yaml: {e}")))?;
+
+    let mut cases = m.cases;
+    if cases.is_empty() {
+        cases.push(FixtureCase {
+            name: "default".to_string(),
+            mode: None,
+            profile: None,
+            backend: None,
+        });
+    }
+
+    Ok((cases, true))
 }
 
 fn compare_dirs(expect_dir: &Path, actual_dir: &Path) -> Result<Vec<FileMismatch>, TestError> {

@@ -22,7 +22,7 @@ Unblocks: CI gate for adapter changes
   - [x] For each fixture case:
     - [x] load repo config
     - [x] validate schemas
-    - [ ] resolve effective config for each matrix entry
+    - [x] resolve effective config for each matrix entry
     - [x] plan + render outputs
     - [x] write to temp dir
     - [x] compare temp outputs to golden expected directory
