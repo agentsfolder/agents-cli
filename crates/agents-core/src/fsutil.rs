@@ -151,6 +151,14 @@ pub fn agents_dir(root: &Path) -> PathBuf {
     root.join(".agents")
 }
 
+pub fn agents_state_dir(root: &Path) -> PathBuf {
+    agents_dir(root).join("state")
+}
+
+pub fn agents_explain_dir(root: &Path) -> PathBuf {
+    agents_state_dir(root).join("explain")
+}
+
 pub fn discover_repo_root(start: &Path) -> FsResult<PathBuf> {
     let mut cur = start;
     let mut best_git: Option<PathBuf> = None;
