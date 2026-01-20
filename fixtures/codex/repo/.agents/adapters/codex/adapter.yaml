@@ -1,0 +1,10 @@
+agentId: codex
+version: '0.1'
+backendDefaults: { preferred: vfs_container, fallback: materialize }
+outputs:
+  - path: AGENTS.md
+    format: md
+    surface: shared:AGENTS.md
+    collision: shared_owner
+    renderer: { type: template, template: AGENTS.md.hbs }
+    driftDetection: { method: sha256, stamp: comment }

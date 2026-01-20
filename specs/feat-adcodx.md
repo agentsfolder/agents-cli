@@ -21,14 +21,14 @@ Notes:
 - Files are concatenated with blank lines; later (deeper) files override earlier guidance.
 
 - [ ] Implement adapter definition
-  - [ ] Create `.agents/adapters/codex/adapter.yaml` (via init preset)
-  - [ ] Outputs:
-    - [ ] Reference shared surface `shared:AGENTS.md`
-      - [ ] Either copy/concat from core generator output OR declare same logical surface and rely on shared ownership
-    - [ ] If adapter needs separate file(s), add them with `surface` names to avoid collisions
-  - [ ] Set backend defaults:
-    - [ ] preferred `vfs_container`
-    - [ ] fallback `materialize`
+  - [x] Create `.agents/adapters/codex/adapter.yaml` (fixture)
+  - [x] Outputs:
+    - [x] Reference shared surface `shared:AGENTS.md`
+      - [x] Declare logical surface and rely on shared ownership (via `sharedSurfacesOwner=codex`)
+    - [x] No additional outputs for v1
+  - [x] Set backend defaults:
+    - [x] preferred `vfs_container`
+    - [x] fallback `materialize`
 
 - [ ] Implement templates (if any)
   - [ ] If Codex needs additional instruction formatting, implement `templates/codex-extra.md.hbs`
