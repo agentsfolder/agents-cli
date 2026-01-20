@@ -32,9 +32,9 @@ Unblocks: feat-doctor
   - [x] Require confirmation if policy says delete requires confirmation
   - [x] Never delete outside repo root
 
-- [ ] Reporting
-  - [ ] Print list of deleted paths
-  - [ ] Print list of skipped paths and why (unmanaged/no stamp)
+- [x] Reporting
+  - [x] Print list of deleted paths
+  - [x] Print list of skipped paths and why (unmanaged/no stamp)
 
 - [ ] Tests
   - [ ] Deletes stamped file
