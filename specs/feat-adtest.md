@@ -49,5 +49,5 @@ Unblocks: CI gate for adapter changes
   - [x] One self-contained fixture test (runs in CI)
 
 ## Verification
-- [ ] `agents test adapters` passes on fixtures
-- [ ] Intentional template change causes a snapshot failure with readable diff
+- [x] `agents test adapters` passes on fixtures
+- [x] Intentional template change causes a snapshot failure with readable diff
