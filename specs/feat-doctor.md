@@ -35,8 +35,8 @@ Unblocks: feat-adtest
     - [x] report drifted files and unmanaged conflicts
   - [x] Prerequisites check
     - [x] if any adapter/backends require docker, confirm docker available
-  - [ ] State file check
-    - [ ] ensure `.agents/state/.gitignore` exists and ignores `state.yaml`
+  - [x] State file check
+    - [x] ensure `.agents/state/.gitignore` exists and ignores `state.yaml`
 
 - [ ] Implement safe fixes (`--fix`)
   - [ ] Create missing `.agents/state/.gitignore`

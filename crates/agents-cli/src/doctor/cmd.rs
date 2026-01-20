@@ -55,6 +55,7 @@ pub fn cmd_doctor(repo_root: &Path, opts: DoctorOptions) -> Result<(), AppError>
     report.items.extend(collision_check(&ctx));
     report.items.extend(drift_check(&ctx));
     report.items.extend(prereqs_check(&ctx));
+    report.items.extend(state_file_check(&ctx));
     report.normalize_order();
 
     for item in &report.items {
@@ -339,4 +340,55 @@ fn prereqs_check(ctx: &DoctorContext) -> Vec<DoctorItem> {
             ],
         }]
     }
+}
+
+fn state_file_check(ctx: &DoctorContext) -> Vec<DoctorItem> {
+    let p = ctx.repo_root.join(".agents/state/.gitignore");
+    if !p.is_file() {
+        return vec![DoctorItem {
+            level: DoctorLevel::Warning,
+            check: "state".to_string(),
+            message: "missing .agents/state/.gitignore".to_string(),
+            context: vec![
+                format!("path: {}", p.display()),
+                "hint: run `agents doctor --fix`".to_string(),
+            ],
+        }];
+    }
+
+    let content = match fsutil::read_to_string(&p) {
+        Ok(s) => s,
+        Err(e) => {
+            return vec![DoctorItem {
+                level: DoctorLevel::Error,
+                check: "state".to_string(),
+                message: "failed to read .agents/state/.gitignore".to_string(),
+                context: vec![e.to_string()],
+            }]
+        }
+    };
+
+    let has_state_yaml = content
+        .lines()
+        .any(|l| l.trim() == "state.yaml" || l.trim() == "/state.yaml");
+
+    if !has_state_yaml {
+        return vec![DoctorItem {
+            level: DoctorLevel::Warning,
+            check: "state".to_string(),
+            message: "state.yaml is not ignored".to_string(),
+            context: vec![
+                format!("path: {}", p.display()),
+                "hint: add `state.yaml` to .agents/state/.gitignore".to_string(),
+                "hint: or run `agents doctor --fix`".to_string(),
+            ],
+        }];
+    }
+
+    vec![DoctorItem {
+        level: DoctorLevel::Info,
+        check: "state".to_string(),
+        message: "state gitignore ok".to_string(),
+        context: vec![],
+    }]
 }
