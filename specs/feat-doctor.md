@@ -49,10 +49,10 @@ Unblocks: feat-adtest
     - [x] collisions are errors
     - [x] schema errors are errors
 
-- [ ] Tests
-  - [ ] Doctor passes on clean fixture
-  - [ ] Doctor reports drift when a generated file is edited
-  - [ ] Doctor `--fix` creates missing gitignore
+- [x] Tests
+  - [x] Doctor passes on clean fixture
+  - [x] Doctor reports drift when a generated file is edited
+  - [x] Doctor `--fix` creates missing gitignore
 
 ## Verification
 - [ ] `agents doctor --ci` fails on drift/collisions and succeeds when clean
