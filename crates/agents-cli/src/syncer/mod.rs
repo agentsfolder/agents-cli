@@ -58,6 +58,9 @@ pub fn cmd_sync(repo_root: &Path, opts: SyncOptions) -> Result<(), AppError> {
             context: vec![],
         })?;
 
+    // Persist source maps for `agents explain`.
+    crate::explnx::persist_source_maps(repo_root, &plan_res)?;
+
     match selected_backend {
         BackendKind::Materialize => {
             let backend = MaterializeBackend;

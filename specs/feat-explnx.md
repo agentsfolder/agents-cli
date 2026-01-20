@@ -30,7 +30,7 @@ Unblocks: debugging and trust
     - [x] enabled skills
   - [ ] Persist source map when:
     - [x] `agents preview`
-    - [ ] `agents sync`
+    - [x] `agents sync`
 
 - [ ] Implement explain lookup
   - [ ] Input: a path in repo
