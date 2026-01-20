@@ -14,13 +14,13 @@ Unblocks: debugging and trust
   - effective mode/policy/profile/scopes
 
 ## Implementation Plan
-- [ ] Decide where to store source maps
+- [x] Decide where to store source maps
   - [ ] Option A: embed in stamp metadata (limited)
   - [x] Option B: write sidecar file under `.agents/state/` (gitignored) during preview/sync
   - [x] Prefer B: `.agents/state/explain/<hash>.json` keyed by output path
 
-- [ ] Implement source map generation
-  - [ ] During planning/rendering, build `SourceMap`:
+- [x] Implement source map generation
+  - [x] During planning/rendering, build `SourceMap`:
     - [x] output path
     - [x] adapter id
     - [x] renderer type and template path
@@ -28,22 +28,22 @@ Unblocks: debugging and trust
     - [x] scopes matched
     - [x] prompt source file paths
     - [x] enabled skills
-  - [ ] Persist source map when:
+  - [x] Persist source map when:
     - [x] `agents preview`
     - [x] `agents sync`
 
-- [ ] Implement explain lookup
+- [x] Implement explain lookup
   - [x] Input: a path in repo
   - [x] Find matching stored source map by normalized repo-relative path
-  - [ ] If not found:
+  - [x] If not found:
     - [x] attempt to parse stamp and provide minimal explanation
     - [x] else report "unmanaged file"
 
-- [ ] Render explain output
+- [x] Render explain output
   - [x] Human-readable stable format
   - [x] Optionally `--json`
 
-- [ ] Tests
+- [x] Tests
   - [x] After preview/sync, explain returns expected components
   - [x] Unmanaged path returns helpful message
 
