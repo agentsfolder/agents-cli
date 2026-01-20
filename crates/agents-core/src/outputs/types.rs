@@ -33,6 +33,9 @@ pub struct SourceMapSkeleton {
     pub output_path: String,
     pub template: Option<String>,
 
+    /// Repo-relative prompt/snippet file paths that contributed to the effective prompt.
+    pub prompt_source_paths: Vec<String>,
+
     pub mode_id: String,
     pub policy_id: String,
     pub skill_ids: Vec<String>,

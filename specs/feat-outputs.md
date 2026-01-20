@@ -56,7 +56,7 @@ Unblocks: feat-prevdf, feat-syncer, feat-stamps
 - [x] Source map skeleton
   - [x] Track for each planned output:
     - [x] adapter id, template path
-    - [ ] contributing prompt/snippet file paths
+    - [x] contributing prompt/snippet file paths
     - [x] mode/policy/skill IDs
   - [x] Store enough info to later implement `agents explain` (feat-explnx)
 

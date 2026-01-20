@@ -60,7 +60,7 @@ pub fn plan_outputs(
         .expect("effective policy exists (validated earlier)");
 
     let composer = PromptComposer::new(repo_root, repo.clone());
-    let (prompts, _prompt_sources) =
+    let (prompts, prompt_sources) =
         composer
             .compose(effective, &policy)
             .map_err(|e| PlanError::InvalidRenderer {
@@ -126,7 +126,8 @@ pub fn plan_outputs(
         &render_ctx,
     )?;
 
-    let sources = build_source_map_skeletons(effective, agent_id, &outputs);
+    let prompt_source_paths = prompt_sources_to_repo_paths(repo_root, &prompt_sources);
+    let sources = build_source_map_skeletons(effective, agent_id, &prompt_source_paths, &outputs);
 
     Ok(PlanResult {
         plan: OutputPlan {
@@ -557,9 +558,31 @@ fn drift_detection_eq(a: &DriftDetection, b: &DriftDetection) -> bool {
     a.method == b.method && a.stamp == b.stamp
 }
 
+fn prompt_sources_to_repo_paths(
+    repo_root: &Path,
+    sources: &[crate::prompts::PromptSource],
+) -> Vec<String> {
+    let mut set: BTreeSet<String> = BTreeSet::new();
+
+    for s in sources {
+        let p = Path::new(&s.path);
+
+        // Prefer repo-relative output for determinism across machines.
+        let rel = p.strip_prefix(repo_root).unwrap_or(p);
+        if let Ok(rp) = fsutil::repo_relpath_noexist(repo_root, rel) {
+            set.insert(rp.as_str().to_string());
+        } else {
+            set.insert(s.path.clone());
+        }
+    }
+
+    set.into_iter().collect()
+}
+
 fn build_source_map_skeletons(
     effective: &EffectiveConfig,
     agent_id: &str,
+    prompt_source_paths: &[String],
     planned: &[PlannedOutput],
 ) -> Vec<SourceMapSkeleton> {
     planned
@@ -568,6 +591,9 @@ fn build_source_map_skeletons(
             adapter_id: agent_id.to_string(),
             output_path: p.path.as_str().to_string(),
             template: p.renderer.template.clone(),
+
+            prompt_source_paths: prompt_source_paths.to_vec(),
+
             mode_id: effective.mode_id.clone(),
             policy_id: effective.policy_id.clone(),
             skill_ids: effective.skill_ids_enabled.clone(),
