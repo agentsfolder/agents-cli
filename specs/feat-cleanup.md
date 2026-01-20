@@ -42,4 +42,4 @@ Unblocks: feat-doctor
   - [x] Prunes empty dirs
 
 ## Verification
-- [ ] `agents clean` removes only generated files and is idempotent
+- [x] `agents clean` removes only generated files and is idempotent
