@@ -39,7 +39,6 @@ Unblocks: feat-adcodx, feat-adopen, feat-adcopl
     - [x] composed prompts
     - [x] policy summary helper (optional; template prints a basic summary)
 
-- [ ] Collision ownership enforcement
 - [x] Collision ownership enforcement
   - [x] Ensure manifest `defaults.sharedSurfacesOwner` is honored
   - [x] If `sharedSurfacesOwner != core`, ensure either:
