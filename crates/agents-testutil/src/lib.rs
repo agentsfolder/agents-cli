@@ -104,6 +104,7 @@ pub fn run_fixture(fixture_root: &Path, agent_filter: Option<&str>) -> Result<Te
         for case in &cases {
             let mut req = ResolutionRequest::default();
             req.repo_root = repo_root.clone();
+            req.target_path = case.target_path.clone();
             req.override_mode = case.mode.clone();
             req.override_profile = case.profile.clone();
             req.override_backend = case.backend;
@@ -168,6 +169,10 @@ struct FixtureMatrix {
 #[derive(Debug, Clone, Deserialize)]
 struct FixtureCase {
     name: String,
+
+    #[serde(default, rename = "targetPath")]
+    target_path: Option<String>,
+
     #[serde(default)]
     mode: Option<String>,
     #[serde(default)]
@@ -181,6 +186,7 @@ fn load_matrix(path: &Path) -> Result<(Vec<FixtureCase>, bool), TestError> {
         return Ok((
             vec![FixtureCase {
                 name: "default".to_string(),
+                target_path: None,
                 mode: None,
                 profile: None,
                 backend: None,
@@ -197,6 +203,7 @@ fn load_matrix(path: &Path) -> Result<(Vec<FixtureCase>, bool), TestError> {
     if cases.is_empty() {
         cases.push(FixtureCase {
             name: "default".to_string(),
+            target_path: None,
             mode: None,
             profile: None,
             backend: None,
