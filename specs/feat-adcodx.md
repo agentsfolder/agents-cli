@@ -11,9 +11,14 @@ Unblocks: feat-adtest
   - optionally emit additional Codex-specific files if needed later
 
 ## Implementation Plan
-- [ ] Research/confirm Codex surface expectations
-  - [ ] Ensure root `AGENTS.md` is sufficient for v1
-  - [ ] Document any layering behavior assumptions (root-to-leaf)
+- [x] Research/confirm Codex surface expectations
+  - [x] Ensure root `AGENTS.md` is sufficient for v1
+  - [x] Document any layering behavior assumptions (root-to-leaf)
+
+Notes:
+- Codex reads `AGENTS.md` files from repo root down to the current working directory.
+- Per-directory precedence: `AGENTS.override.md` then `AGENTS.md` (then optional fallbacks).
+- Files are concatenated with blank lines; later (deeper) files override earlier guidance.
 
 - [ ] Implement adapter definition
   - [ ] Create `.agents/adapters/codex/adapter.yaml` (via init preset)
