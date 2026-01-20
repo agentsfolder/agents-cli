@@ -24,7 +24,7 @@ Unblocks: feat-adtest
       - [x] use `surface: shared:AGENTS.md` and path `AGENTS.md`
   - [x] Backend defaults: preferred `vfs_container`
 
-- [ ] Implement opencode.jsonc rendering
+- [x] Implement opencode.jsonc rendering
   - [x] Decide configuration mapping for v1:
     - [x] embed effective mode name
     - [x] embed policy/tool intent as advisory text fields
@@ -32,8 +32,8 @@ Unblocks: feat-adtest
   - [x] Ensure deterministic JSON serialization ordering
 
 - [ ] Tests
-  - [ ] Golden fixture: `agents preview --agent opencode` outputs
-  - [ ] Validate stamp and drift detection for jsonc
+  - [x] Golden fixture: `agents preview --agent opencode` outputs
+  - [x] Validate stamp and drift detection for jsonc
 
 ## Verification
 - [ ] `agents preview --agent opencode` produces `opencode.jsonc` and shared rule surface
