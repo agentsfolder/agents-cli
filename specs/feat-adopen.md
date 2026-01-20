@@ -25,11 +25,11 @@ Unblocks: feat-adtest
   - [x] Backend defaults: preferred `vfs_container`
 
 - [ ] Implement opencode.jsonc rendering
-  - [ ] Decide configuration mapping for v1:
-    - [ ] embed effective mode name
-    - [ ] embed policy/tool intent as advisory text fields
-    - [ ] include pointers to generated rule file(s) if OpenCode supports
-  - [ ] Ensure deterministic JSON serialization ordering
+  - [x] Decide configuration mapping for v1:
+    - [x] embed effective mode name
+    - [x] embed policy/tool intent as advisory text fields
+    - [x] include pointers to generated rule file(s) if OpenCode supports
+  - [x] Ensure deterministic JSON serialization ordering
 
 - [ ] Tests
   - [ ] Golden fixture: `agents preview --agent opencode` outputs
