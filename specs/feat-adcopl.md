@@ -26,21 +26,21 @@ Notes:
   - [x] Output `.github/copilot-instructions.md`
     - [x] `format: md`
     - [x] stamp via comment
-    - [ ] include current mode banner
+    - [x] include current mode banner
     - [x] collision: error (unique path)
   - [x] Optional outputs:
     - [x] `*.instructions.md` for selected scopes
     - [x] include `applyTo` frontmatter (stamp via `frontmatter`)
   - [x] Backend defaults: preferred `materialize`
 
-- [ ] Implement templates
-  - [ ] Base instructions file:
-    - [ ] composed prompts
-    - [ ] policy summary
-    - [ ] references to AGENTS.md shared surface if desired
-  - [ ] Scoped instructions:
-    - [ ] deterministic naming from scope id
-    - [ ] frontmatter applyTo list
+- [x] Implement templates
+  - [x] Base instructions file:
+    - [x] composed prompts
+    - [x] policy summary
+    - [x] references to AGENTS.md shared surface if desired
+  - [x] Scoped instructions:
+    - [x] deterministic naming from scope id
+    - [x] frontmatter applyTo list
 
 - [ ] Tests
   - [ ] Golden fixture for copilot output
