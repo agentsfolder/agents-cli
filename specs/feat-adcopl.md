@@ -44,7 +44,7 @@ Notes:
 
 - [ ] Tests
   - [ ] Golden fixture for copilot output
-  - [ ] Test deterministic naming and ordering of scope instruction files
+  - [x] Test deterministic naming and ordering of scope instruction files
 
 ## Verification
 - [ ] `agents preview --agent copilot` produces required outputs

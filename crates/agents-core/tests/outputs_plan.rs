@@ -251,6 +251,35 @@ fn fixture_plan_ordering_is_deterministic() {
 }
 
 #[test]
+fn scope_id_placeholder_expands_with_sanitized_deterministic_paths() {
+    let repo_root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../../fixtures/copilot/repo");
+
+    let (cfg, _report) = load_repo_config(
+        &repo_root,
+        &LoaderOptions {
+            require_schemas_dir: false,
+        },
+    )
+    .unwrap();
+
+    let resolver = Resolver::new(cfg.clone());
+    let mut req = ResolutionRequest::default();
+    req.repo_root = repo_root.clone();
+    let eff = resolver.resolve(&req).unwrap();
+
+    let plan_res = plan_outputs(&repo_root, cfg, &eff, "copilot").unwrap();
+    assert_eq!(
+        plan_paths(&plan_res.plan),
+        vec![
+            ".github/copilot-instructions.md",
+            ".github/instructions/api_v2.instructions.md",
+            ".github/instructions/web.instructions.md",
+        ]
+    );
+}
+
+#[test]
 fn core_shared_agents_md_plans_when_owner_is_core() {
     let tmp = tempfile::tempdir().unwrap();
     let repo = tmp.path();
