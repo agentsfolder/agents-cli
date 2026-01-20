@@ -21,13 +21,13 @@ Unblocks: debugging and trust
 
 - [ ] Implement source map generation
   - [ ] During planning/rendering, build `SourceMap`:
-    - [ ] output path
-    - [ ] adapter id
-    - [ ] renderer type and template path
-    - [ ] mode/policy/profile/backend
-    - [ ] scopes matched
-    - [ ] prompt source file paths
-    - [ ] enabled skills
+    - [x] output path
+    - [x] adapter id
+    - [x] renderer type and template path
+    - [x] mode/policy/profile/backend
+    - [x] scopes matched
+    - [x] prompt source file paths
+    - [x] enabled skills
   - [ ] Persist source map when:
     - [ ] `agents preview`
     - [ ] `agents sync`
