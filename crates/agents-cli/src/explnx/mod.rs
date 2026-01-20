@@ -59,15 +59,22 @@ pub fn cmd_explain(repo_root: &Path, input_path: &Path, output: OutputMode) -> R
             if let Some(stamp) = agents_core::stamps::parse_stamp(&content) {
                 return Ok(print_stamp_explain(&repo_rel, &stamp, output));
             }
+
+            return Err(AppError {
+                category: ErrorCategory::Io,
+                message: "unmanaged file (no agents stamp and no source map)".to_string(),
+                context: vec![
+                    format!("path: {repo_rel}"),
+                    "hint: only stamped outputs written by agents (or outputs planned during preview/sync) can be explained"
+                        .to_string(),
+                ],
+            });
         }
 
         return Err(AppError {
             category: ErrorCategory::Io,
-            message: "no explain source map found".to_string(),
-            context: vec![
-                format!("path: {repo_rel}"),
-                "hint: run `agents preview` or `agents sync` first".to_string(),
-            ],
+            message: "file not found".to_string(),
+            context: vec![format!("path: {repo_rel}")],
         });
     }
 

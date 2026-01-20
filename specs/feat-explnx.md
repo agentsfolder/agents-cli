@@ -37,7 +37,7 @@ Unblocks: debugging and trust
   - [x] Find matching stored source map by normalized repo-relative path
   - [ ] If not found:
     - [x] attempt to parse stamp and provide minimal explanation
-    - [ ] else report "unmanaged file"
+    - [x] else report "unmanaged file"
 
 - [ ] Render explain output
   - [ ] Human-readable stable format
