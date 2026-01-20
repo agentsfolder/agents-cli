@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 
 use serde::Serialize;
 
-use crate::model::{ModeFrontmatter, Policy};
+use crate::model::{BackendKind, ModeFrontmatter, Policy};
 use crate::prompts::EffectivePrompts;
 
 #[derive(Debug, Clone, Serialize)]
@@ -46,6 +46,8 @@ pub struct EffectiveCtx {
 #[derive(Debug, Clone, Serialize)]
 pub struct RenderContext {
     pub effective: EffectiveCtx,
+
+    pub backend: BackendKind,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub profile: Option<String>,

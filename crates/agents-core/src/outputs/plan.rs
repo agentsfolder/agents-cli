@@ -103,6 +103,7 @@ pub fn plan_outputs(
             },
             prompts,
         },
+        backend: effective.backend,
         profile: effective.profile.clone(),
         scopes_matched: effective
             .scopes_matched
@@ -277,6 +278,11 @@ fn validate_renderer_sources(
             return Err(fail("template renderer requires `template`".to_string()));
         }
 
+        // Built-in inline templates do not require template_dir.
+        if out.inline_template.is_some() {
+            return Ok(());
+        }
+
         let template_dir = out.template_dir.as_ref().ok_or_else(|| {
             fail("template renderer requires adapter template_dir".to_string())
         })?;
@@ -379,7 +385,7 @@ fn template_exists(template_dir: &Path, template_name: &str) -> bool {
 
 fn build_planned_output(
     repo_root: &Path,
-    _agent_id: &str,
+    agent_id: &str,
     out: &AdapterOutput,
     template_dir: Option<std::path::PathBuf>,
     render_ctx: RenderContext,
@@ -404,6 +410,13 @@ fn build_planned_output(
         stamp: Some(StampMethod::Comment),
     });
 
+    let inline_template = if template_dir.is_none() && out.renderer.type_ == RendererType::Template {
+        let name = out.renderer.template.as_deref().unwrap_or("");
+        crate::shared::builtin_template(agent_id, name).map(|s| s.to_string())
+    } else {
+        None
+    };
+
     Ok(PlannedOutput {
         path,
         format,
@@ -413,6 +426,7 @@ fn build_planned_output(
         write_policy,
         drift_detection,
         template_dir,
+        inline_template,
         render_context: render_ctx,
     })
 }

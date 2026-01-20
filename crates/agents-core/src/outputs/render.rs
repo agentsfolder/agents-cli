@@ -37,15 +37,20 @@ pub fn render_planned_output(
     // v1: template only (concat/copy/json_merge added later).
     let content_without_stamp = match out.renderer.type_ {
         RendererType::Template => {
-            let dir = out
-                .template_dir
-                .as_ref()
-                .ok_or(RenderError::MissingTemplateDir)?;
             let mut engine = TemplateEngine::new();
-            engine.register_partials_from_dir(dir)?;
 
-            let template_name = out.renderer.template.as_deref().unwrap_or("");
-            engine.render(template_name, &out.render_context)?
+            if let Some(inline) = out.inline_template.as_deref() {
+                engine.render_inline(inline, &out.render_context)?
+            } else {
+                let dir = out
+                    .template_dir
+                    .as_ref()
+                    .ok_or(RenderError::MissingTemplateDir)?;
+                engine.register_partials_from_dir(dir)?;
+
+                let template_name = out.renderer.template.as_deref().unwrap_or("");
+                engine.render(template_name, &out.render_context)?
+            }
         }
         other => return Err(RenderError::UnsupportedRenderer(other)),
     };

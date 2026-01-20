@@ -17,6 +17,9 @@ pub struct PlannedOutput {
     /// Optional resolved template dir for convenience.
     pub template_dir: Option<PathBuf>,
 
+    /// Inline template content (for built-in outputs that don't come from disk).
+    pub inline_template: Option<String>,
+
     pub render_context: RenderContext,
 }
 

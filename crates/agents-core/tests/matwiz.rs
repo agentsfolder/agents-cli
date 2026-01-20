@@ -58,6 +58,7 @@ fn dummy_render_context() -> RenderContext {
                 composed_md: "".to_string(),
             },
         },
+        backend: agents_core::model::manifest::BackendKind::Materialize,
         profile: None,
         scopes_matched: vec![],
         generation: GenerationCtx {
@@ -102,6 +103,7 @@ fn planned_output(path: fsutil::RepoPath, write_mode: WriteMode, gitignore: bool
             stamp: Some(StampMethod::Comment),
         },
         template_dir: None,
+        inline_template: None,
         render_context: dummy_render_context(),
     }
 }

@@ -40,6 +40,7 @@ fn minimal_ctx() -> RenderContext {
                 composed_md: "Base\n\nProject\n".to_string(),
             },
         },
+        backend: agents_core::model::BackendKind::VfsContainer,
         profile: None,
         scopes_matched: vec![],
         generation: agents_core::templ::GenerationCtx {

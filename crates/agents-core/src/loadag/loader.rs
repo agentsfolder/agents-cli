@@ -120,7 +120,9 @@ pub fn load_repo_config(
 
     let (modes, _mode_sources) = load_modes_dir(&agents_dir.join("modes"))?;
 
-    let (adapters, adapter_template_dirs) = load_adapters_dir(&agents_dir.join("adapters"))?;
+    let (mut adapters, adapter_template_dirs) = load_adapters_dir(&agents_dir.join("adapters"))?;
+
+    crate::shared::inject_builtin_adapters(&mut adapters);
 
     let profiles = load_profiles_dir(&agents_dir.join("profiles"))?;
 

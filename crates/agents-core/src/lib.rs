@@ -9,6 +9,7 @@ pub mod outputs;
 pub mod prompts;
 pub mod resolv;
 pub mod schemas;
+pub mod shared;
 pub mod skillpl;
 pub mod stamps;
 pub mod templ;
