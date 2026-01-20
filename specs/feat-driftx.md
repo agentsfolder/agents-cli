@@ -18,14 +18,14 @@ Unblocks: feat-prevdf, feat-doctor
   - [x] `DiffEntry { path, kind, details }`
   - [x] `DiffReport { entries: Vec<DiffEntry> }`
 
-- [ ] Compare logic
-  - [ ] For each `PlannedOutput`:
-    - [ ] Read existing file if present
-    - [ ] Strip stamp if present
-    - [ ] Compare against planned content (without stamp)
-    - [ ] Use feat-stamps drift classification to categorize
-  - [ ] Decide treatment for unmanaged existing file at target path:
-    - [ ] show as conflict; require explicit action in sync
+- [x] Compare logic
+  - [x] For each `PlannedOutput`:
+    - [x] Read existing file if present
+    - [x] Strip stamp if present
+    - [x] Compare against planned content (without stamp)
+    - [x] Use feat-stamps drift classification to categorize
+  - [x] Decide treatment for unmanaged existing file at target path:
+    - [x] show as conflict; require explicit action in sync
 
 - [ ] Unified diff generation
   - [ ] Choose a diff library or implement simple line diff
