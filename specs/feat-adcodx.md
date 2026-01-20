@@ -31,8 +31,8 @@ Notes:
     - [x] fallback `materialize`
 
 - [ ] Implement templates (if any)
-  - [ ] If Codex needs additional instruction formatting, implement `templates/codex-extra.md.hbs`
-  - [ ] Keep deterministic and minimal
+  - [x] Implement `templates/AGENTS.md.hbs` for Codex
+  - [x] Keep deterministic and minimal
 
 - [ ] Validate collision behavior
   - [ ] Ensure Codex adapter does not attempt to own shared surface unless configured as owner
