@@ -143,3 +143,42 @@ outputs:
         other => panic!("expected PathCollision, got: {other:?}"),
     }
 }
+
+#[test]
+fn shared_owner_surface_enforces_manifest_owner() {
+    let tmp = tempfile::tempdir().unwrap();
+    let repo = tmp.path();
+
+    base_repo(repo);
+
+    // Override sharedSurfacesOwner to core; adapter `a` must not be allowed to emit shared_owner.
+    write_file(
+        &repo.join(".agents/manifest.yaml"),
+        "specVersion: '0.1'\n\
+defaults: { mode: default, policy: safe, sharedSurfacesOwner: core }\n\
+enabled: { modes: [default], policies: [safe], skills: [], adapters: [a] }\n",
+    );
+
+    write_file(
+        &repo.join(".agents/adapters/a/adapter.yaml"),
+        r#"agentId: a
+version: '0.1'
+backendDefaults: { preferred: vfs_container, fallback: materialize }
+outputs:
+  - path: AGENTS.md
+    surface: shared:AGENTS.md
+    collision: shared_owner
+    renderer: { type: template, template: agents.hbs }
+"#,
+    );
+    write_file(&repo.join(".agents/adapters/a/templates/agents.hbs"), "x\n");
+
+    let (cfg, eff) = load_and_resolve(repo, None, None);
+    let err = plan_outputs(repo, cfg, &eff, "a").unwrap_err();
+    match err {
+        agents_core::outputs::PlanError::SurfaceCollision { surface } => {
+            assert_eq!(surface, "shared:AGENTS.md");
+        }
+        other => panic!("expected SurfaceCollision, got: {other:?}"),
+    }
+}
