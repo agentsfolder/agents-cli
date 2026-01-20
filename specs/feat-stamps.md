@@ -16,14 +16,14 @@ Unblocks: feat-driftx, feat-cleanup, feat-doctor
   - generated-but-drifted
 
 ## Implementation Plan
-- [ ] Define stamp metadata
-  - [ ] `StampMeta` includes:
-    - [ ] generator id ("agents")
-    - [ ] adapter agentId
-    - [ ] manifest specVersion
-    - [ ] effective mode/profile/policy/backend
-    - [ ] timestamp? (avoid; keep deterministic) => do NOT include wall clock time
-    - [ ] content hash (sha256 of canonical content)
+- [x] Define stamp metadata
+  - [x] `StampMeta` includes:
+    - [x] generator id ("agents")
+    - [x] adapter agentId
+    - [x] manifest specVersion
+    - [x] effective mode/profile/policy/backend
+    - [x] timestamp? (avoid; keep deterministic) => do NOT include wall clock time
+    - [x] content hash (sha256 of canonical content)
 
 - [ ] Define stamp encodings by stamp type
   - [ ] `comment` (text/md):
