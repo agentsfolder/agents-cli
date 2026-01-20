@@ -41,5 +41,5 @@ Unblocks: feat-syncer
   - [x] Diff report matches fixture expectations
 
 ## Verification
-- [ ] `agents preview --agent <id>` renders deterministic temp outputs
-- [ ] `agents diff --agent <id>` is stable across runs
+- [x] `agents preview --agent <id>` renders deterministic temp outputs
+- [x] `agents diff --agent <id>` is stable across runs
