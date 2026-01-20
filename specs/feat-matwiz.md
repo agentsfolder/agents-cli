@@ -41,12 +41,12 @@ Unblocks: feat-syncer, feat-cleanup
     - [x] why blocked (unmanaged, drifted)
     - [x] suggested next step (`agents diff`, `agents doctor`, or change collision/writePolicy)
 
-- [ ] `.gitignore` integration
-  - [ ] If output writePolicy sets `gitignore=true`:
-    - [ ] Add entry for the output path (repo-relative)
-    - [ ] Ensure deterministic ordering within `.gitignore`
-    - [ ] Avoid duplicate entries
-    - [ ] Do not modify `.gitignore` if it is unmanaged? (decide; default safe)
+- [x] `.gitignore` integration
+  - [x] If output writePolicy sets `gitignore=true`:
+    - [x] Add entry for the output path (repo-relative)
+    - [x] Ensure deterministic ordering within `.gitignore`
+    - [x] Avoid duplicate entries
+    - [x] Do not modify `.gitignore` if it is unmanaged? (decide; default safe)
 
 - [ ] Permissions and file modes
   - [ ] Preserve executable bit only if explicitly needed (likely no for generated config)

@@ -100,8 +100,102 @@ impl Backend for MaterializeBackend {
             report.written.push(out.path.clone());
         }
 
+        // Optional: update .gitignore entries for outputs that request it.
+        update_gitignore_for_written(session, &planned_by_path, &mut report)?;
+
         Ok(report)
     }
+}
+
+fn update_gitignore_for_written(
+    session: &BackendSession,
+    planned_by_path: &BTreeMap<&str, &crate::outputs::PlannedOutput>,
+    report: &mut ApplyReport,
+) -> Result<(), BackendError> {
+    let mut entries: Vec<String> = vec![];
+
+    for p in &report.written {
+        if let Some(planned) = planned_by_path.get(p.as_str()) {
+            if planned.write_policy.gitignore {
+                entries.push(p.as_str().to_string());
+            }
+        }
+    }
+
+    entries.sort();
+    entries.dedup();
+
+    if entries.is_empty() {
+        return Ok(());
+    }
+
+    let gitignore_path = session.repo_root.join(".gitignore");
+    if !gitignore_path.is_file() {
+        // Default safe: do not create a new .gitignore.
+        return Ok(());
+    }
+
+    let existing = fsutil::read_to_string(&gitignore_path)?;
+    if !has_agents_gitignore_block(&existing) {
+        // Default safe: do not modify user-managed .gitignore.
+        return Ok(());
+    }
+
+    let updated = replace_agents_gitignore_block(&existing, &entries);
+    fsutil::atomic_write(&gitignore_path, updated.as_bytes())?;
+
+    // Track .gitignore write as a written path for reporting consumers.
+    if let Ok(rp) = fsutil::repo_relpath(&session.repo_root, &gitignore_path) {
+        report.written.push(rp);
+    }
+
+    Ok(())
+}
+
+fn has_agents_gitignore_block(existing: &str) -> bool {
+    const BEGIN: &str = "# BEGIN agents (generated)";
+    const END: &str = "# END agents";
+    existing.lines().any(|l| l.trim_end() == BEGIN) && existing.lines().any(|l| l.trim_end() == END)
+}
+
+fn replace_agents_gitignore_block(existing: &str, entries: &[String]) -> String {
+    const BEGIN: &str = "# BEGIN agents (generated)";
+    const END: &str = "# END agents";
+
+    let existing = existing.replace("\r\n", "\n");
+    let mut lines: Vec<&str> = existing.lines().collect();
+
+    // Remove any existing managed block.
+    if let Some(start) = lines.iter().position(|l| l.trim_end() == BEGIN) {
+        if let Some(end_rel) = lines[start..].iter().position(|l| l.trim_end() == END) {
+            let end = start + end_rel;
+            // Remove from start..=end
+            lines.drain(start..=end);
+            // Also remove a single trailing blank line if present.
+            while start < lines.len() && lines[start].trim().is_empty() {
+                lines.remove(start);
+                break;
+            }
+        }
+    }
+
+    let mut out = lines.join("\n");
+    out = out.trim_end().to_string();
+    if !out.is_empty() {
+        out.push('\n');
+        out.push('\n');
+    }
+
+    out.push_str(BEGIN);
+    out.push('\n');
+    for e in entries {
+        out.push_str(e);
+        out.push('\n');
+    }
+    out.push_str(END);
+    out.push('\n');
+
+    out
 }
 
 fn normalize_bytes_for_write(_path: &PathBuf, bytes: &[u8], format: Option<OutputFormat>) -> Vec<u8> {
