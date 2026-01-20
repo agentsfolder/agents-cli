@@ -52,11 +52,11 @@ Unblocks: feat-syncer, feat-cleanup
   - [x] Preserve executable bit only if explicitly needed (likely no for generated config)
   - [x] Ensure Windows compatibility (no unix-only perms assumptions)
 
-- [ ] Tests
-  - [ ] Write new file
-  - [ ] Overwrite stamped file with `if_generated`
-  - [ ] Refuse overwrite unmanaged file with `if_generated`
-  - [ ] `.gitignore` update stable and idempotent
+- [x] Tests
+  - [x] Write new file
+  - [x] Overwrite stamped file with `if_generated`
+  - [x] Refuse overwrite unmanaged file with `if_generated`
+  - [x] `.gitignore` update stable and idempotent
 
 ## Verification
 - [ ] `agents sync --backend materialize` writes expected outputs
