@@ -57,5 +57,5 @@ Unblocks: feat-driftx, feat-cleanup, feat-doctor
   - [x] Determinism test: stamping same inputs yields identical bytes
 
 ## Verification
-- [ ] Generated files contain valid stamp blocks/fields
-- [ ] Manual edits are detected as drift
+- [x] Generated files contain valid stamp blocks/fields
+- [x] Manual edits are detected as drift
