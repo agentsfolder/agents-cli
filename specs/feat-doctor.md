@@ -27,9 +27,9 @@ Unblocks: feat-adtest
 - [ ] Implement checks
   - [x] Schema check
     - [x] run the same validation as `agents validate`
-  - [ ] Collision check
-    - [ ] plan outputs for each enabled adapter (or selected agent)
-    - [ ] surface/path collisions reported with details
+  - [x] Collision check
+    - [x] plan outputs for each enabled adapter (or selected agent)
+    - [x] surface/path collisions reported with details
   - [ ] Drift check
     - [ ] for each adapter, compute planned outputs and compare to disk
     - [ ] report drifted files and unmanaged conflicts
