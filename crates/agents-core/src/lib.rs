@@ -1,6 +1,7 @@
 pub mod driftx;
 pub mod fsutil;
 pub mod loadag;
+pub mod matwiz;
 pub mod model;
 pub mod outputs;
 pub mod prompts;

@@ -12,12 +12,13 @@ Unblocks: feat-syncer, feat-cleanup
 - Optional `.gitignore` update when adapter requests.
 
 ## Implementation Plan
-- [ ] Define backend interface
-  - [ ] `Backend` trait:
-    - [ ] `prepare(plan) -> Result<BackendSession>` (optional)
-    - [ ] `apply(session, outputs) -> Result<ApplyReport>`
-  - [ ] `RenderedOutput { path, bytes, stamp_meta, drift_status }`
-  - [ ] `ApplyReport { written: Vec<Path>, skipped: Vec<Path>, conflicts: Vec<Path> }`
+- [x] Define backend interface
+  - [x] `Backend` trait:
+    - [x] `prepare(plan) -> Result<BackendSession>` (optional)
+    - [x] `apply(session, outputs) -> Result<ApplyReport>`
+  - [x] `RenderedOutput { path, bytes, stamp_meta, drift_status }`
+  - [x] `ApplyReport { written: Vec<Path>, skipped: Vec<Path>, conflicts: Vec<Path> }`
+
 
 - [ ] Implement safe write behavior
   - [ ] Ensure parent directories exist
