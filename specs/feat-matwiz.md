@@ -20,10 +20,10 @@ Unblocks: feat-syncer, feat-cleanup
   - [x] `ApplyReport { written: Vec<Path>, skipped: Vec<Path>, conflicts: Vec<Path> }`
 
 
-- [ ] Implement safe write behavior
-  - [ ] Ensure parent directories exist
-  - [ ] Use feat-fsutil `atomic_write`
-  - [ ] Ensure newline normalization for text formats
+- [x] Implement safe write behavior
+  - [x] Ensure parent directories exist
+  - [x] Use feat-fsutil `atomic_write`
+  - [x] Ensure newline normalization for text formats
 
 - [ ] Implement writePolicy handling
   - [ ] `always`:
