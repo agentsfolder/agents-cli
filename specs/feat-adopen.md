@@ -31,9 +31,9 @@ Unblocks: feat-adtest
     - [x] include pointers to generated rule file(s) if OpenCode supports
   - [x] Ensure deterministic JSON serialization ordering
 
-- [ ] Tests
+- [x] Tests
   - [x] Golden fixture: `agents preview --agent opencode` outputs
   - [x] Validate stamp and drift detection for jsonc
 
 ## Verification
-- [ ] `agents preview --agent opencode` produces `opencode.jsonc` and shared rule surface
+- [x] `agents preview --agent opencode` produces `opencode.jsonc` and shared rule surface
