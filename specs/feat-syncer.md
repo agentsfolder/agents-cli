@@ -10,21 +10,21 @@ Unblocks: feat-runner, feat-doctor
 - Applies planned outputs via the backend.
 
 ## Implementation Plan
-- [ ] Implement sync orchestration
-  - [ ] Load repo config + validate
-  - [ ] Resolve effective config
-  - [ ] Plan outputs for agent
-  - [ ] Render outputs and apply stamps
-  - [ ] Select backend:
-    - [ ] from CLI override
-    - [ ] else from manifest defaults/byAgent
-    - [ ] else from adapter backendDefaults
-  - [ ] Call backend apply
+- [x] Implement sync orchestration
+  - [x] Load repo config + validate
+  - [x] Resolve effective config
+  - [x] Plan outputs for agent
+  - [x] Render outputs and apply stamps
+  - [x] Select backend:
+    - [x] from CLI override
+    - [x] else from manifest defaults/byAgent
+    - [x] else from adapter backendDefaults
+  - [x] Call backend apply
 
-- [ ] Handle conflicts
-  - [ ] If materialize backend reports unmanaged conflicts:
-    - [ ] return non-zero
-    - [ ] print actionable hint (run diff, adjust writePolicy)
+- [x] Handle conflicts
+  - [x] If materialize backend reports unmanaged conflicts:
+    - [x] return non-zero
+    - [x] print actionable hint (run diff, adjust writePolicy)
 
 - [ ] Reporting
   - [ ] Print written/skipped/conflict counts

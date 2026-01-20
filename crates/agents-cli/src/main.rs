@@ -7,6 +7,7 @@ mod main_tests;
 
 mod prevdf;
 mod status;
+mod syncer;
 
 #[derive(Debug, Clone, ValueEnum)]
 enum Backend {
@@ -242,6 +243,24 @@ fn dispatch(ctx: &AppContext, cmd: Commands) -> AppResult<()> {
         Commands::Diff { agent, show } => {
             let agent = agent.unwrap_or_else(|| "core".to_string());
             crate::prevdf::cmd_diff(&ctx.repo_root, crate::prevdf::DiffOptions { agent, show })
+        }
+
+        Commands::Sync { agent, backend } => {
+            let agent = agent.unwrap_or_else(|| "core".to_string());
+            let backend = backend.map(|b| match b {
+                Backend::VfsContainer => agents_core::model::BackendKind::VfsContainer,
+                Backend::Materialize => agents_core::model::BackendKind::Materialize,
+                Backend::VfsMount => agents_core::model::BackendKind::VfsMount,
+            });
+
+            crate::syncer::cmd_sync(
+                &ctx.repo_root,
+                crate::syncer::SyncOptions {
+                    agent,
+                    backend,
+                    verbose: ctx.verbose,
+                },
+            )
         }
 
         _ => Err(AppError::not_initialized(&ctx.repo_root)),
