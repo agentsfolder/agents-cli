@@ -32,9 +32,9 @@ Unblocks: feat-prevdf, feat-doctor
   - [x] Ensure stable diff output (normalize newlines)
   - [x] Include context lines, but keep output bounded (later add `--full`)
 
-- [ ] Deletion detection (optional for v1)
-  - [ ] Identify stamped generated outputs that are no longer planned
-    - [ ] used by `clean` and `doctor`
+- [x] Deletion detection (optional for v1)
+  - [x] Identify stamped generated outputs that are no longer planned
+    - [x] used by `clean` and `doctor`
 
 - [ ] Tests
   - [ ] Fixture where planned == existing => Noop

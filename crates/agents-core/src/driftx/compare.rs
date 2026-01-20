@@ -1,3 +1,4 @@
+use std::collections::BTreeSet;
 use std::path::Path;
 
 use crate::fsutil;
@@ -5,7 +6,7 @@ use crate::outputs::{OutputPlan, PlannedOutput};
 use crate::stamps::{classify, strip_existing_stamp, DriftStatus};
 use crate::templ::TemplateEngine;
 
-use super::{unified_diff_for, DiffEntry, DiffKind, DiffReport};
+use super::{detect_stale_generated, unified_diff_for, DiffEntry, DiffKind, DiffReport};
 
 #[derive(Debug, thiserror::Error)]
 pub enum DriftxError {
@@ -14,6 +15,9 @@ pub enum DriftxError {
 
     #[error("io error: {0}")]
     Fs(#[from] fsutil::FsError),
+
+    #[error("walkdir error: {0}")]
+    Walkdir(String),
 
     #[error("stamp error: {0}")]
     Stamp(#[from] crate::stamps::StampError),
@@ -31,6 +35,17 @@ pub fn diff_plan(repo_root: &Path, plan: &OutputPlan) -> Result<DiffReport, Drif
     for out in &plan.outputs {
         entries.push(diff_one(repo_root, out)?);
     }
+
+    // Optional: detect generated files that are no longer planned.
+    //
+    // v1 scope: only files stamped by agents AND matching this plan's adapter id.
+    let planned_paths: BTreeSet<String> = plan
+        .outputs
+        .iter()
+        .map(|o| o.path.as_str().to_string())
+        .collect();
+    let stale = detect_stale_generated(repo_root, &plan.agent_id, &planned_paths)?;
+    entries.extend(stale);
 
     Ok(DiffReport { entries })
 }
