@@ -29,7 +29,7 @@ Unblocks: debugging and trust
     - [x] prompt source file paths
     - [x] enabled skills
   - [ ] Persist source map when:
-    - [ ] `agents preview`
+    - [x] `agents preview`
     - [ ] `agents sync`
 
 - [ ] Implement explain lookup

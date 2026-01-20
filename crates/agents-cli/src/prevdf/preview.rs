@@ -59,6 +59,9 @@ pub fn cmd_preview(repo_root: &Path, opts: PreviewOptions) -> Result<(), AppErro
             context: vec![],
         })?;
 
+    // Persist source maps for `agents explain`.
+    crate::explnx::persist_source_maps(repo_root, &plan_res)?;
+
     let tmp = agents_core::fsutil::temp_generation_dir("agents-preview").map_err(|e| AppError {
         category: ErrorCategory::Io,
         message: e.to_string(),

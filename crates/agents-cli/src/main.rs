@@ -11,6 +11,7 @@ mod syncer;
 mod cleanup;
 mod doctor;
 mod adtest;
+mod explnx;
 
 #[derive(Debug, Clone, ValueEnum)]
 enum Backend {
