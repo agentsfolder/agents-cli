@@ -24,13 +24,13 @@ Unblocks: feat-syncer
     - [x] temp directory path
     - [x] list of outputs with repo-relative destination
 
-- [ ] Implement diff pipeline
-  - [ ] Same as preview until planned stamped content is available
-  - [ ] Use feat-driftx to compare planned vs on-disk
-  - [ ] Print:
-    - [ ] counts (create/update/noop/conflict)
-    - [ ] per-path status lines
-    - [ ] optional `--show` to print unified diffs
+- [x] Implement diff pipeline
+  - [x] Same as preview until planned stamped content is available
+  - [x] Use feat-driftx to compare planned vs on-disk
+  - [x] Print:
+    - [x] counts (create/update/noop/conflict)
+    - [x] per-path status lines
+    - [x] optional `--show` to print unified diffs
 
 - [x] Temp directory handling
   - [x] Use feat-fsutil temp dir helper

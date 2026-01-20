@@ -80,6 +80,8 @@ enum Commands {
     Diff {
         #[arg(long)]
         agent: Option<String>,
+        #[arg(long, default_value_t = false)]
+        show: bool,
     },
     Sync {
         #[arg(long)]
@@ -235,6 +237,11 @@ fn dispatch(ctx: &AppContext, cmd: Commands) -> AppResult<()> {
                     keep_temp,
                 },
             )
+        }
+
+        Commands::Diff { agent, show } => {
+            let agent = agent.unwrap_or_else(|| "core".to_string());
+            crate::prevdf::cmd_diff(&ctx.repo_root, crate::prevdf::DiffOptions { agent, show })
         }
 
         _ => Err(AppError::not_initialized(&ctx.repo_root)),
