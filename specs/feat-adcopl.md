@@ -42,8 +42,8 @@ Notes:
     - [x] deterministic naming from scope id
     - [x] frontmatter applyTo list
 
-- [ ] Tests
-  - [ ] Golden fixture for copilot output
+- [x] Tests
+  - [x] Golden fixture for copilot output
   - [x] Test deterministic naming and ordering of scope instruction files
 
 ## Verification
