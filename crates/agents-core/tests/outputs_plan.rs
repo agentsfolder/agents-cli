@@ -182,3 +182,41 @@ outputs:
         other => panic!("expected SurfaceCollision, got: {other:?}"),
     }
 }
+
+#[test]
+fn merge_surface_collision_produces_deterministic_concat_sources() {
+    let tmp = tempfile::tempdir().unwrap();
+    let repo = tmp.path();
+
+    base_repo(repo);
+
+    write_file(
+        &repo.join(".agents/adapters/a/adapter.yaml"),
+        r#"agentId: a
+version: '0.1'
+backendDefaults: { preferred: vfs_container, fallback: materialize }
+outputs:
+  - path: b.md
+    surface: s
+    collision: merge
+    renderer: { type: template, template: b.hbs }
+  - path: a.md
+    surface: s
+    collision: merge
+    renderer: { type: template, template: a.hbs }
+"#,
+    );
+    write_file(&repo.join(".agents/adapters/a/templates/a.hbs"), "a\n");
+    write_file(&repo.join(".agents/adapters/a/templates/b.hbs"), "b\n");
+
+    let (cfg, eff) = load_and_resolve(repo, None, None);
+    let plan_res = plan_outputs(repo, cfg, &eff, "a").unwrap();
+    let plan = plan_res.plan;
+
+    assert_eq!(plan.outputs.len(), 1);
+    let out = &plan.outputs[0];
+    assert_eq!(out.path.as_str(), "a.md");
+    assert_eq!(out.surface.as_deref(), Some("s"));
+    assert_eq!(out.renderer.type_, agents_core::model::RendererType::Concat);
+    assert_eq!(out.renderer.sources, vec!["template:a.hbs", "template:b.hbs"]);
+}

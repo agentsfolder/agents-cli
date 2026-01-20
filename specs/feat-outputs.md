@@ -60,12 +60,12 @@ Unblocks: feat-prevdf, feat-syncer, feat-stamps
     - [x] mode/policy/skill IDs
   - [x] Store enough info to later implement `agents explain` (feat-explnx)
 
-- [ ] Tests
+- [x] Tests
   - [x] Condition filtering tests
-  - [ ] Collision tests:
+  - [x] Collision tests:
     - [x] physical path collision error
     - [x] logical surface collision with shared_owner
-    - [ ] merge collision produces deterministic output ordering
+    - [x] merge collision produces deterministic output ordering
 
 ## Verification
 - [ ] A fixture adapter renders a plan with deterministic output ordering
