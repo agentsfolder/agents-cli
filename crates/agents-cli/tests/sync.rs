@@ -97,5 +97,5 @@ fn sync_fails_on_unmanaged_file_with_if_generated() {
 
     cmd.assert()
         .failure()
-        .stderr(predicate::str::contains("unmanaged file exists"));
+        .stderr(predicate::str::contains("unmanaged"));
 }

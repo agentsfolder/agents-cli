@@ -59,5 +59,5 @@ Unblocks: feat-syncer, feat-cleanup
   - [x] `.gitignore` update stable and idempotent
 
 ## Verification
-- [ ] `agents sync --backend materialize` writes expected outputs
-- [ ] Rerun sync yields no diffs (`agents diff` is clean)
+- [x] `agents sync --backend materialize` writes expected outputs
+- [x] Rerun sync yields no diffs (`agents diff` is clean)

@@ -1,10 +1,11 @@
 use std::path::Path;
 
 use agents_core::loadag::{load_repo_config, LoadError, LoaderOptions, RepoConfig};
-use agents_core::model::{BackendKind, WriteMode};
+use agents_core::matwiz::{Backend, MaterializeBackend};
+use agents_core::model::BackendKind;
 use agents_core::outputs::{plan_outputs, render_planned_output};
 use agents_core::resolv::{ResolutionRequest, Resolver};
-use agents_core::stamps::parse_stamp;
+use agents_core::stamps::{classify, parse_stamp};
 
 use crate::{AppError, ErrorCategory};
 
@@ -59,10 +60,14 @@ pub fn cmd_sync(repo_root: &Path, opts: SyncOptions) -> Result<(), AppError> {
 
     match selected_backend {
         BackendKind::Materialize => {
-            // v1: materialize directly to repo.
-            let mut written = 0usize;
-            let mut skipped = 0usize;
+            let backend = MaterializeBackend;
+            let mut session = backend.prepare(repo_root, &plan_res.plan).map_err(|e| AppError {
+                category: ErrorCategory::Io,
+                message: e.to_string(),
+                context: vec![],
+            })?;
 
+            let mut rendered_outputs: Vec<agents_core::matwiz::RenderedOutput> = vec![];
             for out in &plan_res.plan.outputs {
                 let rendered = render_planned_output(repo_root, out).map_err(|e| AppError {
                     category: ErrorCategory::Io,
@@ -70,53 +75,70 @@ pub fn cmd_sync(repo_root: &Path, opts: SyncOptions) -> Result<(), AppError> {
                     context: vec![format!("path: {}", out.path.as_str())],
                 })?;
 
-                let dest = repo_root.join(out.path.as_str());
+                let stamp = parse_stamp(&rendered.content_with_stamp).ok_or_else(|| AppError {
+                    category: ErrorCategory::Io,
+                    message: "rendered output missing stamp".to_string(),
+                    context: vec![format!("path: {}", out.path.as_str())],
+                })?;
 
-                // v1: honor writePolicy modes.
-                let mode = out.write_policy.mode.unwrap_or(WriteMode::IfGenerated);
-                if mode == WriteMode::Never {
-                    skipped += 1;
-                    if opts.verbose {
-                        println!("skip: {} (writePolicy=never)", out.path.as_str());
-                    }
-                    continue;
+                let drift_status = classify(
+                    &repo_root.join(out.path.as_str()),
+                    &rendered.content_without_stamp,
+                    &out.drift_detection,
+                )
+                .map_err(|e| AppError {
+                    category: ErrorCategory::Io,
+                    message: e.to_string(),
+                    context: vec![format!("path: {}", out.path.as_str())],
+                })?;
+
+                rendered_outputs.push(agents_core::matwiz::RenderedOutput {
+                    path: out.path.clone(),
+                    bytes: rendered.content_with_stamp.into_bytes(),
+                    stamp_meta: stamp.meta,
+                    drift_status,
+                });
+            }
+
+            let report = backend.apply(&mut session, &rendered_outputs).map_err(|e| AppError {
+                category: ErrorCategory::Io,
+                message: e.to_string(),
+                context: vec![],
+            })?;
+
+            if !report.conflicts.is_empty() {
+                let msg = report
+                    .conflict_details
+                    .first()
+                    .map(|c| c.message.clone())
+                    .unwrap_or_else(|| "conflicts detected".to_string());
+                return Err(AppError {
+                    category: ErrorCategory::Conflict,
+                    message: msg,
+                    context: report
+                        .conflict_details
+                        .first()
+                        .map(|c| c.hints.clone())
+                        .unwrap_or_default(),
+                });
+            }
+
+            if opts.verbose {
+                for p in &report.written {
+                    println!("write: {}", p.as_str());
                 }
-
-                if mode == WriteMode::IfGenerated && dest.exists() {
-                    // Refuse to overwrite unmanaged files.
-                    let existing =
-                        agents_core::fsutil::read_to_string(&dest).map_err(|e| AppError {
-                            category: ErrorCategory::Io,
-                            message: e.to_string(),
-                            context: vec![],
-                        })?;
-
-                    if parse_stamp(&existing).is_none() {
-                        return Err(AppError {
-                            category: ErrorCategory::Conflict,
-                            message: format!("unmanaged file exists at {}", out.path.as_str()),
-                            context: vec![
-                                "hint: run `agents diff --agent <id>` to see conflicts".to_string(),
-                                "hint: change output.writePolicy.mode to `always` to force overwrite".to_string(),
-                            ],
-                        });
-                    }
-                }
-
-                agents_core::fsutil::atomic_write(&dest, rendered.content_with_stamp.as_bytes())
-                    .map_err(|e| AppError {
-                        category: ErrorCategory::Io,
-                        message: e.to_string(),
-                        context: vec![],
-                    })?;
-
-                written += 1;
-                if opts.verbose {
-                    println!("write: {}", out.path.as_str());
+                for p in &report.skipped {
+                    println!("skip: {}", p.as_str());
                 }
             }
 
-            println!("sync: written={} skipped={} conflict=0", written, skipped);
+            println!(
+                "sync: written={} skipped={} conflict={}",
+                report.written.len(),
+                report.skipped.len(),
+                report.conflicts.len()
+            );
+
             Ok(())
         }
         BackendKind::VfsContainer | BackendKind::VfsMount => Err(AppError {
