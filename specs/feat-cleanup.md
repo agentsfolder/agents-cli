@@ -36,10 +36,10 @@ Unblocks: feat-doctor
   - [x] Print list of deleted paths
   - [x] Print list of skipped paths and why (unmanaged/no stamp)
 
-- [ ] Tests
-  - [ ] Deletes stamped file
-  - [ ] Does not delete unmanaged file at same path
-  - [ ] Prunes empty dirs
+- [x] Tests
+  - [x] Deletes stamped file
+  - [x] Does not delete unmanaged file at same path
+  - [x] Prunes empty dirs
 
 ## Verification
 - [ ] `agents clean` removes only generated files and is idempotent
