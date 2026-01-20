@@ -1,3 +1,4 @@
+pub mod driftx;
 pub mod fsutil;
 pub mod loadag;
 pub mod model;

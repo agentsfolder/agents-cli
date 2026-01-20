@@ -13,10 +13,10 @@ Unblocks: feat-prevdf, feat-doctor
 - CLI integration for `agents diff` and `agents preview` (later)
 
 ## Implementation Plan
-- [ ] Define diff model
-  - [ ] `DiffKind`: `Create`, `Update`, `Noop`, `UnmanagedExists`, `Drifted`, `Missing`
-  - [ ] `DiffEntry { path, kind, details }`
-  - [ ] `DiffReport { entries: Vec<DiffEntry> }`
+- [x] Define diff model
+  - [x] `DiffKind`: `Create`, `Update`, `Delete`, `Noop`, `UnmanagedExists`, `Drifted`
+  - [x] `DiffEntry { path, kind, details }`
+  - [x] `DiffReport { entries: Vec<DiffEntry> }`
 
 - [ ] Compare logic
   - [ ] For each `PlannedOutput`:
