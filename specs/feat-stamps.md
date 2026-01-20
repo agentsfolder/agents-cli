@@ -38,10 +38,10 @@ Unblocks: feat-driftx, feat-cleanup, feat-doctor
   - [x] `apply_stamp(content_stripped, meta, method) -> stamped_content`
   - [x] Ensure stamping is idempotent and deterministic
 
-- [ ] Implement hashing
-  - [ ] Use `sha2::Sha256`
-  - [ ] Hash canonical content *without* stamp
-  - [ ] Normalize newlines before hashing
+- [x] Implement hashing
+  - [x] Use `sha2::Sha256`
+  - [x] Hash canonical content *without* stamp
+  - [x] Normalize newlines before hashing
 
 - [ ] Implement drift detection
   - [ ] `classify(path, planned_content_without_stamp) -> DriftStatus`
