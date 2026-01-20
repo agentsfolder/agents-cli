@@ -13,6 +13,8 @@ struct ExplainRecord {
 }
 
 pub fn persist_source_maps(repo_root: &Path, plan_res: &PlanResult) -> Result<(), AppError> {
+    ensure_state_gitignore(repo_root)?;
+
     let dir = agents_core::fsutil::agents_explain_dir(repo_root);
     std::fs::create_dir_all(&dir).map_err(|e| AppError {
         category: ErrorCategory::Io,
@@ -36,6 +38,52 @@ pub fn persist_source_maps(repo_root: &Path, plan_res: &PlanResult) -> Result<()
             category: ErrorCategory::Io,
             message: e.to_string(),
             context: vec![format!("path: {}", dest.display())],
+        })?;
+    }
+
+    Ok(())
+}
+
+fn ensure_state_gitignore(repo_root: &Path) -> Result<(), AppError> {
+    let state_dir = agents_core::fsutil::agents_state_dir(repo_root);
+    std::fs::create_dir_all(&state_dir).map_err(|e| AppError {
+        category: ErrorCategory::Io,
+        message: e.to_string(),
+        context: vec![format!("path: {}", state_dir.display())],
+    })?;
+
+    let p = state_dir.join(".gitignore");
+    let mut content = if p.is_file() {
+        agents_core::fsutil::read_to_string(&p).map_err(|e| AppError {
+            category: ErrorCategory::Io,
+            message: e.to_string(),
+            context: vec![format!("path: {}", p.display())],
+        })?
+    } else {
+        String::new()
+    };
+
+    let mut changed = false;
+    for rule in ["state.yaml", "explain/"] {
+        let rooted = format!("/{rule}");
+        let has = content
+            .lines()
+            .any(|l| l.trim() == rule || l.trim() == rooted);
+        if !has {
+            if !content.is_empty() && !content.ends_with('\n') {
+                content.push('\n');
+            }
+            content.push_str(rule);
+            content.push('\n');
+            changed = true;
+        }
+    }
+
+    if changed {
+        agents_core::fsutil::atomic_write(&p, content.as_bytes()).map_err(|e| AppError {
+            category: ErrorCategory::Io,
+            message: e.to_string(),
+            context: vec![format!("path: {}", p.display())],
         })?;
     }
 

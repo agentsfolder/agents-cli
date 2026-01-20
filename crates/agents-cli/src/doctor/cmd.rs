@@ -189,15 +189,20 @@ fn fix_state_gitignore(repo_root: &Path) -> Result<bool, fsutil::FsError> {
         String::new()
     };
 
-    let has = content
-        .lines()
-        .any(|l| l.trim() == "state.yaml" || l.trim() == "/state.yaml");
-    if !has {
-        if !content.is_empty() && !content.ends_with('\n') {
+    for rule in ["state.yaml", "explain/"] {
+        let rooted = format!("/{rule}");
+        let has = content.lines().any(|l| {
+            let t = l.trim();
+            t == rule || t == rooted
+        });
+        if !has {
+            if !content.is_empty() && !content.ends_with('\n') {
+                content.push('\n');
+            }
+            content.push_str(rule);
             content.push('\n');
+            changed = true;
         }
-        content.push_str("state.yaml\n");
-        changed = true;
     }
 
     if changed {
@@ -491,6 +496,9 @@ fn state_file_check(ctx: &DoctorContext) -> Vec<DoctorItem> {
     let has_state_yaml = content
         .lines()
         .any(|l| l.trim() == "state.yaml" || l.trim() == "/state.yaml");
+    let has_explain = content
+        .lines()
+        .any(|l| l.trim() == "explain/" || l.trim() == "/explain/");
 
     if !has_state_yaml {
         return vec![DoctorItem {
@@ -500,6 +508,19 @@ fn state_file_check(ctx: &DoctorContext) -> Vec<DoctorItem> {
             context: vec![
                 format!("path: {}", p.display()),
                 "hint: add `state.yaml` to .agents/state/.gitignore".to_string(),
+                "hint: or run `agents doctor --fix`".to_string(),
+            ],
+        }];
+    }
+
+    if !has_explain {
+        return vec![DoctorItem {
+            level: DoctorLevel::Warning,
+            check: "state".to_string(),
+            message: "explain/ is not ignored".to_string(),
+            context: vec![
+                format!("path: {}", p.display()),
+                "hint: add `explain/` to .agents/state/.gitignore".to_string(),
                 "hint: or run `agents doctor --fix`".to_string(),
             ],
         }];
