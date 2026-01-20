@@ -63,7 +63,7 @@ Unblocks: feat-prevdf, feat-syncer, feat-stamps
 - [ ] Tests
   - [x] Condition filtering tests
   - [ ] Collision tests:
-    - [ ] physical path collision error
+    - [x] physical path collision error
     - [ ] logical surface collision with shared_owner
     - [ ] merge collision produces deterministic output ordering
 

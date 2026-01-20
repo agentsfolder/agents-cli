@@ -111,3 +111,35 @@ outputs:
         vec!["always.md", "dev.md", "mat.md"]
     );
 }
+
+#[test]
+fn physical_path_collision_errors() {
+    let tmp = tempfile::tempdir().unwrap();
+    let repo = tmp.path();
+
+    base_repo(repo);
+
+    write_file(
+        &repo.join(".agents/adapters/a/adapter.yaml"),
+        r#"agentId: a
+version: '0.1'
+backendDefaults: { preferred: vfs_container, fallback: materialize }
+outputs:
+  - path: same.md
+    renderer: { type: template, template: a.hbs }
+  - path: same.md
+    renderer: { type: template, template: b.hbs }
+"#,
+    );
+    write_file(&repo.join(".agents/adapters/a/templates/a.hbs"), "a\n");
+    write_file(&repo.join(".agents/adapters/a/templates/b.hbs"), "b\n");
+
+    let (cfg, eff) = load_and_resolve(repo, None, None);
+    let err = plan_outputs(repo, cfg, &eff, "a").unwrap_err();
+    match err {
+        agents_core::outputs::PlanError::PathCollision { path } => {
+            assert_eq!(path, "same.md");
+        }
+        other => panic!("expected PathCollision, got: {other:?}"),
+    }
+}
