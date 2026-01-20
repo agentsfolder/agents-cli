@@ -36,14 +36,14 @@ Unblocks: feat-prevdf, feat-syncer, feat-stamps
   - [x] Stable ordering of outputs (by `path`, then `surface`)
   - [x] Planned output paths do not need to exist on disk
 
-- [ ] Collision detection
-  - [ ] Detect physical path collisions within the same plan
-  - [ ] Detect logical surface collisions within the same plan
-  - [ ] Apply collision policies:
-    - [ ] `error`: fail with details
-    - [ ] `overwrite`: allow a single winner; define deterministic winner or require explicit ordering
-    - [ ] `merge`: produce a combined planned output (concat) with stable ordering
-    - [ ] `shared_owner`: enforce manifest `defaults.sharedSurfacesOwner`
+- [x] Collision detection
+  - [x] Detect physical path collisions within the same plan
+  - [x] Detect logical surface collisions within the same plan
+  - [x] Apply collision policies:
+    - [x] `error`: fail with details
+    - [x] `overwrite`: allow a single winner; define deterministic winner or require explicit ordering
+    - [x] `merge`: produce a combined planned output (concat) with stable ordering
+    - [x] `shared_owner`: enforce manifest `defaults.sharedSurfacesOwner`
 
 - [x] Renderer dispatch specification
   - [x] Validate renderer config fields:

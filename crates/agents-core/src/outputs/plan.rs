@@ -173,8 +173,8 @@ fn evaluate_outputs(
             .then_with(|| a.surface.cmp(&b.surface))
     });
 
-    // Collision detection.
-    detect_collisions(repo, &planned)?;
+    // Collision handling.
+    let planned = resolve_collisions(repo, agent_id, planned)?;
 
     Ok(planned)
 }
@@ -281,10 +281,46 @@ fn build_planned_output(
     })
 }
 
-fn detect_collisions(repo: &RepoConfig, planned: &[PlannedOutput]) -> Result<(), PlanError> {
-    // Physical path collisions.
+fn resolve_collisions(
+    repo: &RepoConfig,
+    agent_id: &str,
+    planned: Vec<PlannedOutput>,
+) -> Result<Vec<PlannedOutput>, PlanError> {
+    let shared_owner = repo
+        .manifest
+        .defaults
+        .shared_surfaces_owner
+        .clone()
+        .unwrap_or_else(|| "core".to_string());
+
+    // Enforce shared surface ownership even when there is no collision.
+    for p in &planned {
+        if p.collision != CollisionPolicy::SharedOwner {
+            continue;
+        }
+
+        let surface = p.surface.as_deref().ok_or_else(|| PlanError::InvalidRenderer {
+            path: p.path.as_str().to_string(),
+            message: "collision=shared_owner requires a non-empty `surface`".to_string(),
+        })?;
+
+        if surface.is_empty() {
+            return Err(PlanError::InvalidRenderer {
+                path: p.path.as_str().to_string(),
+                message: "collision=shared_owner requires a non-empty `surface`".to_string(),
+            });
+        }
+
+        if shared_owner != agent_id {
+            return Err(PlanError::SurfaceCollision {
+                surface: surface.to_string(),
+            });
+        }
+    }
+
+    // Physical path collisions are always an error (multiple outputs writing the same file).
     let mut seen_paths: BTreeSet<String> = BTreeSet::new();
-    for p in planned {
+    for p in &planned {
         let key = p.path.as_str().to_string();
         if !seen_paths.insert(key.clone()) {
             return Err(PlanError::PathCollision { path: key });
@@ -292,45 +328,105 @@ fn detect_collisions(repo: &RepoConfig, planned: &[PlannedOutput]) -> Result<(),
     }
 
     // Logical surface collisions.
-    let mut by_surface: BTreeMap<String, Vec<&PlannedOutput>> = BTreeMap::new();
+    let mut by_surface: BTreeMap<String, Vec<PlannedOutput>> = BTreeMap::new();
+    let mut without_surface: Vec<PlannedOutput> = vec![];
     for p in planned {
         if let Some(surface) = &p.surface {
             by_surface.entry(surface.clone()).or_default().push(p);
+        } else {
+            without_surface.push(p);
         }
     }
 
-    for (surface, items) in by_surface {
-        if items.len() <= 1 {
+    let mut out: Vec<PlannedOutput> = vec![];
+    out.extend(without_surface);
+
+    for (surface, mut items) in by_surface {
+        if items.len() == 1 {
+            out.push(items.remove(0));
             continue;
         }
 
-        // If any of the colliding items are shared_owner, enforce manifest owner.
-        let any_shared_owner = items
-            .iter()
-            .any(|p| p.collision == CollisionPolicy::SharedOwner);
-        if any_shared_owner {
-            let owner = repo
-                .manifest
-                .defaults
-                .shared_surfaces_owner
-                .clone()
-                .unwrap_or_else(|| "core".to_string());
-
-            // Require that only the owner adapter defines this surface.
-            if owner != "core" {
-                // v1: we only support core owner; other ownership is deferred.
-                return Err(PlanError::SurfaceCollision { surface });
-            }
-
+        // All colliding outputs must agree on collision policy.
+        let policy = items[0].collision;
+        if items.iter().any(|p| p.collision != policy) {
             return Err(PlanError::SurfaceCollision { surface });
         }
 
-        // For now, any other collision is an error unless explicitly merge/overwrite.
-        // Full merge/overwrite is implemented in a later step.
-        return Err(PlanError::SurfaceCollision { surface });
+        match policy {
+            CollisionPolicy::Error => return Err(PlanError::SurfaceCollision { surface }),
+            CollisionPolicy::SharedOwner => {
+                // Shared-owner surfaces may only be emitted once (by the designated owner).
+                return Err(PlanError::SurfaceCollision { surface });
+            }
+            CollisionPolicy::Overwrite => {
+                // Deterministic winner: lowest path.
+                items.sort_by(|a, b| a.path.as_str().cmp(b.path.as_str()));
+                out.push(items.remove(0));
+            }
+            CollisionPolicy::Merge => {
+                // Deterministic merge order: ascending by path.
+                items.sort_by(|a, b| a.path.as_str().cmp(b.path.as_str()));
+
+                // Require compatible output settings.
+                let first = &items[0];
+                if items.iter().any(|p| p.format != first.format) {
+                    return Err(PlanError::SurfaceCollision { surface });
+                }
+                if items
+                    .iter()
+                    .any(|p| !write_policy_eq(&p.write_policy, &first.write_policy))
+                {
+                    return Err(PlanError::SurfaceCollision { surface });
+                }
+                if items
+                    .iter()
+                    .any(|p| !drift_detection_eq(&p.drift_detection, &first.drift_detection))
+                {
+                    return Err(PlanError::SurfaceCollision { surface });
+                }
+
+                // Merge by creating a concat renderer over the original templates.
+                let mut sources: Vec<String> = vec![];
+                for p in &items {
+                    if p.renderer.type_ != RendererType::Template {
+                        return Err(PlanError::SurfaceCollision { surface });
+                    }
+                    let t = p.renderer.template.as_deref().unwrap_or("");
+                    if t.is_empty() {
+                        return Err(PlanError::SurfaceCollision { surface });
+                    }
+                    sources.push(format!("template:{t}"));
+                }
+
+                let mut merged = items.remove(0);
+                merged.renderer.type_ = RendererType::Concat;
+                merged.renderer.template = None;
+                merged.renderer.sources = sources;
+                // Keep the logical surface name.
+                merged.surface = Some(surface.clone());
+                out.push(merged);
+            }
+        }
     }
 
-    Ok(())
+    // Ensure deterministic ordering.
+    out.sort_by(|a, b| {
+        a.path
+            .as_str()
+            .cmp(b.path.as_str())
+            .then_with(|| a.surface.cmp(&b.surface))
+    });
+
+    Ok(out)
+}
+
+fn write_policy_eq(a: &WritePolicy, b: &WritePolicy) -> bool {
+    a.mode == b.mode && a.gitignore == b.gitignore
+}
+
+fn drift_detection_eq(a: &DriftDetection, b: &DriftDetection) -> bool {
+    a.method == b.method && a.stamp == b.stamp
 }
 
 fn build_source_map_skeletons(
