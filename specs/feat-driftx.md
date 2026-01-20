@@ -42,5 +42,5 @@ Unblocks: feat-prevdf, feat-doctor
   - [x] Fixture where unmanaged file exists => UnmanagedExists
 
 ## Verification
-- [ ] `agents diff` shows clean/no-op after `agents sync`
-- [ ] Diff output is deterministic across runs
+- [x] `agents diff` shows clean/no-op after `agents sync`
+- [x] Diff output is deterministic across runs
