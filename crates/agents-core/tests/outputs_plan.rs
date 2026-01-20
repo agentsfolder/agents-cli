@@ -249,3 +249,63 @@ fn fixture_plan_ordering_is_deterministic() {
     let plan_res = plan_outputs(&repo_root, cfg, &eff, "a").unwrap();
     assert_eq!(plan_paths(&plan_res.plan), vec!["a.md", "m.md", "z.md"]);
 }
+
+#[test]
+fn core_shared_agents_md_plans_when_owner_is_core() {
+    let tmp = tempfile::tempdir().unwrap();
+    let repo = tmp.path();
+
+    write_file(
+        &repo.join(".agents/manifest.yaml"),
+        "specVersion: '0.1'\n\
+defaults: { mode: default, policy: safe, sharedSurfacesOwner: core }\n\
+enabled: { modes: [default], policies: [safe], skills: [], adapters: [core] }\n",
+    );
+    write_file(&repo.join(".agents/prompts/base.md"), "base\n");
+    write_file(&repo.join(".agents/prompts/project.md"), "project\n");
+    write_file(&repo.join(".agents/modes/default.md"), "---\nid: default\n---\n\n");
+    write_file(
+        &repo.join(".agents/policies/safe.yaml"),
+        "id: safe\ndescription: safe\ncapabilities: {}\npaths: { allow: [], deny: [], redact: [] }\nconfirmations: {}\n",
+    );
+
+    let (cfg, eff) = load_and_resolve(repo, None, None);
+    let plan_res = plan_outputs(repo, cfg, &eff, "core").unwrap();
+    assert_eq!(plan_paths(&plan_res.plan), vec!["AGENTS.md"]);
+    assert_eq!(plan_res.plan.outputs[0].surface.as_deref(), Some("shared:AGENTS.md"));
+}
+
+#[test]
+fn core_shared_agents_md_fails_when_owner_is_not_core() {
+    let tmp = tempfile::tempdir().unwrap();
+    let repo = tmp.path();
+
+    write_file(
+        &repo.join(".agents/manifest.yaml"),
+        "specVersion: '0.1'\n\
+defaults: { mode: default, policy: safe, sharedSurfacesOwner: other }\n\
+enabled: { modes: [default], policies: [safe], skills: [], adapters: [core] }\n",
+    );
+    write_file(&repo.join(".agents/prompts/base.md"), "base\n");
+    write_file(&repo.join(".agents/prompts/project.md"), "project\n");
+    write_file(&repo.join(".agents/modes/default.md"), "---\nid: default\n---\n\n");
+    write_file(
+        &repo.join(".agents/policies/safe.yaml"),
+        "id: safe\ndescription: safe\ncapabilities: {}\npaths: { allow: [], deny: [], redact: [] }\nconfirmations: {}\n",
+    );
+
+    let (cfg, eff) = load_and_resolve(repo, None, None);
+    let err = plan_outputs(repo, cfg, &eff, "core").unwrap_err();
+    match err {
+        agents_core::outputs::PlanError::SharedOwnerViolation {
+            surface,
+            owner,
+            agent_id,
+        } => {
+            assert_eq!(surface, "shared:AGENTS.md");
+            assert_eq!(owner, "other");
+            assert_eq!(agent_id, "core");
+        }
+        other => panic!("expected SharedOwnerViolation, got: {other:?}"),
+    }
+}

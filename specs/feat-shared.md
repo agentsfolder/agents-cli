@@ -40,10 +40,11 @@ Unblocks: feat-adcodx, feat-adopen, feat-adcopl
     - [x] policy summary helper (optional; template prints a basic summary)
 
 - [ ] Collision ownership enforcement
-  - [ ] Ensure manifest `defaults.sharedSurfacesOwner` is honored
-  - [ ] If `sharedSurfacesOwner != core`, ensure either:
+- [x] Collision ownership enforcement
+  - [x] Ensure manifest `defaults.sharedSurfacesOwner` is honored
+  - [x] If `sharedSurfacesOwner != core`, ensure either:
     - [ ] another adapter owns the shared surface, or
-    - [ ] planning fails with actionable error
+    - [x] planning fails with actionable error
 
 - [ ] Tests
   - [ ] Golden test rendering `AGENTS.md` for:
