@@ -21,11 +21,18 @@ pub enum PlanError {
     #[error("unknown adapter: {agent_id}")]
     UnknownAdapter { agent_id: String },
 
-    #[error("output collision at path: {path}")]
-    PathCollision { path: String },
+    #[error("output collision at path: {path}: {contenders}")]
+    PathCollision { path: String, contenders: String },
 
-    #[error("surface collision: {surface}")]
-    SurfaceCollision { surface: String },
+    #[error("surface collision: {surface}: {message}")]
+    SurfaceCollision { surface: String, message: String },
+
+    #[error("surface {surface} is shared_owner; owner is {owner} (this adapter: {agent_id})")]
+    SharedOwnerViolation {
+        surface: String,
+        owner: String,
+        agent_id: String,
+    },
 
     #[error("invalid renderer config for {path}: {message}")]
     InvalidRenderer { path: String, message: String },
@@ -441,18 +448,29 @@ fn resolve_collisions(
         }
 
         if shared_owner != agent_id {
-            return Err(PlanError::SurfaceCollision {
+            return Err(PlanError::SharedOwnerViolation {
                 surface: surface.to_string(),
+                owner: shared_owner.clone(),
+                agent_id: agent_id.to_string(),
             });
         }
     }
 
     // Physical path collisions are always an error (multiple outputs writing the same file).
-    let mut seen_paths: BTreeSet<String> = BTreeSet::new();
+    let mut by_path: BTreeMap<String, Vec<String>> = BTreeMap::new();
     for p in &planned {
         let key = p.path.as_str().to_string();
-        if !seen_paths.insert(key.clone()) {
-            return Err(PlanError::PathCollision { path: key });
+        by_path
+            .entry(key)
+            .or_default()
+            .push(describe_output_for_collision(p));
+    }
+    for (path, items) in &by_path {
+        if items.len() > 1 {
+            return Err(PlanError::PathCollision {
+                path: path.clone(),
+                contenders: items.join(", "),
+            });
         }
     }
 
@@ -479,14 +497,39 @@ fn resolve_collisions(
         // All colliding outputs must agree on collision policy.
         let policy = items[0].collision;
         if items.iter().any(|p| p.collision != policy) {
-            return Err(PlanError::SurfaceCollision { surface });
+            let mut policies: Vec<String> = items
+                .iter()
+                .map(|p| format!("{}={:?}", p.path.as_str(), p.collision))
+                .collect();
+            policies.sort();
+            return Err(PlanError::SurfaceCollision {
+                surface,
+                message: format!("collision policies differ: {}", policies.join(", ")),
+            });
         }
 
         match policy {
-            CollisionPolicy::Error => return Err(PlanError::SurfaceCollision { surface }),
+            CollisionPolicy::Error => {
+                let mut paths: Vec<String> =
+                    items.iter().map(|p| p.path.as_str().to_string()).collect();
+                paths.sort();
+                return Err(PlanError::SurfaceCollision {
+                    surface,
+                    message: format!("multiple outputs for surface (collision=error): {}", paths.join(", ")),
+                });
+            }
             CollisionPolicy::SharedOwner => {
                 // Shared-owner surfaces may only be emitted once (by the designated owner).
-                return Err(PlanError::SurfaceCollision { surface });
+                let mut paths: Vec<String> =
+                    items.iter().map(|p| p.path.as_str().to_string()).collect();
+                paths.sort();
+                return Err(PlanError::SurfaceCollision {
+                    surface,
+                    message: format!(
+                        "shared_owner surface must be unique within an adapter: {}",
+                        paths.join(", ")
+                    ),
+                });
             }
             CollisionPolicy::Overwrite => {
                 // Deterministic winner: lowest path.
@@ -500,30 +543,45 @@ fn resolve_collisions(
                 // Require compatible output settings.
                 let first = &items[0];
                 if items.iter().any(|p| p.format != first.format) {
-                    return Err(PlanError::SurfaceCollision { surface });
+                    return Err(PlanError::SurfaceCollision {
+                        surface,
+                        message: "merge requires all outputs to have the same format".to_string(),
+                    });
                 }
                 if items
                     .iter()
                     .any(|p| !write_policy_eq(&p.write_policy, &first.write_policy))
                 {
-                    return Err(PlanError::SurfaceCollision { surface });
+                    return Err(PlanError::SurfaceCollision {
+                        surface,
+                        message: "merge requires all outputs to have the same writePolicy".to_string(),
+                    });
                 }
                 if items
                     .iter()
                     .any(|p| !drift_detection_eq(&p.drift_detection, &first.drift_detection))
                 {
-                    return Err(PlanError::SurfaceCollision { surface });
+                    return Err(PlanError::SurfaceCollision {
+                        surface,
+                        message: "merge requires all outputs to have the same driftDetection".to_string(),
+                    });
                 }
 
                 // Merge by creating a concat renderer over the original templates.
                 let mut sources: Vec<String> = vec![];
                 for p in &items {
                     if p.renderer.type_ != RendererType::Template {
-                        return Err(PlanError::SurfaceCollision { surface });
+                        return Err(PlanError::SurfaceCollision {
+                            surface,
+                            message: "merge currently supports template-only outputs".to_string(),
+                        });
                     }
                     let t = p.renderer.template.as_deref().unwrap_or("");
                     if t.is_empty() {
-                        return Err(PlanError::SurfaceCollision { surface });
+                        return Err(PlanError::SurfaceCollision {
+                            surface,
+                            message: "merge requires each output to specify a template".to_string(),
+                        });
                     }
                     sources.push(format!("template:{t}"));
                 }
@@ -548,6 +606,24 @@ fn resolve_collisions(
     });
 
     Ok(out)
+}
+
+fn describe_output_for_collision(p: &PlannedOutput) -> String {
+    let mut parts: Vec<String> = vec![];
+
+    if let Some(surface) = &p.surface {
+        parts.push(format!("surface={surface}"));
+    }
+
+    parts.push(format!("renderer={:?}", p.renderer.type_));
+    if let Some(t) = &p.renderer.template {
+        parts.push(format!("template={t}"));
+    }
+    if !p.renderer.sources.is_empty() {
+        parts.push(format!("sources={}", p.renderer.sources.join("|")));
+    }
+
+    parts.join(" ")
 }
 
 fn write_policy_eq(a: &WritePolicy, b: &WritePolicy) -> bool {

@@ -260,7 +260,9 @@ fn collision_check(ctx: &DoctorContext) -> Vec<DoctorItem> {
         let res = plan_outputs(&ctx.repo_root, repo.clone(), effective, &agent_id);
         if let Err(err) = res {
             let (level, msg) = match &err {
-                PlanError::PathCollision { .. } | PlanError::SurfaceCollision { .. } => {
+                PlanError::PathCollision { .. }
+                | PlanError::SurfaceCollision { .. }
+                | PlanError::SharedOwnerViolation { .. } => {
                     (if ctx.ci { DoctorLevel::Error } else { DoctorLevel::Warning }, "collision detected")
                 }
                 _ => (DoctorLevel::Error, "output planning failed"),

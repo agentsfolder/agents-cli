@@ -69,4 +69,4 @@ Unblocks: feat-prevdf, feat-syncer, feat-stamps
 
 ## Verification
 - [x] A fixture adapter renders a plan with deterministic output ordering
-- [ ] Colliding outputs fail with actionable diagnostics
+- [x] Colliding outputs fail with actionable diagnostics

@@ -138,7 +138,7 @@ outputs:
     let (cfg, eff) = load_and_resolve(repo, None, None);
     let err = plan_outputs(repo, cfg, &eff, "a").unwrap_err();
     match err {
-        agents_core::outputs::PlanError::PathCollision { path } => {
+        agents_core::outputs::PlanError::PathCollision { path, .. } => {
             assert_eq!(path, "same.md");
         }
         other => panic!("expected PathCollision, got: {other:?}"),
@@ -177,10 +177,16 @@ outputs:
     let (cfg, eff) = load_and_resolve(repo, None, None);
     let err = plan_outputs(repo, cfg, &eff, "a").unwrap_err();
     match err {
-        agents_core::outputs::PlanError::SurfaceCollision { surface } => {
+        agents_core::outputs::PlanError::SharedOwnerViolation {
+            surface,
+            owner,
+            agent_id,
+        } => {
             assert_eq!(surface, "shared:AGENTS.md");
+            assert_eq!(owner, "core");
+            assert_eq!(agent_id, "a");
         }
-        other => panic!("expected SurfaceCollision, got: {other:?}"),
+        other => panic!("expected SharedOwnerViolation, got: {other:?}"),
     }
 }
 
