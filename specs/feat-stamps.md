@@ -25,13 +25,13 @@ Unblocks: feat-driftx, feat-cleanup, feat-doctor
     - [x] timestamp? (avoid; keep deterministic) => do NOT include wall clock time
     - [x] content hash (sha256 of canonical content)
 
-- [ ] Define stamp encodings by stamp type
-  - [ ] `comment` (text/md):
-    - [ ] a clearly delimited block at top of file
-  - [ ] `frontmatter` (md):
-    - [ ] inject into YAML frontmatter under a reserved key (e.g., `x_generated`)
-  - [ ] `json_field` (json/jsonc):
-    - [ ] inject an `"x_generated"` object field
+- [x] Define stamp encodings by stamp type
+  - [x] `comment` (text/md):
+    - [x] a clearly delimited block at top of file
+  - [x] `frontmatter` (md):
+    - [x] inject into YAML frontmatter under a reserved key (e.g., `x_generated`)
+  - [x] `json_field` (json/jsonc):
+    - [x] inject an `"x_generated"` object field
 
 - [ ] Implement stamping functions
   - [ ] `strip_existing_stamp(content) -> (stripped, found_stamp)`
