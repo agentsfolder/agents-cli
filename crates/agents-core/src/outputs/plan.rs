@@ -156,13 +156,17 @@ fn evaluate_outputs(
 
         validate_renderer(out)?;
 
-        planned.push(build_planned_output(
+        let planned_out = build_planned_output(
             repo_root,
             agent_id,
             out,
             template_dir.clone(),
             render_ctx.clone(),
-        )?);
+        )?;
+
+        validate_renderer_sources(repo_root, repo, effective, &planned_out)?;
+
+        planned.push(planned_out);
     }
 
     // Stable ordering by path then surface.
@@ -239,6 +243,130 @@ fn validate_renderer(out: &AdapterOutput) -> Result<(), PlanError> {
     }
 
     Ok(())
+}
+
+fn validate_renderer_sources(
+    repo_root: &Path,
+    repo: &RepoConfig,
+    effective: &EffectiveConfig,
+    out: &PlannedOutput,
+) -> Result<(), PlanError> {
+    let fail = |message: String| PlanError::InvalidRenderer {
+        path: out.path.as_str().to_string(),
+        message,
+    };
+
+    // Validate template existence for template renderer.
+    if out.renderer.type_ == RendererType::Template {
+        let template_name = out
+            .renderer
+            .template
+            .as_deref()
+            .unwrap_or("")
+            .trim();
+
+        if template_name.is_empty() {
+            return Err(fail("template renderer requires `template`".to_string()));
+        }
+
+        let template_dir = out.template_dir.as_ref().ok_or_else(|| {
+            fail("template renderer requires adapter template_dir".to_string())
+        })?;
+
+        if !template_exists(template_dir, template_name) {
+            return Err(fail(format!(
+                "unknown template source: {template_name}"
+            )));
+        }
+    }
+
+    // Validate each declared source for concat/copy/json_merge.
+    if out.renderer.sources.is_empty() {
+        return Ok(());
+    }
+
+    for raw in &out.renderer.sources {
+        let raw = raw.trim();
+        if raw.is_empty() {
+            return Err(fail("renderer source must be non-empty".to_string()));
+        }
+
+        let (kind, val) = match raw.split_once(':') {
+            Some((k, v)) => (Some(k), v),
+            None => (None, raw),
+        };
+
+        match kind {
+            Some("template") => {
+                let template_dir = out
+                    .template_dir
+                    .as_ref()
+                    .ok_or_else(|| fail("template source requires adapter template_dir".to_string()))?;
+                let name = val.trim();
+                if name.is_empty() {
+                    return Err(fail("template:<name> must include a template name".to_string()));
+                }
+                if !template_exists(template_dir, name) {
+                    return Err(fail(format!("unknown template source: {raw}")));
+                }
+            }
+            Some("prompt") => {
+                let p = val.trim();
+                match p {
+                    "base" | "project" | "composed" => {}
+                    _ => return Err(fail(format!("unknown prompt source: {raw}"))),
+                }
+            }
+            Some("snippet") => {
+                let id = val.trim();
+                if id.is_empty() {
+                    return Err(fail("snippet:<id> must include a snippet id".to_string()));
+                }
+                if !effective.snippet_ids_included.iter().any(|x| x == id) {
+                    return Err(fail(format!("snippet not included in effective config: {raw}")));
+                }
+                if !repo.prompts.snippets.contains_key(id) {
+                    return Err(fail(format!("unknown snippet id: {raw}")));
+                }
+            }
+            Some("repo") | Some("file") | None => {
+                let rel = val.trim();
+                if rel.is_empty() {
+                    return Err(fail(format!("invalid file source: {raw}")));
+                }
+
+                let repo_rel = fsutil::repo_relpath_noexist(repo_root, Path::new(rel))
+                    .map_err(|e| fail(format!("invalid file source: {raw}: {e}")))?;
+                let abs = repo_root.join(repo_rel.as_str());
+                if !abs.exists() {
+                    return Err(fail(format!("missing file source: {raw}")));
+                }
+            }
+            Some(other) => return Err(fail(format!("unknown renderer source kind: {other}"))),
+        }
+    }
+
+    Ok(())
+}
+
+fn template_exists(template_dir: &Path, template_name: &str) -> bool {
+    // Template names are stored as paths relative to the adapter templates directory.
+    if template_name.is_empty() {
+        return false;
+    }
+
+    // Reject absolute paths and parent traversal.
+    let p = Path::new(template_name);
+    if p.is_absolute() {
+        return false;
+    }
+    for c in p.components() {
+        if let std::path::Component::ParentDir = c {
+            return false;
+        }
+    }
+
+    template_dir.join(p).is_file()
 }
 
 fn build_planned_output(

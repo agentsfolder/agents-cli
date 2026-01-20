@@ -51,7 +51,7 @@ Unblocks: feat-prevdf, feat-syncer, feat-stamps
     - [x] `concat` requires `sources`
     - [x] `copy` requires `sources` (or a `source`)
     - [x] `json_merge` requires `sources` and `jsonMergeStrategy`
-  - [ ] Validate sources resolve to known canonical inputs or adapter templates
+  - [x] Validate sources resolve to known canonical inputs or adapter templates
 
 - [x] Source map skeleton
   - [x] Track for each planned output:
