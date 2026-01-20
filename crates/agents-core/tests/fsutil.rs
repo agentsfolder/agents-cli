@@ -37,6 +37,16 @@ fn repo_relpath_rejects_escape() {
 }
 
 #[test]
+fn repo_relpath_noexist_accepts_missing_file() {
+    let tmp = tempfile::tempdir().unwrap();
+    let root = tmp.path().join("repo");
+    fs::create_dir_all(&root).unwrap();
+
+    let rp = fsutil::repo_relpath_noexist(&root, Path::new("a/b/missing.txt")).unwrap();
+    assert_eq!(rp.as_str(), "a/b/missing.txt");
+}
+
+#[test]
 fn read_to_string_normalizes_crlf() {
     let tmp = tempfile::tempdir().unwrap();
     let p = tmp.path().join("file.txt");

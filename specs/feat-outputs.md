@@ -34,6 +34,7 @@ Unblocks: feat-prevdf, feat-syncer, feat-stamps
   - [x] Implement `condition.backendIn` filtering
   - [x] Implement `condition.profileIn` filtering
   - [x] Stable ordering of outputs (by `path`, then `surface`)
+  - [x] Planned output paths do not need to exist on disk
 
 - [ ] Collision detection
   - [ ] Detect physical path collisions within the same plan

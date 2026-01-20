@@ -84,6 +84,50 @@ pub fn repo_relpath(root: &Path, path: &Path) -> FsResult<RepoPath> {
     Ok(RepoPath(path_to_forward_slash(rel)))
 }
 
+/// Convert a repo-relative path to a normalized `RepoPath` without requiring the target to exist.
+///
+/// Unlike `repo_relpath`, this does not canonicalize `path`.
+///
+/// This is used for planned output paths that may not exist yet.
+pub fn repo_relpath_noexist(root: &Path, path: &Path) -> FsResult<RepoPath> {
+    let _root_abs = root.canonicalize().map_err(|e| FsError::Io {
+        path: root.to_path_buf(),
+        source: e,
+    })?;
+
+    // Reject absolute paths.
+    if path.is_absolute() {
+        return Err(FsError::PathEscapesRepo {
+            root: root.to_path_buf(),
+            path: path.to_path_buf(),
+        });
+    }
+
+    let mut parts: Vec<String> = vec![];
+    for comp in path.components() {
+        match comp {
+            Component::Normal(os) => parts.push(os.to_string_lossy().to_string()),
+            Component::CurDir => {}
+            Component::ParentDir => {
+                if parts.pop().is_none() {
+                    return Err(FsError::PathEscapesRepo {
+                        root: root.to_path_buf(),
+                        path: path.to_path_buf(),
+                    });
+                }
+            }
+            Component::RootDir | Component::Prefix(_) => {
+                return Err(FsError::PathEscapesRepo {
+                    root: root.to_path_buf(),
+                    path: path.to_path_buf(),
+                });
+            }
+        }
+    }
+
+    Ok(RepoPath(parts.join("/")))
+}
+
 fn path_to_forward_slash(path: &Path) -> String {
     let mut out = String::new();
     for comp in path.components() {

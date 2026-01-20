@@ -248,7 +248,7 @@ fn build_planned_output(
     template_dir: Option<std::path::PathBuf>,
     render_ctx: RenderContext,
 ) -> Result<PlannedOutput, PlanError> {
-    let path = fsutil::repo_relpath(repo_root, Path::new(&out.path)).map_err(|e| {
+    let path = fsutil::repo_relpath_noexist(repo_root, Path::new(&out.path)).map_err(|e| {
         PlanError::InvalidRenderer {
             path: out.path.clone(),
             message: e.to_string(),
