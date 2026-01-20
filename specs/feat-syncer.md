@@ -35,4 +35,4 @@ Unblocks: feat-runner, feat-doctor
   - [x] Sync fails when unmanaged file exists at output path and writePolicy is `if_generated`
 
 ## Verification
-- [ ] `agents sync` followed by `agents diff` yields no changes
+- [x] `agents sync` followed by `agents diff` yields no changes
