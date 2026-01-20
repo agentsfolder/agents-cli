@@ -43,11 +43,11 @@ Unblocks: feat-adtest
   - [x] Remove stale generated files that are no longer planned (optional; careful)
   - [x] Do NOT overwrite unmanaged files
 
-- [ ] `--ci` semantics
-  - [ ] In `--ci` mode:
-    - [ ] drift is an error
-    - [ ] collisions are errors
-    - [ ] schema errors are errors
+- [x] `--ci` semantics
+  - [x] In `--ci` mode:
+    - [x] drift is an error
+    - [x] collisions are errors
+    - [x] schema errors are errors
 
 - [ ] Tests
   - [ ] Doctor passes on clean fixture
