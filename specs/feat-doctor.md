@@ -24,7 +24,7 @@ Unblocks: feat-adtest
     - [x] exit code mapping (`--ci` makes warnings fail if desired)
 
 
-- [ ] Implement checks
+- [x] Implement checks
   - [x] Schema check
     - [x] run the same validation as `agents validate`
   - [x] Collision check
