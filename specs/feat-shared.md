@@ -46,7 +46,7 @@ Unblocks: feat-adcodx, feat-adopen, feat-adcopl
     - [ ] another adapter owns the shared surface, or
     - [x] planning fails with actionable error
 
-- [ ] Tests
+- [x] Tests
   - [x] Golden test rendering `AGENTS.md` for:
     - [x] single repo
     - [x] monorepo with scopes
@@ -54,5 +54,5 @@ Unblocks: feat-adcodx, feat-adopen, feat-adcopl
   - [x] Collision test: two adapters try to own `shared:AGENTS.md` => error
 
 ## Verification
-- [ ] `agents preview --agent codex` (later) uses shared `AGENTS.md`
-- [ ] `AGENTS.md` output is byte-identical across runs
+- [x] `agents preview --agent core` uses shared `AGENTS.md`
+- [x] `AGENTS.md` output is byte-identical across runs
