@@ -40,8 +40,8 @@ Unblocks: debugging and trust
     - [x] else report "unmanaged file"
 
 - [ ] Render explain output
-  - [ ] Human-readable stable format
-  - [ ] Optionally `--json`
+  - [x] Human-readable stable format
+  - [x] Optionally `--json`
 
 - [ ] Tests
   - [ ] After preview/sync, explain returns expected components

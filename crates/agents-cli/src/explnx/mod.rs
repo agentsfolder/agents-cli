@@ -173,6 +173,12 @@ fn print_explain_human(m: &agents_core::explain::ExplainSourceMap) {
     if let Some(t) = &m.renderer.template {
         println!("template: {t}");
     }
+    if !m.renderer.sources.is_empty() {
+        println!("sources:");
+        for s in &m.renderer.sources {
+            println!("- {s}");
+        }
+    }
 
     println!("mode: {}", m.effective.mode_id);
     println!("policy: {}", m.effective.policy_id);
