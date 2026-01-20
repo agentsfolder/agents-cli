@@ -48,9 +48,9 @@ Unblocks: feat-syncer, feat-cleanup
     - [x] Avoid duplicate entries
     - [x] Do not modify `.gitignore` if it is unmanaged? (decide; default safe)
 
-- [ ] Permissions and file modes
-  - [ ] Preserve executable bit only if explicitly needed (likely no for generated config)
-  - [ ] Ensure Windows compatibility (no unix-only perms assumptions)
+- [x] Permissions and file modes
+  - [x] Preserve executable bit only if explicitly needed (likely no for generated config)
+  - [x] Ensure Windows compatibility (no unix-only perms assumptions)
 
 - [ ] Tests
   - [ ] Write new file

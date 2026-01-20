@@ -97,6 +97,7 @@ impl Backend for MaterializeBackend {
             // `always` overwrites unconditionally; `if_generated` reaches here only when safe.
             let bytes = normalize_bytes_for_write(&dest, &out.bytes, Some(planned.format));
             fsutil::atomic_write(&dest, &bytes)?;
+            // Intentionally do not set executable bits or other platform-specific permissions.
             report.written.push(out.path.clone());
         }
 
