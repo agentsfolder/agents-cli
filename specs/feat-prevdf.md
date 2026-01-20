@@ -18,8 +18,8 @@ Unblocks: feat-syncer
   - [ ] Load repo config + validate schemas
   - [ ] Resolve effective config (mode/profile/scope/backend)
   - [ ] Plan outputs for selected agent
-  - [ ] Render outputs (template/concat/copy/json_merge)
-  - [ ] Apply stamps (but write only into temp dir)
+  - [x] Render outputs (template/concat/copy/json_merge)
+  - [x] Apply stamps (but write only into temp dir)
   - [ ] Print:
     - [ ] temp directory path
     - [ ] list of outputs with repo-relative destination
