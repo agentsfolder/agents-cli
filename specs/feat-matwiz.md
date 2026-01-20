@@ -25,15 +25,15 @@ Unblocks: feat-syncer, feat-cleanup
   - [x] Use feat-fsutil `atomic_write`
   - [x] Ensure newline normalization for text formats
 
-- [ ] Implement writePolicy handling
-  - [ ] `always`:
-    - [ ] overwrite unconditionally
-  - [ ] `if_generated`:
-    - [ ] if file does not exist: write
-    - [ ] if file exists and has valid stamp from this generator: overwrite
-    - [ ] if file exists and is unmanaged: refuse and report conflict
-  - [ ] `never`:
-    - [ ] never write; report skipped
+- [x] Implement writePolicy handling
+  - [x] `always`:
+    - [x] overwrite unconditionally
+  - [x] `if_generated`:
+    - [x] if file does not exist: write
+    - [x] if file exists and has valid stamp from this generator: overwrite
+    - [x] if file exists and is unmanaged: refuse and report conflict
+  - [x] `never`:
+    - [x] never write; report skipped
 
 - [ ] Implement conflict reporting
   - [ ] Provide actionable error:
