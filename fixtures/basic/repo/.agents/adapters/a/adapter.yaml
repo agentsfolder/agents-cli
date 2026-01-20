@@ -1,0 +1,7 @@
+agentId: a
+version: '0.1'
+backendDefaults: { preferred: materialize, fallback: materialize }
+outputs:
+  - path: out.md
+    format: md
+    renderer: { type: template, template: t.hbs }

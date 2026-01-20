@@ -309,3 +309,57 @@ fn text_diff_if_applicable(path: &str, exp: &[u8], act: &[u8]) -> Option<String>
     let act_s = std::str::from_utf8(act).ok()?;
     Some(unified_diff_for(exp_s, act_s, "expected", path))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn write(path: &Path, bytes: &[u8]) {
+        if let Some(parent) = path.parent() {
+            std::fs::create_dir_all(parent).unwrap();
+        }
+        std::fs::write(path, bytes).unwrap();
+    }
+
+    #[test]
+    fn compare_dirs_detects_missing_and_mismatch() {
+        let tmp = tempfile::tempdir().unwrap();
+        let expect = tmp.path().join("expect");
+        let actual = tmp.path().join("actual");
+
+        write(&expect.join("a.txt"), b"hello\n");
+        write(&expect.join("b.txt"), b"same\n");
+        write(&actual.join("b.txt"), b"same\n");
+        write(&actual.join("c.txt"), b"extra\n");
+
+        let mismatches = compare_dirs(&expect, &actual).unwrap();
+        let kinds: Vec<String> = mismatches.iter().map(|m| m.kind.clone()).collect();
+
+        assert!(kinds.contains(&"missing_actual".to_string()));
+        assert!(kinds.contains(&"unexpected_actual".to_string()));
+    }
+
+    #[test]
+    fn compare_dirs_includes_text_unified_diff() {
+        let tmp = tempfile::tempdir().unwrap();
+        let expect = tmp.path().join("expect");
+        let actual = tmp.path().join("actual");
+
+        write(&expect.join("a.md"), b"one\n");
+        write(&actual.join("a.md"), b"two\n");
+
+        let mismatches = compare_dirs(&expect, &actual).unwrap();
+        assert_eq!(mismatches.len(), 1);
+        assert_eq!(mismatches[0].kind, "content_mismatch");
+        assert!(mismatches[0]
+            .diff
+            .as_deref()
+            .unwrap_or("")
+            .contains("-one"));
+        assert!(mismatches[0]
+            .diff
+            .as_deref()
+            .unwrap_or("")
+            .contains("+two"));
+    }
+}

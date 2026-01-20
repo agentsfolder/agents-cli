@@ -44,9 +44,9 @@ Unblocks: CI gate for adapter changes
   - [x] Ensure exit code non-zero on any mismatch
   - [x] Keep runtime reasonable (parallelize fixtures if possible)
 
-- [ ] Tests
-  - [ ] Unit tests for file discovery and compare logic
-  - [ ] One self-contained fixture test (runs in CI)
+- [x] Tests
+  - [x] Unit tests for file discovery and compare logic
+  - [x] One self-contained fixture test (runs in CI)
 
 ## Verification
 - [ ] `agents test adapters` passes on fixtures
