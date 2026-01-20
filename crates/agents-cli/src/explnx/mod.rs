@@ -47,6 +47,20 @@ pub fn cmd_explain(repo_root: &Path, input_path: &Path, output: OutputMode) -> R
     let p = explain_record_path(repo_root, &repo_rel);
 
     if !p.is_file() {
+        // Fall back to stamp parsing for minimal explanation.
+        let abs = repo_root.join(&repo_rel);
+        if abs.is_file() {
+            let content = std::fs::read_to_string(&abs).map_err(|e| AppError {
+                category: ErrorCategory::Io,
+                message: e.to_string(),
+                context: vec![format!("path: {}", abs.display())],
+            })?;
+
+            if let Some(stamp) = agents_core::stamps::parse_stamp(&content) {
+                return Ok(print_stamp_explain(&repo_rel, &stamp, output));
+            }
+        }
+
         return Err(AppError {
             category: ErrorCategory::Io,
             message: "no explain source map found".to_string(),
@@ -84,6 +98,34 @@ pub fn cmd_explain(repo_root: &Path, input_path: &Path, output: OutputMode) -> R
     }
 
     Ok(())
+}
+
+fn print_stamp_explain(repo_rel: &str, stamp: &agents_core::stamps::Stamp, output: OutputMode) {
+    match output {
+        OutputMode::Json => {
+            #[derive(serde::Serialize)]
+            struct StampExplain<'a> {
+                path: &'a str,
+                stamp: &'a agents_core::stamps::Stamp,
+            }
+
+            let s = serde_json::to_string_pretty(&StampExplain { path: repo_rel, stamp })
+                .unwrap_or_else(|_| "{}".to_string());
+            println!("{s}");
+        }
+        OutputMode::Human => {
+            println!("path: {repo_rel}");
+            println!("generator: {}", stamp.meta.generator);
+            println!("adapter: {}", stamp.meta.adapter_agent_id);
+            println!("mode: {}", stamp.meta.mode);
+            println!("policy: {}", stamp.meta.policy);
+            println!("backend: {:?}", stamp.meta.backend);
+            println!(
+                "profile: {}",
+                stamp.meta.profile.as_deref().unwrap_or("<none>")
+            );
+        }
+    }
 }
 
 fn normalize_repo_rel_path(repo_root: &Path, input: &Path) -> Result<String, AppError> {
