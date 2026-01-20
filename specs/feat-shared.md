@@ -12,7 +12,7 @@ Unblocks: feat-adcodx, feat-adopen, feat-adcopl
 ## Implementation Plan
 - [ ] Decide implementation approach
   - [ ] Option A: Create a special adapter id (e.g., `core`) under `.agents/adapters/core` embedded by init preset
-  - [ ] Option B: Hardcode shared surface generation in code
+  - [x] Option B: Hardcode shared surface generation in code
   - [ ] Prefer Option A to keep everything in `.agents/adapters/**` and testable via golden fixtures.
 
 - [ ] Define shared surface template requirements
