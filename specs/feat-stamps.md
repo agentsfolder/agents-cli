@@ -33,10 +33,10 @@ Unblocks: feat-driftx, feat-cleanup, feat-doctor
   - [x] `json_field` (json/jsonc):
     - [x] inject an `"x_generated"` object field
 
-- [ ] Implement stamping functions
-  - [ ] `strip_existing_stamp(content) -> (stripped, found_stamp)`
-  - [ ] `apply_stamp(content_stripped, meta, method) -> stamped_content`
-  - [ ] Ensure stamping is idempotent and deterministic
+- [x] Implement stamping functions
+  - [x] `strip_existing_stamp(content) -> (stripped, found_stamp)`
+  - [x] `apply_stamp(content_stripped, meta, method) -> stamped_content`
+  - [x] Ensure stamping is idempotent and deterministic
 
 - [ ] Implement hashing
   - [ ] Use `sha2::Sha256`
