@@ -28,9 +28,9 @@ Unblocks: feat-doctor
     - [x] prune empty parent directories up to repo root (best-effort)
   - [x] Never delete directories that contain unmanaged files
 
-- [ ] Safety checks
-  - [ ] Require confirmation if policy says delete requires confirmation
-  - [ ] Never delete outside repo root
+- [x] Safety checks
+  - [x] Require confirmation if policy says delete requires confirmation
+  - [x] Never delete outside repo root
 
 - [ ] Reporting
   - [ ] Print list of deleted paths

@@ -8,6 +8,7 @@ mod main_tests;
 mod prevdf;
 mod status;
 mod syncer;
+mod cleanup;
 
 #[derive(Debug, Clone, ValueEnum)]
 enum Backend {
@@ -110,6 +111,12 @@ enum Commands {
     Clean {
         #[arg(long)]
         agent: Option<String>,
+
+        #[arg(long, default_value_t = false)]
+        dry_run: bool,
+
+        #[arg(long, default_value_t = false)]
+        yes: bool,
     },
     Import {
         #[arg(long = "from")]
@@ -262,6 +269,19 @@ fn dispatch(ctx: &AppContext, cmd: Commands) -> AppResult<()> {
                 },
             )
         }
+
+        Commands::Clean {
+            agent,
+            dry_run,
+            yes,
+        } => crate::cleanup::cmd_clean(
+            &ctx.repo_root,
+            crate::cleanup::CleanOptions {
+                agent,
+                dry_run,
+                yes,
+            },
+        ),
 
         _ => Err(AppError::not_initialized(&ctx.repo_root)),
     }
