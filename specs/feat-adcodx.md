@@ -37,9 +37,9 @@ Notes:
 - [x] Validate collision behavior
   - [x] Ensure Codex adapter does not attempt to own shared surface unless configured as owner
 
-- [ ] Tests
-  - [ ] Add golden fixture output for `agents preview --agent codex`
-  - [ ] Ensure output list matches PRD requirements
+- [x] Tests
+  - [x] Add golden fixture output for `agents preview --agent codex`
+  - [x] Ensure output list matches PRD requirements
 
 ## Verification
-- [ ] `agents preview --agent codex` produces required outputs without collisions
+- [x] `agents preview --agent codex` produces required outputs without collisions
