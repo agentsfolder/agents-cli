@@ -15,7 +15,7 @@ Unblocks: debugging and trust
 
 ## Implementation Plan
 - [x] Decide where to store source maps
-  - [ ] Option A: embed in stamp metadata (limited)
+  - [x] Option A: embed in stamp metadata (limited, rejected in favor of sidecar)
   - [x] Option B: write sidecar file under `.agents/state/` (gitignored) during preview/sync
   - [x] Prefer B: `.agents/state/explain/<hash>.json` keyed by output path
 
