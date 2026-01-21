@@ -37,8 +37,8 @@ Notes:
     - [x] project settings via `.claude/settings.json` (permissions.deny)
   - [x] Keep unknown keys out; deterministic formatting
 
-- [ ] Tests
-  - [ ] Golden fixture for `.claude/settings.json`
+- [x] Tests
+  - [x] Golden fixture for `.claude/settings.json`
   - [x] Ensure stamp present and drift detectable
 
 ## Verification

@@ -1,0 +1,10 @@
+{
+  "x_generated": {"generator":"agents","adapterAgentId":"claude","manifestSpecVersion":"0.1","mode":"default","policy":"safe","backend":"vfs_container","contentSha256":"70d76964f4515c835bbe18efde551d1d43eccbdeae2eac22972ade7b693a0d77"},
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)"
+    ]
+  }
+}
