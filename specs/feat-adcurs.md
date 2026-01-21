@@ -33,9 +33,9 @@ Unblocks: feat-adtest
     - [x] deterministic section headers
   - [x] Ensure stable ordering of snippets and lists
 
-- [ ] Tests
+- [x] Tests
   - [x] Golden fixture for cursor outputs
-  - [ ] Determinism test: repeated renders produce identical filenames and content
+  - [x] Determinism test: repeated renders produce identical filenames and content
 
 ## Verification
-- [ ] `agents diff --agent cursor` is stable across runs
+- [x] `agents diff --agent cursor` is stable across runs
