@@ -73,8 +73,34 @@ pub fn cmd_import(repo_root: &Path, opts: ImportOptions) -> Result<(), AppError>
         write_file(repo_root, &f.rel_path, &f.contents)?;
     }
 
+    // Validate produced artifacts.
+    let (cfg, _report) = agents_core::loadag::load_repo_config(
+        repo_root,
+        &agents_core::loadag::LoaderOptions {
+            require_schemas_dir: true,
+        },
+    )
+    .map_err(|e| AppError {
+        category: ErrorCategory::Io,
+        message: e.to_string(),
+        context: vec![],
+    })?;
+
+    agents_core::schemas::validate_repo_config(repo_root, &cfg).map_err(|err| AppError {
+        category: ErrorCategory::SchemaInvalid,
+        message: format!("schema invalid: {} ({})", err.path.display(), err.schema),
+        context: {
+            let mut c = vec![format!("pointer: {}", err.pointer), err.message];
+            if let Some(h) = err.hint {
+                c.push(h);
+            }
+            c
+        },
+    })?;
+
     println!("ok: imported into .agents/ (from: {})", importer.agent_id());
-    println!("next: run `agents validate` and `agents status`");
+    println!("ok: schemas valid");
+    println!("next: run `agents status` and `agents preview --agent copilot`");
 
     Ok(())
 }

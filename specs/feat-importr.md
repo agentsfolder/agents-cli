@@ -35,8 +35,8 @@ Unblocks: adoption in existing repos
   - [x] Add `--dry-run` to show what would be written
   - [x] Print diff-like summary
 
-- [ ] Validation
-  - [ ] After import, run schema validation on produced artifacts
+- [x] Validation
+  - [x] After import, run schema validation on produced artifacts
 
 - [ ] Tests
   - [ ] Fixture with a copilot instructions file imports into `.agents` and validates
