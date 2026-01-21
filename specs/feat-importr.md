@@ -11,7 +11,7 @@ Unblocks: adoption in existing repos
 
 ## Implementation Plan
 - [x] Define import framework
-  - [ ] `Importer` trait:
+  - [x] `Importer` trait:
     - [x] `agent_id()`
     - [x] `discover(repo_root) -> Option<ImportInputs>`
     - [x] `convert(inputs) -> CanonicalArtifacts`
