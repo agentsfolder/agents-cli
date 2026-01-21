@@ -37,27 +37,27 @@ Unblocks: feat-adbase (if used), feat-adtest
   - [x] Write `.agents/state/.gitignore` to ignore `state.yaml`
 
 - [x] Preset content requirements
-  - [ ] Manifest:
+  - [x] Manifest:
     - [x] set `specVersion`
     - [x] defaults mode/policy/backend
     - [x] enabled modes/policies/skills/adapters appropriate for preset
-  - [ ] Modes:
+  - [x] Modes:
     - [x] at least `default` and `readonly-audit` examples
-  - [ ] Policies:
+  - [x] Policies:
     - [x] at least one safe default policy
-  - [ ] Adapters:
+  - [x] Adapters:
     - [x] minimal adapter.yaml per supported agent in agent-pack
     - [x] minimal templates so `agents preview` works later
-  - [ ] Schemas:
+  - [x] Schemas:
     - [x] embed PRD schemas into `.agents/schemas/`
 
 - [x] Post-init validation
   - [x] After writing, run internal validate (same as `agents validate`)
   - [x] Print next steps (run `agents status`, `agents preview`)
 
-- [ ] Tests
-  - [ ] Init into temp dir creates expected structure
-  - [ ] Init is deterministic (run twice with same preset => same bytes or second run fails safely)
+- [x] Tests
+  - [x] Init into temp dir creates expected structure
+  - [x] Init is deterministic (run twice with same preset => same bytes or second run fails safely)
 
 ## Verification
-- [ ] `agents init --preset standard` creates `.agents/` and `agents validate` passes
+- [x] `agents init --preset standard` creates `.agents/` and `agents validate` passes
