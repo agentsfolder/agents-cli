@@ -120,14 +120,19 @@ impl Importer for CopilotImporter {
             contents: normalize_lf(COPILOT_IMPORT_MANIFEST).into_bytes(),
         });
 
-        // Replace project prompt with imported instructions.
-        let mut project_md = inputs.content;
-        if !project_md.ends_with('\n') {
-            project_md.push('\n');
+        // Import content as a snippet and provide an opt-in mode.
+        let mut snippet_md = inputs.content;
+        if !snippet_md.ends_with('\n') {
+            snippet_md.push('\n');
         }
         files.push(CanonicalFile {
-            rel_path: ".agents/prompts/project.md".to_string(),
-            contents: normalize_lf(&project_md).into_bytes(),
+            rel_path: ".agents/prompts/snippets/copilot.md".to_string(),
+            contents: normalize_lf(&snippet_md).into_bytes(),
+        });
+
+        files.push(CanonicalFile {
+            rel_path: ".agents/modes/copilot-import.md".to_string(),
+            contents: normalize_lf(COPILOT_IMPORT_MODE).into_bytes(),
         });
 
         Ok(CanonicalArtifacts { files })
@@ -137,10 +142,19 @@ impl Importer for CopilotImporter {
 const COPILOT_IMPORT_MANIFEST: &str = "specVersion: '0.1'\n\
 defaults: { mode: default, policy: safe, backend: materialize, sharedSurfacesOwner: core }\n\
 enabled:\n\
-  modes: [default, readonly-audit]\n\
+  modes: [default, readonly-audit, copilot-import]\n\
   policies: [safe, conservative, ci-safe]\n\
   skills: []\n\
   adapters: [core, copilot]\n";
+
+const COPILOT_IMPORT_MODE: &str = "---\n\
+id: copilot-import\n\
+title: Copilot Import\n\
+includeSnippets: [copilot]\n\
+---\n\
+\n\
+This mode includes imported Copilot instructions as a snippet (copilot).\n\
+";
 
 fn ensure_agents_not_initialized(repo_root: &Path) -> Result<(), AppError> {
     let manifest = repo_root.join(".agents/manifest.yaml");

@@ -26,8 +26,8 @@ Unblocks: adoption in existing repos
 - [x] Implement first importer (recommend: Copilot)
   - [x] Read `.github/copilot-instructions.md`
   - [x] Convert to:
-    - [x] `.agents/prompts/project.md`
-    - [ ] create a mode that includes that snippet
+    - [x] `.agents/prompts/project.md` (or a snippet)
+    - [x] create a mode that includes that snippet
   - [x] Generate/update manifest enabled sets as needed
   - [x] Do not overwrite existing `.agents` without confirmation
 
