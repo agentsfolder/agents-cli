@@ -10,9 +10,12 @@ Unblocks: feat-adtest
 - One or more templates producing rule files under `.cursor/rules/`.
 
 ## Implementation Plan
-- [ ] Determine rule file breakdown
-  - [ ] Decide categories (e.g., `00-mode.md`, `10-style.md`, `20-testing.md`, etc.)
-  - [ ] Ensure naming is deterministic and stable
+- [x] Determine rule file breakdown
+  - [x] Decide categories:
+    - [x] `00-current-mode.md`
+    - [x] `10-guidance.md`
+    - [x] `20-policy.md`
+  - [x] Ensure naming is deterministic and stable
 
 - [ ] Implement adapter YAML
   - [ ] Outputs:
