@@ -23,13 +23,13 @@ Unblocks: adoption in existing repos
     - [x] default known paths (e.g., `.github/copilot-instructions.md`)
     - [x] allow `--path` override
 
-- [ ] Implement first importer (recommend: Copilot)
-  - [ ] Read `.github/copilot-instructions.md`
-  - [ ] Convert to:
-    - [ ] `.agents/prompts/project.md` (or a snippet)
+- [x] Implement first importer (recommend: Copilot)
+  - [x] Read `.github/copilot-instructions.md`
+  - [x] Convert to:
+    - [x] `.agents/prompts/project.md`
     - [ ] create a mode that includes that snippet
-  - [ ] Generate/update manifest enabled sets as needed
-  - [ ] Do not overwrite existing `.agents` without confirmation
+  - [x] Generate/update manifest enabled sets as needed
+  - [x] Do not overwrite existing `.agents` without confirmation
 
 - [ ] Dry-run and preview
   - [ ] Add `--dry-run` to show what would be written

@@ -37,12 +37,191 @@ pub fn cmd_import(repo_root: &Path, opts: ImportOptions) -> Result<(), AppError>
     let from = opts.from_agent.trim();
     let inputs = resolve_import_inputs(repo_root, from, opts.path.as_deref())?;
 
-    // Implemented in later steps (see feat-importr): convert + write artifacts.
-    Err(AppError {
-        category: ErrorCategory::InvalidArgs,
-        message: "import not implemented yet".to_string(),
-        context: vec![format!("from: {from}"), format!("path: {}", inputs.source_path.display())],
-    })
+    ensure_agents_not_initialized(repo_root)?;
+
+    let importer: Box<dyn Importer> = match from {
+        "copilot" => Box::new(CopilotImporter),
+        _ => {
+            return Err(AppError {
+                category: ErrorCategory::InvalidArgs,
+                message: "unsupported import source".to_string(),
+                context: vec![format!("from: {from}"), "hint: supported: copilot".to_string()],
+            })
+        }
+    };
+
+    let artifacts = importer
+        .convert(inputs)
+        .map_err(|e| AppError {
+            category: ErrorCategory::Io,
+            message: e,
+            context: vec![],
+        })?;
+
+    for f in &artifacts.files {
+        write_file(repo_root, &f.rel_path, &f.contents)?;
+    }
+
+    println!("ok: imported into .agents/ (from: {})", importer.agent_id());
+    println!("next: run `agents validate` and `agents status`");
+
+    Ok(())
+}
+
+struct CopilotImporter;
+
+impl Importer for CopilotImporter {
+    fn agent_id(&self) -> &'static str {
+        "copilot"
+    }
+
+    fn discover(&self, _repo_root: &Path) -> Option<ImportInputs> {
+        None
+    }
+
+    fn convert(&self, inputs: ImportInputs) -> Result<CanonicalArtifacts, String> {
+        let mut files: Vec<CanonicalFile> = vec![];
+
+        // Start from the standard preset.
+        let base = crate::initpr::assets::files_for_preset(crate::initpr::assets::InitPreset::Standard);
+        for f in base {
+            files.push(CanonicalFile {
+                rel_path: f.rel_path.to_string(),
+                contents: normalize_lf(f.contents).into_bytes(),
+            });
+        }
+
+        // Ensure Copilot adapter is present.
+        files.push(CanonicalFile {
+            rel_path: ".agents/adapters/copilot/adapter.yaml".to_string(),
+            contents: normalize_lf(include_str!(
+                "../initpr/assets/agent-pack/adapters/copilot/adapter.yaml"
+            ))
+            .into_bytes(),
+        });
+        files.push(CanonicalFile {
+            rel_path: ".agents/adapters/copilot/templates/copilot-instructions.md.hbs".to_string(),
+            contents: normalize_lf(include_str!(
+                "../initpr/assets/agent-pack/adapters/copilot/templates/copilot-instructions.md.hbs"
+            ))
+            .into_bytes(),
+        });
+        files.push(CanonicalFile {
+            rel_path: ".agents/adapters/copilot/templates/scope.instructions.md.hbs".to_string(),
+            contents: normalize_lf(include_str!(
+                "../initpr/assets/agent-pack/adapters/copilot/templates/scope.instructions.md.hbs"
+            ))
+            .into_bytes(),
+        });
+
+        // Replace manifest with one that enables the copilot adapter.
+        files.push(CanonicalFile {
+            rel_path: ".agents/manifest.yaml".to_string(),
+            contents: normalize_lf(COPILOT_IMPORT_MANIFEST).into_bytes(),
+        });
+
+        // Replace project prompt with imported instructions.
+        let mut project_md = inputs.content;
+        if !project_md.ends_with('\n') {
+            project_md.push('\n');
+        }
+        files.push(CanonicalFile {
+            rel_path: ".agents/prompts/project.md".to_string(),
+            contents: normalize_lf(&project_md).into_bytes(),
+        });
+
+        Ok(CanonicalArtifacts { files })
+    }
+}
+
+const COPILOT_IMPORT_MANIFEST: &str = "specVersion: '0.1'\n\
+defaults: { mode: default, policy: safe, backend: materialize, sharedSurfacesOwner: core }\n\
+enabled:\n\
+  modes: [default, readonly-audit]\n\
+  policies: [safe, conservative, ci-safe]\n\
+  skills: []\n\
+  adapters: [core, copilot]\n";
+
+fn ensure_agents_not_initialized(repo_root: &Path) -> Result<(), AppError> {
+    let manifest = repo_root.join(".agents/manifest.yaml");
+    if manifest.is_file() {
+        return Err(AppError {
+            category: ErrorCategory::InvalidArgs,
+            message: "refusing to import: .agents already exists".to_string(),
+            context: vec![
+                format!("path: {}", manifest.display()),
+                "hint: edit .agents manually or remove it before importing".to_string(),
+            ],
+        });
+    }
+
+    let agents_dir = repo_root.join(".agents");
+    if !agents_dir.exists() {
+        return Ok(());
+    }
+    if !agents_dir.is_dir() {
+        return Err(AppError {
+            category: ErrorCategory::InvalidArgs,
+            message: ".agents exists but is not a directory".to_string(),
+            context: vec![format!("path: {}", agents_dir.display())],
+        });
+    }
+
+    let mut entries: Vec<String> = vec![];
+    for entry in std::fs::read_dir(&agents_dir).map_err(|e| AppError {
+        category: ErrorCategory::Io,
+        message: e.to_string(),
+        context: vec![format!("path: {}", agents_dir.display())],
+    })? {
+        let entry = entry.map_err(|e| AppError {
+            category: ErrorCategory::Io,
+            message: e.to_string(),
+            context: vec![format!("path: {}", agents_dir.display())],
+        })?;
+        let name = entry.file_name().to_string_lossy().to_string();
+        if name == ".DS_Store" {
+            continue;
+        }
+        entries.push(name);
+    }
+
+    if !entries.is_empty() {
+        entries.sort();
+        return Err(AppError {
+            category: ErrorCategory::InvalidArgs,
+            message: "refusing to import: .agents is not empty".to_string(),
+            context: vec![
+                format!("path: {}", agents_dir.display()),
+                format!("entries: {}", entries.join(", ")),
+            ],
+        });
+    }
+
+    Ok(())
+}
+
+fn normalize_lf(s: &str) -> String {
+    // Avoid CRLF differences in imported content.
+    s.replace("\r\n", "\n")
+}
+
+fn write_file(repo_root: &Path, rel_path: &str, bytes: &[u8]) -> Result<(), AppError> {
+    let dest = repo_root.join(rel_path);
+    if let Some(parent) = dest.parent() {
+        std::fs::create_dir_all(parent).map_err(|e| AppError {
+            category: ErrorCategory::Io,
+            message: e.to_string(),
+            context: vec![format!("path: {}", parent.display())],
+        })?;
+    }
+
+    agents_core::fsutil::atomic_write(&dest, bytes).map_err(|e| AppError {
+        category: ErrorCategory::Io,
+        message: e.to_string(),
+        context: vec![format!("path: {}", dest.display())],
+    })?;
+
+    Ok(())
 }
 
 fn resolve_import_inputs(
