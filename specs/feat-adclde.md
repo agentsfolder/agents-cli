@@ -20,16 +20,16 @@ Notes:
 - The settings file is JSON and supports keys like `permissions`, `env`, and `hooks`.
 - Minimal v1 mapping: populate `permissions.deny` with repo policy redaction globs (as `Read(<glob>)`).
 
-- [ ] Implement adapter YAML
-  - [ ] Output `.claude/settings.json`
-    - [ ] `format: json`
-    - [ ] `renderer: json_merge` or `template`
-    - [ ] `writePolicy: if_generated`
-    - [ ] stamp via `json_field`
-  - [ ] Optional output `CLAUDE.md`
-    - [ ] `format: md`
-    - [ ] includes current mode banner and composed prompts
-  - [ ] Backend defaults: preferred `vfs_container`, fallback `materialize`
+- [x] Implement adapter YAML
+  - [x] Output `.claude/settings.json`
+    - [x] `format: json`
+    - [x] `renderer: template`
+    - [x] `writePolicy: if_generated`
+    - [x] stamp via `json_field`
+  - [x] Optional output `CLAUDE.md`
+    - [x] `format: md`
+    - [x] includes current mode banner and composed prompts
+  - [x] Backend defaults: preferred `vfs_container`, fallback `materialize`
 
 - [ ] Implement settings mapping
   - [ ] Minimal v1 mapping:
