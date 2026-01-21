@@ -31,11 +31,11 @@ Notes:
     - [x] includes current mode banner and composed prompts
   - [x] Backend defaults: preferred `vfs_container`, fallback `materialize`
 
-- [ ] Implement settings mapping
-  - [ ] Minimal v1 mapping:
-    - [ ] project instructions path or embedded instructions if supported
-    - [ ] any official project settings needed (keep conservative)
-  - [ ] Keep unknown keys out; deterministic formatting
+- [x] Implement settings mapping
+  - [x] Minimal v1 mapping:
+    - [x] project instructions via `CLAUDE.md` (project scope)
+    - [x] project settings via `.claude/settings.json` (permissions.deny)
+  - [x] Keep unknown keys out; deterministic formatting
 
 - [ ] Tests
   - [ ] Golden fixture for `.claude/settings.json`
