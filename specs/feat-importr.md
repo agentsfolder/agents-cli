@@ -38,8 +38,8 @@ Unblocks: adoption in existing repos
 - [x] Validation
   - [x] After import, run schema validation on produced artifacts
 
-- [ ] Tests
-  - [ ] Fixture with a copilot instructions file imports into `.agents` and validates
+- [x] Tests
+  - [x] Fixture with a copilot instructions file imports into `.agents` and validates
 
 ## Verification
-- [ ] `agents import --from copilot` produces valid `.agents` and `agents validate` passes
+- [x] `agents import --from copilot` produces valid `.agents` and `agents validate` passes

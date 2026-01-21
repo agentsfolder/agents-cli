@@ -178,11 +178,7 @@ impl Importer for CopilotImporter {
 
 const COPILOT_IMPORT_MANIFEST: &str = "specVersion: '0.1'\n\
 defaults: { mode: default, policy: safe, backend: materialize, sharedSurfacesOwner: core }\n\
-enabled:\n\
-  modes: [default, readonly-audit, copilot-import]\n\
-  policies: [safe, conservative, ci-safe]\n\
-  skills: []\n\
-  adapters: [core, copilot]\n";
+enabled: { modes: [default, readonly-audit, copilot-import], policies: [safe, conservative, ci-safe], skills: [], adapters: [core, copilot] }\n";
 
 const COPILOT_IMPORT_MODE: &str = "---\n\
 id: copilot-import\n\
