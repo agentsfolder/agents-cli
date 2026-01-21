@@ -31,9 +31,9 @@ Unblocks: adoption in existing repos
   - [x] Generate/update manifest enabled sets as needed
   - [x] Do not overwrite existing `.agents` without confirmation
 
-- [ ] Dry-run and preview
-  - [ ] Add `--dry-run` to show what would be written
-  - [ ] Print diff-like summary
+- [x] Dry-run and preview
+  - [x] Add `--dry-run` to show what would be written
+  - [x] Print diff-like summary
 
 - [ ] Validation
   - [ ] After import, run schema validation on produced artifacts

@@ -31,6 +31,7 @@ pub trait Importer {
 pub struct ImportOptions {
     pub from_agent: String,
     pub path: Option<PathBuf>,
+    pub dry_run: bool,
 }
 
 pub fn cmd_import(repo_root: &Path, opts: ImportOptions) -> Result<(), AppError> {
@@ -57,6 +58,16 @@ pub fn cmd_import(repo_root: &Path, opts: ImportOptions) -> Result<(), AppError>
             message: e,
             context: vec![],
         })?;
+
+    if opts.dry_run {
+        let mut paths: Vec<&str> = artifacts.files.iter().map(|f| f.rel_path.as_str()).collect();
+        paths.sort();
+        println!("dry-run: would write {} files", paths.len());
+        for p in paths {
+            println!("write: {p}");
+        }
+        return Ok(());
+    }
 
     for f in &artifacts.files {
         write_file(repo_root, &f.rel_path, &f.contents)?;

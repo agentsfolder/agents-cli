@@ -128,6 +128,9 @@ enum Commands {
         from_agent: String,
         #[arg(long)]
         path: Option<PathBuf>,
+
+        #[arg(long, default_value_t = false)]
+        dry_run: bool,
     },
     Explain {
         path: PathBuf,
@@ -231,9 +234,17 @@ fn dispatch(ctx: &AppContext, cmd: Commands) -> AppResult<()> {
             crate::initpr::InitOptions { preset },
         ),
 
-        Commands::Import { from_agent, path } => crate::importr::cmd_import(
+        Commands::Import {
+            from_agent,
+            path,
+            dry_run,
+        } => crate::importr::cmd_import(
             &ctx.repo_root,
-            crate::importr::ImportOptions { from_agent, path },
+            crate::importr::ImportOptions {
+                from_agent,
+                path,
+                dry_run,
+            },
         ),
 
         Commands::Validate { .. } => cmd_validate(ctx),
