@@ -12,8 +12,13 @@ Unblocks: feat-adtest
   - optional `CLAUDE.md.hbs`
 
 ## Implementation Plan
-- [ ] Confirm required Claude Code settings surface
-  - [ ] Document expected keys in `.claude/settings.json` for v1
+- [x] Confirm required Claude Code settings surface
+  - [x] Document expected keys in `.claude/settings.json` for v1
+
+Notes:
+- Claude Code project-scoped settings live at `.claude/settings.json` and are intended to be committed.
+- The settings file is JSON and supports keys like `permissions`, `env`, and `hooks`.
+- Minimal v1 mapping: populate `permissions.deny` with repo policy redaction globs (as `Read(<glob>)`).
 
 - [ ] Implement adapter YAML
   - [ ] Output `.claude/settings.json`
