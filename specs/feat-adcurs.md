@@ -26,12 +26,12 @@ Unblocks: feat-adtest
   - [x] stamp via comment
   - [x] Backend defaults: preferred `materialize`
 
-- [ ] Implement templates
+- [x] Implement templates
   - [ ] Each file includes:
-    - [ ] stamp
-    - [ ] current mode banner
-    - [ ] deterministic section headers
-  - [ ] Ensure stable ordering of snippets and lists
+    - [x] stamp
+    - [x] current mode banner
+    - [x] deterministic section headers
+  - [x] Ensure stable ordering of snippets and lists
 
 - [ ] Tests
   - [ ] Golden fixture for cursor outputs
