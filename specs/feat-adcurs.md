@@ -18,7 +18,7 @@ Unblocks: feat-adtest
   - [x] Ensure naming is deterministic and stable
 
 - [x] Implement adapter YAML
-  - [ ] Outputs:
+  - [x] Outputs:
     - [x] `.cursor/rules/00-current-mode.md`
     - [x] `.cursor/rules/10-guidance.md` (composed prompts)
     - [x] `.cursor/rules/20-policy.md` (policy summary)
@@ -27,14 +27,14 @@ Unblocks: feat-adtest
   - [x] Backend defaults: preferred `materialize`
 
 - [x] Implement templates
-  - [ ] Each file includes:
+  - [x] Each file includes:
     - [x] stamp
     - [x] current mode banner
     - [x] deterministic section headers
   - [x] Ensure stable ordering of snippets and lists
 
 - [ ] Tests
-  - [ ] Golden fixture for cursor outputs
+  - [x] Golden fixture for cursor outputs
   - [ ] Determinism test: repeated renders produce identical filenames and content
 
 ## Verification
