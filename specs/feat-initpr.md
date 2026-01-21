@@ -29,12 +29,12 @@ Unblocks: feat-adbase (if used), feat-adtest
   - [x] Maintain a manifest of embedded files with destination paths
   - [x] Ensure deterministic output bytes (LF newlines)
 
-- [ ] Implement init behavior
-  - [ ] Detect existing `.agents/`:
-    - [ ] if exists and non-empty, require `--force` (or error for v1)
-  - [ ] Create directory structure
-  - [ ] Write files for chosen preset
-  - [ ] Write `.agents/state/.gitignore` to ignore `state.yaml`
+- [x] Implement init behavior
+  - [x] Detect existing `.agents/`:
+    - [x] if exists and non-empty, require `--force` (or error for v1)
+  - [x] Create directory structure
+  - [x] Write files for chosen preset
+  - [x] Write `.agents/state/.gitignore` to ignore `state.yaml`
 
 - [ ] Preset content requirements
   - [ ] Manifest:

@@ -225,6 +225,10 @@ type AppResult<T> = Result<T, AppError>;
 
 fn dispatch(ctx: &AppContext, cmd: Commands) -> AppResult<()> {
     match cmd {
+        Commands::Init { preset } => crate::initpr::cmd_init(
+            &ctx.repo_root,
+            crate::initpr::InitOptions { preset },
+        ),
         Commands::Validate { .. } => cmd_validate(ctx),
         Commands::Status => cmd_status(ctx),
 
