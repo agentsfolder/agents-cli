@@ -64,11 +64,13 @@ pub fn cmd_sync(repo_root: &Path, opts: SyncOptions) -> Result<(), AppError> {
     match selected_backend {
         BackendKind::Materialize => {
             let backend = MaterializeBackend;
-            let mut session = backend.prepare(repo_root, &plan_res.plan).map_err(|e| AppError {
-                category: ErrorCategory::Io,
-                message: e.to_string(),
-                context: vec![],
-            })?;
+            let mut session = backend
+                .prepare(repo_root, &plan_res.plan)
+                .map_err(|e| AppError {
+                    category: ErrorCategory::Io,
+                    message: e.to_string(),
+                    context: vec![],
+                })?;
 
             let mut rendered_outputs: Vec<agents_core::matwiz::RenderedOutput> = vec![];
             for out in &plan_res.plan.outputs {
@@ -103,11 +105,13 @@ pub fn cmd_sync(repo_root: &Path, opts: SyncOptions) -> Result<(), AppError> {
                 });
             }
 
-            let report = backend.apply(&mut session, &rendered_outputs).map_err(|e| AppError {
-                category: ErrorCategory::Io,
-                message: e.to_string(),
-                context: vec![],
-            })?;
+            let report = backend
+                .apply(&mut session, &rendered_outputs)
+                .map_err(|e| AppError {
+                    category: ErrorCategory::Io,
+                    message: e.to_string(),
+                    context: vec![],
+                })?;
 
             if !report.conflicts.is_empty() {
                 let msg = report

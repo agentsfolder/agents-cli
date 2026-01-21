@@ -75,6 +75,17 @@ impl DockerRuntime {
             stderr: String::from_utf8_lossy(&out.stderr).to_string(),
         })
     }
+
+    pub fn status(&self, args: &[String]) -> Result<std::process::ExitStatus, DockerError> {
+        let status = Command::new(&self.docker_bin)
+            .args(args)
+            .stdin(std::process::Stdio::inherit())
+            .stdout(std::process::Stdio::inherit())
+            .stderr(std::process::Stdio::inherit())
+            .status()?;
+
+        Ok(status)
+    }
 }
 
 impl Default for DockerRuntime {

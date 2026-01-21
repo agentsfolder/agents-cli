@@ -79,23 +79,29 @@ pub fn cmd_clean(repo_root: &Path, opts: CleanOptions) -> Result<(), AppError> {
     };
     agent_ids.sort();
 
-    let mut identify = identify_deletable(repo_root, &repo, &effective, &agent_ids).map_err(|e| AppError {
-        category: ErrorCategory::Io,
-        message: e.to_string(),
-        context: vec![],
-    })?;
+    let mut identify =
+        identify_deletable(repo_root, &repo, &effective, &agent_ids).map_err(|e| AppError {
+            category: ErrorCategory::Io,
+            message: e.to_string(),
+            context: vec![],
+        })?;
 
     identify
         .skipped
         .sort_by(|a, b| a.path.as_str().cmp(b.path.as_str()));
 
-    let delete = delete_paths(repo_root, &identify.eligible, opts.dry_run).map_err(|e| AppError {
-        category: ErrorCategory::Io,
-        message: e.to_string(),
-        context: vec![],
-    })?;
+    let delete =
+        delete_paths(repo_root, &identify.eligible, opts.dry_run).map_err(|e| AppError {
+            category: ErrorCategory::Io,
+            message: e.to_string(),
+            context: vec![],
+        })?;
 
-    let verb = if opts.dry_run { "would-delete" } else { "delete" };
+    let verb = if opts.dry_run {
+        "would-delete"
+    } else {
+        "delete"
+    };
     for p in &delete.deleted {
         println!("{verb}: {}", p.as_str());
     }

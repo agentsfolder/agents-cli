@@ -42,23 +42,38 @@ pub fn files_for_preset(preset: InitPreset) -> Vec<EmbeddedFile> {
 
     match preset {
         InitPreset::Conservative => {
-            out.push(file(".agents/manifest.yaml", include_str!("assets/conservative/manifest.yaml")));
+            out.push(file(
+                ".agents/manifest.yaml",
+                include_str!("assets/conservative/manifest.yaml"),
+            ));
         }
         InitPreset::Standard => {
-            out.push(file(".agents/manifest.yaml", include_str!("assets/standard/manifest.yaml")));
+            out.push(file(
+                ".agents/manifest.yaml",
+                include_str!("assets/standard/manifest.yaml"),
+            ));
         }
         InitPreset::CiSafe => {
-            out.push(file(".agents/manifest.yaml", include_str!("assets/ci-safe/manifest.yaml")));
+            out.push(file(
+                ".agents/manifest.yaml",
+                include_str!("assets/ci-safe/manifest.yaml"),
+            ));
         }
         InitPreset::Monorepo => {
-            out.push(file(".agents/manifest.yaml", include_str!("assets/monorepo/manifest.yaml")));
+            out.push(file(
+                ".agents/manifest.yaml",
+                include_str!("assets/monorepo/manifest.yaml"),
+            ));
             out.push(file(
                 ".agents/scopes/packages.yaml",
                 include_str!("assets/monorepo/scopes/packages.yaml"),
             ));
         }
         InitPreset::AgentPack => {
-            out.push(file(".agents/manifest.yaml", include_str!("assets/agent-pack/manifest.yaml")));
+            out.push(file(
+                ".agents/manifest.yaml",
+                include_str!("assets/agent-pack/manifest.yaml"),
+            ));
             out.extend(agent_pack_adapters());
         }
     }
@@ -73,7 +88,10 @@ fn file(rel_path: &'static str, contents: &'static str) -> EmbeddedFile {
 fn common_files() -> Vec<EmbeddedFile> {
     vec![
         // Prompts
-        file(".agents/prompts/base.md", include_str!("assets/common/prompts/base.md")),
+        file(
+            ".agents/prompts/base.md",
+            include_str!("assets/common/prompts/base.md"),
+        ),
         file(
             ".agents/prompts/project.md",
             include_str!("assets/common/prompts/project.md"),
@@ -82,14 +100,15 @@ fn common_files() -> Vec<EmbeddedFile> {
             ".agents/prompts/snippets/example.md",
             include_str!("assets/common/prompts/snippets/example.md"),
         ),
-
         // Modes
-        file(".agents/modes/default.md", include_str!("assets/common/modes/default.md")),
+        file(
+            ".agents/modes/default.md",
+            include_str!("assets/common/modes/default.md"),
+        ),
         file(
             ".agents/modes/readonly-audit.md",
             include_str!("assets/common/modes/readonly-audit.md"),
         ),
-
         // Policies
         file(
             ".agents/policies/safe.yaml",
@@ -103,7 +122,6 @@ fn common_files() -> Vec<EmbeddedFile> {
             ".agents/policies/ci-safe.yaml",
             include_str!("assets/common/policies/ci-safe.yaml"),
         ),
-
         // Schemas
         file(
             ".agents/schemas/manifest.schema.json",
@@ -133,7 +151,6 @@ fn common_files() -> Vec<EmbeddedFile> {
             ".agents/schemas/mode-frontmatter.schema.json",
             include_str!("assets/common/schemas/mode-frontmatter.schema.json"),
         ),
-
         // State
         file(
             ".agents/state/.gitignore",
@@ -161,7 +178,6 @@ fn agent_pack_adapters() -> Vec<EmbeddedFile> {
             ".agents/adapters/cursor/templates/20-policy.md.hbs",
             include_str!("assets/agent-pack/adapters/cursor/templates/20-policy.md.hbs"),
         ),
-
         // Copilot
         file(
             ".agents/adapters/copilot/adapter.yaml",
@@ -177,7 +193,6 @@ fn agent_pack_adapters() -> Vec<EmbeddedFile> {
             ".agents/adapters/copilot/templates/scope.instructions.md.hbs",
             include_str!("assets/agent-pack/adapters/copilot/templates/scope.instructions.md.hbs"),
         ),
-
         // OpenCode
         file(
             ".agents/adapters/opencode/adapter.yaml",
@@ -187,7 +202,6 @@ fn agent_pack_adapters() -> Vec<EmbeddedFile> {
             ".agents/adapters/opencode/templates/opencode.jsonc.hbs",
             include_str!("assets/agent-pack/adapters/opencode/templates/opencode.jsonc.hbs"),
         ),
-
         // Claude Code
         file(
             ".agents/adapters/claude/adapter.yaml",
@@ -201,7 +215,6 @@ fn agent_pack_adapters() -> Vec<EmbeddedFile> {
             ".agents/adapters/claude/templates/CLAUDE.md.hbs",
             include_str!("assets/agent-pack/adapters/claude/templates/CLAUDE.md.hbs"),
         ),
-
         // Codex (AGENTS.md)
         file(
             ".agents/adapters/codex/adapter.yaml",

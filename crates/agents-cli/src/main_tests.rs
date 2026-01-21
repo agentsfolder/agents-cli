@@ -18,5 +18,7 @@ mod tests {
         assert_eq!(mk(ErrorCategory::Conflict).exit_code(), 5);
         assert_eq!(mk(ErrorCategory::PolicyDenied).exit_code(), 5);
         assert_eq!(mk(ErrorCategory::ExternalToolMissing).exit_code(), 5);
+
+        assert_eq!(mk(ErrorCategory::AgentExit { code: 17 }).exit_code(), 17);
     }
 }

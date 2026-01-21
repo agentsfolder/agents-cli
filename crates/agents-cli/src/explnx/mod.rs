@@ -90,7 +90,11 @@ fn ensure_state_gitignore(repo_root: &Path) -> Result<(), AppError> {
     Ok(())
 }
 
-pub fn cmd_explain(repo_root: &Path, input_path: &Path, output: OutputMode) -> Result<(), AppError> {
+pub fn cmd_explain(
+    repo_root: &Path,
+    input_path: &Path,
+    output: OutputMode,
+) -> Result<(), AppError> {
     let repo_rel = normalize_repo_rel_path(repo_root, input_path)?;
     let p = explain_record_path(repo_root, &repo_rel);
 
@@ -164,8 +168,11 @@ fn print_stamp_explain(repo_rel: &str, stamp: &agents_core::stamps::Stamp, outpu
                 stamp: &'a agents_core::stamps::Stamp,
             }
 
-            let s = serde_json::to_string_pretty(&StampExplain { path: repo_rel, stamp })
-                .unwrap_or_else(|_| "{}".to_string());
+            let s = serde_json::to_string_pretty(&StampExplain {
+                path: repo_rel,
+                stamp,
+            })
+            .unwrap_or_else(|_| "{}".to_string());
             println!("{s}");
         }
         OutputMode::Human => {

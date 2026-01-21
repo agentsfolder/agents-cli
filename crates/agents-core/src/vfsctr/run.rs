@@ -77,6 +77,17 @@ impl VfsContainerInvocation {
         let args = self.docker_args();
         docker.run(&args)
     }
+
+    pub fn run_interactive(
+        &self,
+        docker: &DockerRuntime,
+    ) -> Result<std::process::ExitStatus, DockerError> {
+        docker.check_available()?;
+        docker.check_daemon()?;
+
+        let args = self.docker_args();
+        docker.status(&args)
+    }
 }
 
 pub fn default_image() -> String {

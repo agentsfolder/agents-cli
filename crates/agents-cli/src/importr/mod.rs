@@ -46,21 +46,26 @@ pub fn cmd_import(repo_root: &Path, opts: ImportOptions) -> Result<(), AppError>
             return Err(AppError {
                 category: ErrorCategory::InvalidArgs,
                 message: "unsupported import source".to_string(),
-                context: vec![format!("from: {from}"), "hint: supported: copilot".to_string()],
+                context: vec![
+                    format!("from: {from}"),
+                    "hint: supported: copilot".to_string(),
+                ],
             })
         }
     };
 
-    let artifacts = importer
-        .convert(inputs)
-        .map_err(|e| AppError {
-            category: ErrorCategory::Io,
-            message: e,
-            context: vec![],
-        })?;
+    let artifacts = importer.convert(inputs).map_err(|e| AppError {
+        category: ErrorCategory::Io,
+        message: e,
+        context: vec![],
+    })?;
 
     if opts.dry_run {
-        let mut paths: Vec<&str> = artifacts.files.iter().map(|f| f.rel_path.as_str()).collect();
+        let mut paths: Vec<&str> = artifacts
+            .files
+            .iter()
+            .map(|f| f.rel_path.as_str())
+            .collect();
         paths.sort();
         println!("dry-run: would write {} files", paths.len());
         for p in paths {
@@ -120,7 +125,8 @@ impl Importer for CopilotImporter {
         let mut files: Vec<CanonicalFile> = vec![];
 
         // Start from the standard preset.
-        let base = crate::initpr::assets::files_for_preset(crate::initpr::assets::InitPreset::Standard);
+        let base =
+            crate::initpr::assets::files_for_preset(crate::initpr::assets::InitPreset::Standard);
         for f in base {
             files.push(CanonicalFile {
                 rel_path: f.rel_path.to_string(),

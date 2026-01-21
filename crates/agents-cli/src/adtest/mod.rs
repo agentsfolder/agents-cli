@@ -55,8 +55,7 @@ pub fn cmd_test_adapters(root: &Path, agent: Option<String>, update: bool) -> Re
         let agent_filter = agent_filter.clone();
 
         let h = std::thread::spawn(move || {
-            run_fixture(&fixture_clone, agent_filter.as_deref())
-                .map(|r| (fixture_clone, r))
+            run_fixture(&fixture_clone, agent_filter.as_deref()).map(|r| (fixture_clone, r))
         });
         handles.push(h);
     }
@@ -128,7 +127,10 @@ fn update_goldens(fixtures_dir: &Path, agent_filter: &Option<String>) -> Result<
         let has_matrix = fixture.join("matrix.yaml").is_file();
         for failure in report.failures {
             let expect_dir = if has_matrix {
-                fixture.join("expect").join(&failure.agent_id).join(&failure.case)
+                fixture
+                    .join("expect")
+                    .join(&failure.agent_id)
+                    .join(&failure.case)
             } else {
                 fixture.join("expect").join(&failure.agent_id)
             };

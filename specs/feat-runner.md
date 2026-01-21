@@ -10,47 +10,44 @@ Unblocks: end-to-end workflows
 - For v1:
   - uses `vfs_container` by default for CLI agents
   - ensures generated outputs are available to the agent
-  - starts MCP servers for `mcp_tool` skills (if implemented)
+  - skill runtime beyond `instruction_only` is deferred (no MCP server orchestration yet)
 
 ## Implementation Plan
-- [ ] Define agent registry
-  - [ ] Map agent IDs to:
-    - [ ] executable name or docker entrypoint
-    - [ ] default backend preference
-    - [ ] required outputs (from adapter)
-  - [ ] For v1, allow `--agent <id>` to pick adapter and `run <agent>` to run actual binary
+- [x] Define agent registry
+  - [x] Map agent IDs to:
+    - [x] executable name or docker entrypoint
+    - [x] default backend preference
+    - [x] required outputs (derived from adapter plan at runtime)
+  - [x] For v1, allow `--adapter <id>` (alias: `--agent`) to pick adapter and `run <agent>` to run actual binary
 
-- [ ] Implement run orchestration
-  - [ ] Load + validate repo config
-  - [ ] Resolve effective config
-  - [ ] Plan + render outputs
-  - [ ] Determine backend and prepare environment
+- [x] Implement run orchestration
+  - [x] Load + validate repo config
+  - [x] Resolve effective config
+  - [x] Plan + render outputs
+  - [x] Determine backend and prepare environment
 
-- [ ] Skill runtime (incremental)
-  - [ ] instruction_only:
-    - [ ] already handled by prompt composition/templates
-  - [ ] mcp_tool:
-    - [ ] read skill interface entrypoint/args/env
-    - [ ] validate policy allows MCP
-    - [ ] start process(es), capture stdout/stderr
-    - [ ] propagate connection info to agent (env vars)
-  - [ ] cli_shim:
-    - [ ] ensure skill assets are available in runtime (via vfs container mounts or materialize)
+- [x] Skill runtime (v1)
+  - [x] instruction_only:
+    - [x] already handled by prompt composition/templates
 
-- [ ] Policy warnings
-  - [ ] If policy enables network or unrestricted exec:
-    - [ ] print warning and require confirmation (if configured)
+Future (not in v1)
+- MCP server orchestration for `mcp_tool` skills
+- CLI shim runtime for `cli_shim` skills
 
-- [ ] Exec the agent
-  - [ ] Support passthrough args after `--`
-  - [ ] Propagate exit code of agent as CLI exit code
-  - [ ] Ensure cleanup:
-    - [ ] stop MCP servers
-    - [ ] remove temp dirs
+- [x] Policy warnings
+  - [x] If policy enables network or unrestricted exec:
+    - [x] print warning (no interactive confirmation in v1)
 
-- [ ] Tests
-  - [ ] Unit tests for argument construction
-  - [ ] Integration test with a dummy "agent" executable (script) in fixtures
+- [x] Exec the agent
+  - [x] Support passthrough args after `--`
+  - [x] Propagate exit code of agent as CLI exit code
+  - [x] Ensure cleanup:
+    - [x] stop MCP servers (no-op in v1; MCP runtime not started)
+    - [x] remove temp dirs
+
+- [x] Tests
+  - [x] Unit tests for argument construction
+  - [x] Integration test with a dummy "agent" executable (script) in fixtures
 
 ## Verification
-- [ ] `agents run opencode -- --help` starts the backend and runs the binary (or container entry)
+- [x] `agents run opencode -- --help` starts the backend and runs the binary (or container entry) (covered by dummy agent run test)

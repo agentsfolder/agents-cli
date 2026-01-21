@@ -89,10 +89,7 @@ fn ensure_agents_dir_empty(repo_root: &Path) -> Result<(), AppError> {
             message: e.to_string(),
             context: vec![format!("path: {}", agents_dir.display())],
         })?;
-        let name = entry
-            .file_name()
-            .to_string_lossy()
-            .to_string();
+        let name = entry.file_name().to_string_lossy().to_string();
         if name == ".DS_Store" {
             continue;
         }

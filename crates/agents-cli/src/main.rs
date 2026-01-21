@@ -5,15 +5,16 @@ use clap::{Parser, Subcommand, ValueEnum};
 #[cfg(test)]
 mod main_tests;
 
-mod prevdf;
-mod status;
-mod syncer;
+mod adtest;
 mod cleanup;
 mod doctor;
-mod adtest;
 mod explnx;
-mod initpr;
 mod importr;
+mod initpr;
+mod prevdf;
+mod runner;
+mod status;
+mod syncer;
 
 #[derive(Debug, Clone, ValueEnum)]
 enum Backend {
@@ -98,13 +99,18 @@ enum Commands {
     },
     Run {
         agent: String,
+
+        /// Adapter id to use for generated outputs (defaults to <agent>)
+        #[arg(long = "adapter", alias = "agent")]
+        adapter: Option<String>,
+
         #[arg(long)]
         mode: Option<String>,
         #[arg(long)]
         profile: Option<String>,
         #[arg(long)]
         backend: Option<Backend>,
-        #[arg(last = true, trailing_var_arg = true)]
+        #[arg(trailing_var_arg = true)]
         passthrough: Vec<String>,
     },
     Doctor {
@@ -176,6 +182,11 @@ pub(crate) enum ErrorCategory {
     Conflict,
     PolicyDenied,
     ExternalToolMissing,
+
+    /// Used to propagate an external process exit code (e.g., `agents run`).
+    AgentExit {
+        code: i32,
+    },
 }
 
 #[derive(Debug)]
@@ -205,6 +216,9 @@ impl AppError {
             ErrorCategory::InvalidArgs => 2,
             ErrorCategory::NotInitialized => 3,
             ErrorCategory::SchemaInvalid => 4,
+
+            ErrorCategory::AgentExit { code } => code,
+
             ErrorCategory::Io
             | ErrorCategory::Conflict
             | ErrorCategory::PolicyDenied
@@ -229,10 +243,9 @@ type AppResult<T> = Result<T, AppError>;
 
 fn dispatch(ctx: &AppContext, cmd: Commands) -> AppResult<()> {
     match cmd {
-        Commands::Init { preset } => crate::initpr::cmd_init(
-            &ctx.repo_root,
-            crate::initpr::InitOptions { preset },
-        ),
+        Commands::Init { preset } => {
+            crate::initpr::cmd_init(&ctx.repo_root, crate::initpr::InitOptions { preset })
+        }
 
         Commands::Import {
             from_agent,
@@ -299,6 +312,34 @@ fn dispatch(ctx: &AppContext, cmd: Commands) -> AppResult<()> {
             )
         }
 
+        Commands::Run {
+            agent,
+            adapter,
+            mode,
+            profile,
+            backend,
+            passthrough,
+        } => {
+            let backend = backend.map(|b| match b {
+                Backend::VfsContainer => agents_core::model::BackendKind::VfsContainer,
+                Backend::Materialize => agents_core::model::BackendKind::Materialize,
+                Backend::VfsMount => agents_core::model::BackendKind::VfsMount,
+            });
+
+            crate::runner::cmd_run(
+                &ctx.repo_root,
+                crate::runner::RunOptions {
+                    agent_cmd: agent,
+                    adapter,
+                    backend,
+                    mode,
+                    profile,
+                    passthrough,
+                    verbose: ctx.verbose,
+                },
+            )
+        }
+
         Commands::Clean {
             agent,
             dry_run,
@@ -312,10 +353,9 @@ fn dispatch(ctx: &AppContext, cmd: Commands) -> AppResult<()> {
             },
         ),
 
-        Commands::Doctor { fix, ci } => crate::doctor::cmd_doctor(
-            &ctx.repo_root,
-            crate::doctor::DoctorOptions { fix, ci },
-        ),
+        Commands::Doctor { fix, ci } => {
+            crate::doctor::cmd_doctor(&ctx.repo_root, crate::doctor::DoctorOptions { fix, ci })
+        }
 
         Commands::Test { command } => match command {
             TestCommands::Adapters { agent, update } => {
@@ -423,6 +463,12 @@ fn main() {
     match dispatch(&ctx, cli.command) {
         Ok(()) => std::process::exit(0),
         Err(err) => {
+            // When we are intentionally propagating a child exit code, do not print an extra
+            // "error:" line (the child process is expected to have printed its own output).
+            if matches!(err.category, ErrorCategory::AgentExit { .. }) {
+                std::process::exit(err.exit_code());
+            }
+
             eprint!("{err}");
             std::process::exit(err.exit_code());
         }

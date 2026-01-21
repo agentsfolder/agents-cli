@@ -1,12 +1,12 @@
 use std::path::Path;
 
-use agents_core::loadag::{load_repo_config, LoadError, LoaderOptions};
+use agents_core::cleanup;
 use agents_core::fsutil;
+use agents_core::loadag::{load_repo_config, LoadError, LoaderOptions};
+use agents_core::model::BackendKind;
 use agents_core::outputs::{plan_outputs, PlanError};
 use agents_core::resolv::{ResolutionRequest, Resolver};
 use agents_core::{driftx, driftx::DiffKind};
-use agents_core::model::BackendKind;
-use agents_core::cleanup;
 use std::collections::BTreeSet;
 
 use crate::{AppError, ErrorCategory};
@@ -73,7 +73,11 @@ pub fn cmd_doctor(repo_root: &Path, opts: DoctorOptions) -> Result<(), AppError>
 
     println!(
         "doctor: errors={} warnings={} ci={} fix={}",
-        report.items.iter().filter(|i| i.level == DoctorLevel::Error).count(),
+        report
+            .items
+            .iter()
+            .filter(|i| i.level == DoctorLevel::Error)
+            .count(),
         report
             .items
             .iter()
@@ -130,15 +134,21 @@ fn apply_fixes(ctx: &DoctorContext) -> Vec<DoctorItem> {
                 Err(_) => continue,
             };
 
-            let planned: BTreeSet<String> =
-                plan.outputs.iter().map(|o| o.path.as_str().to_string()).collect();
+            let planned: BTreeSet<String> = plan
+                .outputs
+                .iter()
+                .map(|o| o.path.as_str().to_string())
+                .collect();
             let stale = match driftx::detect_stale_generated(&ctx.repo_root, agent_id, &planned) {
                 Ok(s) => s,
                 Err(_) => continue,
             };
 
             for e in stale {
-                let rp = match fsutil::repo_relpath_noexist(&ctx.repo_root, std::path::Path::new(&e.path)) {
+                let rp = match fsutil::repo_relpath_noexist(
+                    &ctx.repo_root,
+                    std::path::Path::new(&e.path),
+                ) {
                     Ok(p) => p,
                     Err(_) => continue,
                 };
@@ -240,7 +250,11 @@ fn schema_check(ctx: &DoctorContext) -> Vec<DoctorItem> {
             check: "schemas".to_string(),
             message: "schema invalid".to_string(),
             context: vec![
-                format!("path: {}", fsutil::display_repo_path(&ctx.repo_root, &err.path).unwrap_or_else(|_| err.path.display().to_string())),
+                format!(
+                    "path: {}",
+                    fsutil::display_repo_path(&ctx.repo_root, &err.path)
+                        .unwrap_or_else(|_| err.path.display().to_string())
+                ),
                 format!("schema: {}", err.schema),
                 format!("pointer: {}", err.pointer),
                 err.message,
@@ -267,9 +281,14 @@ fn collision_check(ctx: &DoctorContext) -> Vec<DoctorItem> {
             let (level, msg) = match &err {
                 PlanError::PathCollision { .. }
                 | PlanError::SurfaceCollision { .. }
-                | PlanError::SharedOwnerViolation { .. } => {
-                    (if ctx.ci { DoctorLevel::Error } else { DoctorLevel::Warning }, "collision detected")
-                }
+                | PlanError::SharedOwnerViolation { .. } => (
+                    if ctx.ci {
+                        DoctorLevel::Error
+                    } else {
+                        DoctorLevel::Warning
+                    },
+                    "collision detected",
+                ),
                 _ => (DoctorLevel::Error, "output planning failed"),
             };
 
@@ -355,7 +374,11 @@ fn drift_check(ctx: &DoctorContext) -> Vec<DoctorItem> {
 
     if !unmanaged.is_empty() {
         items.push(DoctorItem {
-            level: if ctx.ci { DoctorLevel::Error } else { DoctorLevel::Warning },
+            level: if ctx.ci {
+                DoctorLevel::Error
+            } else {
+                DoctorLevel::Warning
+            },
             check: "drift".to_string(),
             message: "unmanaged files block sync".to_string(),
             context: unmanaged,
@@ -364,7 +387,11 @@ fn drift_check(ctx: &DoctorContext) -> Vec<DoctorItem> {
 
     if !drifted.is_empty() {
         items.push(DoctorItem {
-            level: if ctx.ci { DoctorLevel::Error } else { DoctorLevel::Warning },
+            level: if ctx.ci {
+                DoctorLevel::Error
+            } else {
+                DoctorLevel::Warning
+            },
             check: "drift".to_string(),
             message: "generated files drifted".to_string(),
             context: drifted,
@@ -415,7 +442,11 @@ fn prereqs_check(ctx: &DoctorContext) -> Vec<DoctorItem> {
         if backends.default == Some(BackendKind::VfsContainer) {
             needs_docker = true;
         }
-        if backends.by_agent.values().any(|b| *b == BackendKind::VfsContainer) {
+        if backends
+            .by_agent
+            .values()
+            .any(|b| *b == BackendKind::VfsContainer)
+        {
             needs_docker = true;
         }
     }
