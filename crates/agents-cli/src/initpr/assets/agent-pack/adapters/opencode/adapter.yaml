@@ -1,0 +1,9 @@
+agentId: opencode
+version: '0.1'
+backendDefaults: { preferred: vfs_container, fallback: materialize }
+outputs:
+  - path: opencode.jsonc
+    format: jsonc
+    renderer: { type: template, template: opencode.jsonc.hbs }
+    writePolicy: { mode: if_generated, gitignore: false }
+    driftDetection: { method: sha256, stamp: json_field }

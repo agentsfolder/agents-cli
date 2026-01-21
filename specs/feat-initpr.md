@@ -24,10 +24,10 @@ Unblocks: feat-adbase (if used), feat-adtest
   - [x] `monorepo`
   - [x] `agent-pack`
 
-- [ ] Bundle template assets in the binary
-  - [ ] Use `include_str!` / `include_bytes!` for each template file
-  - [ ] Maintain a manifest of embedded files with destination paths
-  - [ ] Ensure deterministic output bytes (LF newlines)
+- [x] Bundle template assets in the binary
+  - [x] Use `include_str!` / `include_bytes!` for each template file
+  - [x] Maintain a manifest of embedded files with destination paths
+  - [x] Ensure deterministic output bytes (LF newlines)
 
 - [ ] Implement init behavior
   - [ ] Detect existing `.agents/`:

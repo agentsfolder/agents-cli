@@ -1,0 +1,18 @@
+# Copilot Instructions
+
+These are repository-wide custom instructions for GitHub Copilot.
+
+## Active Configuration
+- adapter: {{adapter.agentId}}
+- mode: {{generation.stamp.mode}}
+- policy: {{effective.policy.id}}
+- backend: {{backend}}{{#if profile}}
+- profile: {{profile}}{{/if}}{{#if scopesMatched}}
+- scopesMatched: {{join scopesMatched ", "}}{{/if}}
+
+## Composed Prompt
+{{effective.prompts.composed_md}}
+
+## Policy Summary
+- allow: {{join effective.policy.paths.allow ", "}}
+- deny: {{join effective.policy.paths.deny ", "}}

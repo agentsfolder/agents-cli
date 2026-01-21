@@ -1,0 +1,5 @@
+id: packages
+applyTo: ["packages/*"]
+priority: 0
+overrides:
+  includeSnippets: ["example"]

@@ -1,0 +1,10 @@
+# Current Mode
+
+## Active Configuration
+- mode: {{generation.stamp.mode}}
+- policy: {{effective.policy.id}}
+- backend: {{backend}}{{#if profile}}
+- profile: {{profile}}{{/if}}
+
+## Mode Body
+{{effective.mode.body}}

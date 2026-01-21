@@ -1,0 +1,9 @@
+agentId: codex
+version: '0.1'
+backendDefaults: { preferred: vfs_container, fallback: materialize }
+outputs:
+  - path: AGENTS.md
+    format: md
+    renderer: { type: template, template: AGENTS.md.hbs }
+    writePolicy: { mode: if_generated, gitignore: false }
+    driftDetection: { method: sha256, stamp: comment }

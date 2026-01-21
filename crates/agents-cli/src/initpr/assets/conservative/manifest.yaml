@@ -1,0 +1,7 @@
+specVersion: '0.1'
+defaults: { mode: readonly-audit, policy: conservative, backend: materialize, sharedSurfacesOwner: core }
+enabled:
+  modes: [default, readonly-audit]
+  policies: [safe, conservative, ci-safe]
+  skills: []
+  adapters: [core]

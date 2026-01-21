@@ -1,0 +1,28 @@
+id: ci-safe
+description: CI-safe (no exec/network)
+capabilities:
+  filesystem:
+    read: true
+    write: true
+    delete: false
+    rename: false
+  exec:
+    enabled: false
+    allow: []
+    deny: []
+  network:
+    enabled: false
+    allowHosts: []
+    denyHosts: []
+  mcp:
+    enabled: false
+    allowServers: []
+    denyServers: []
+paths:
+  allow: []
+  deny: []
+  redact: [".env", ".env.*", "secrets/**"]
+confirmations:
+  requiredFor: [overwrite, delete, push]
+limits:
+  maxFilesChanged: 200

@@ -1,0 +1,14 @@
+agentId: claude
+version: '0.1'
+backendDefaults: { preferred: vfs_container, fallback: materialize }
+outputs:
+  - path: .claude/settings.json
+    format: json
+    renderer: { type: template, template: settings.json.hbs }
+    writePolicy: { mode: if_generated, gitignore: false }
+    driftDetection: { method: sha256, stamp: json_field }
+  - path: CLAUDE.md
+    format: md
+    renderer: { type: template, template: CLAUDE.md.hbs }
+    writePolicy: { mode: if_generated, gitignore: false }
+    driftDetection: { method: sha256, stamp: comment }

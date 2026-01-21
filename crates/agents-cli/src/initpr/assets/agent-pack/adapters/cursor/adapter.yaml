@@ -1,0 +1,19 @@
+agentId: cursor
+version: '0.1'
+backendDefaults: { preferred: materialize, fallback: materialize }
+outputs:
+  - path: .cursor/rules/00-current-mode.md
+    format: md
+    renderer: { type: template, template: 00-current-mode.md.hbs }
+    writePolicy: { mode: if_generated, gitignore: false }
+    driftDetection: { method: sha256, stamp: comment }
+  - path: .cursor/rules/10-guidance.md
+    format: md
+    renderer: { type: template, template: 10-guidance.md.hbs }
+    writePolicy: { mode: if_generated, gitignore: false }
+    driftDetection: { method: sha256, stamp: comment }
+  - path: .cursor/rules/20-policy.md
+    format: md
+    renderer: { type: template, template: 20-policy.md.hbs }
+    writePolicy: { mode: if_generated, gitignore: false }
+    driftDetection: { method: sha256, stamp: comment }

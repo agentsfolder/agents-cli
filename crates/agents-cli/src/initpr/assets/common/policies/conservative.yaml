@@ -1,0 +1,28 @@
+id: conservative
+description: Readonly-ish, strict confirmations
+capabilities:
+  filesystem:
+    read: true
+    write: false
+    delete: false
+    rename: false
+  exec:
+    enabled: false
+    allow: []
+    deny: []
+  network:
+    enabled: false
+    allowHosts: []
+    denyHosts: []
+  mcp:
+    enabled: false
+    allowServers: []
+    denyServers: []
+paths:
+  allow: []
+  deny: []
+  redact: [".env", ".env.*", "secrets/**"]
+confirmations:
+  requiredFor: [overwrite, delete, push, deploy, publish]
+limits:
+  maxFilesChanged: 50

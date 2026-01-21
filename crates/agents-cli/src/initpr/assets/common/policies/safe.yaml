@@ -1,0 +1,28 @@
+id: safe
+description: Balanced default policy
+capabilities:
+  filesystem:
+    read: true
+    write: true
+    delete: false
+    rename: false
+  exec:
+    enabled: true
+    allow: []
+    deny: []
+  network:
+    enabled: false
+    allowHosts: []
+    denyHosts: []
+  mcp:
+    enabled: true
+    allowServers: []
+    denyServers: []
+paths:
+  allow: []
+  deny: []
+  redact: [".env", ".env.*", "secrets/**"]
+confirmations:
+  requiredFor: [overwrite, delete, push]
+limits:
+  maxFilesChanged: 200

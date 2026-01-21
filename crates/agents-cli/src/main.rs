@@ -12,6 +12,7 @@ mod cleanup;
 mod doctor;
 mod adtest;
 mod explnx;
+mod initpr;
 
 #[derive(Debug, Clone, ValueEnum)]
 enum Backend {
