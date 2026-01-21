@@ -10,12 +10,12 @@ Unblocks: adoption in existing repos
 - For v1, support importing at least one agent surface (start with Copilot or Cursor) and keep others as stubs.
 
 ## Implementation Plan
-- [ ] Define import framework
+- [x] Define import framework
   - [ ] `Importer` trait:
-    - [ ] `agent_id()`
-    - [ ] `discover(repo_root) -> Option<ImportInputs>`
-    - [ ] `convert(inputs) -> CanonicalArtifacts`
-  - [ ] `CanonicalArtifacts` includes files to write under `.agents/**`
+    - [x] `agent_id()`
+    - [x] `discover(repo_root) -> Option<ImportInputs>`
+    - [x] `convert(inputs) -> CanonicalArtifacts`
+  - [x] `CanonicalArtifacts` includes files to write under `.agents/**`
 
 - [ ] Implement import target selection
   - [ ] Parse `--from <agent>`
