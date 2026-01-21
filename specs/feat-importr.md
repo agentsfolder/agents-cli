@@ -17,11 +17,11 @@ Unblocks: adoption in existing repos
     - [x] `convert(inputs) -> CanonicalArtifacts`
   - [x] `CanonicalArtifacts` includes files to write under `.agents/**`
 
-- [ ] Implement import target selection
-  - [ ] Parse `--from <agent>`
-  - [ ] Determine input location:
-    - [ ] default known paths (e.g., `.github/copilot-instructions.md`)
-    - [ ] allow `--path` override
+- [x] Implement import target selection
+  - [x] Parse `--from <agent>`
+  - [x] Determine input location:
+    - [x] default known paths (e.g., `.github/copilot-instructions.md`)
+    - [x] allow `--path` override
 
 - [ ] Implement first importer (recommend: Copilot)
   - [ ] Read `.github/copilot-instructions.md`

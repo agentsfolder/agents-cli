@@ -13,6 +13,7 @@ mod doctor;
 mod adtest;
 mod explnx;
 mod initpr;
+mod importr;
 
 #[derive(Debug, Clone, ValueEnum)]
 enum Backend {
@@ -229,6 +230,12 @@ fn dispatch(ctx: &AppContext, cmd: Commands) -> AppResult<()> {
             &ctx.repo_root,
             crate::initpr::InitOptions { preset },
         ),
+
+        Commands::Import { from_agent, path } => crate::importr::cmd_import(
+            &ctx.repo_root,
+            crate::importr::ImportOptions { from_agent, path },
+        ),
+
         Commands::Validate { .. } => cmd_validate(ctx),
         Commands::Status => cmd_status(ctx),
 
