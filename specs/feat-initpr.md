@@ -36,20 +36,20 @@ Unblocks: feat-adbase (if used), feat-adtest
   - [x] Write files for chosen preset
   - [x] Write `.agents/state/.gitignore` to ignore `state.yaml`
 
-- [ ] Preset content requirements
+- [x] Preset content requirements
   - [ ] Manifest:
-    - [ ] set `specVersion`
-    - [ ] defaults mode/policy/backend
-    - [ ] enabled modes/policies/skills/adapters appropriate for preset
+    - [x] set `specVersion`
+    - [x] defaults mode/policy/backend
+    - [x] enabled modes/policies/skills/adapters appropriate for preset
   - [ ] Modes:
-    - [ ] at least `default` and `readonly-audit` examples
+    - [x] at least `default` and `readonly-audit` examples
   - [ ] Policies:
-    - [ ] at least one safe default policy
+    - [x] at least one safe default policy
   - [ ] Adapters:
-    - [ ] minimal adapter.yaml per supported agent in agent-pack
-    - [ ] minimal templates so `agents preview` works later
+    - [x] minimal adapter.yaml per supported agent in agent-pack
+    - [x] minimal templates so `agents preview` works later
   - [ ] Schemas:
-    - [ ] embed PRD schemas into `.agents/schemas/`
+    - [x] embed PRD schemas into `.agents/schemas/`
 
 - [ ] Post-init validation
   - [ ] After writing, run internal validate (same as `agents validate`)
