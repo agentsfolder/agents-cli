@@ -13,31 +13,31 @@ Unblocks: onboarding UX
   - enforcement notes (exec/network/filesystem) and known limitations
 
 ## Implementation Plan
-- [ ] Define compatibility data sources
-  - [ ] Adapter YAML:
-    - [ ] backendDefaults
-    - [ ] outputs list
-    - [ ] capabilityMapping (optional)
-  - [ ] Core knowledge base:
-    - [ ] per-agent limitations (hardcoded doc strings for v1)
+- [x] Define compatibility data sources
+  - [x] Adapter YAML:
+    - [x] backendDefaults
+    - [x] outputs list
+    - [x] capabilityMapping (optional)
+  - [x] Core knowledge base:
+    - [x] per-agent limitations (hardcoded doc strings for v1)
 
-- [ ] Implement matrix builder
-  - [ ] Iterate enabled adapters
-  - [ ] Extract:
-    - [ ] output paths
-    - [ ] logical surfaces
-    - [ ] backend defaults
-  - [ ] Summarize enforceability:
-    - [ ] vfs_container: filesystem enforceable via mounts
-    - [ ] network restrictions: advisory
-    - [ ] exec restrictions: limited
+- [x] Implement matrix builder
+  - [x] Iterate enabled adapters
+  - [x] Extract:
+    - [x] output paths
+    - [x] logical surfaces
+    - [x] backend defaults
+  - [x] Summarize enforceability:
+    - [x] vfs_container: filesystem enforceable via mounts
+    - [x] network restrictions: advisory
+    - [x] exec restrictions: limited
 
-- [ ] Render output
-  - [ ] Human-readable table with stable ordering
-  - [ ] `--json` output optional
+- [x] Render output
+  - [x] Human-readable table with stable ordering
+  - [x] `--json` output optional
 
-- [ ] Tests
-  - [ ] Snapshot test for compat output (stable ordering)
+- [x] Tests
+  - [x] Snapshot test for compat output (stable ordering)
 
 ## Verification
-- [ ] `agents compat` includes all enabled adapters and stable output
+- [x] `agents compat` includes all enabled adapters and stable output (covered by compat snapshot test)

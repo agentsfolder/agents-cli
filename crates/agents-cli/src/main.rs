@@ -7,6 +7,7 @@ mod main_tests;
 
 mod adtest;
 mod cleanup;
+mod compat;
 mod doctor;
 mod explnx;
 mod importr;
@@ -364,6 +365,8 @@ fn dispatch(ctx: &AppContext, cmd: Commands) -> AppResult<()> {
         },
 
         Commands::Explain { path } => crate::explnx::cmd_explain(&ctx.repo_root, &path, ctx.output),
+
+        Commands::Compat => crate::compat::cmd_compat(&ctx.repo_root, ctx.output),
 
         _ => Err(AppError::not_initialized(&ctx.repo_root)),
     }
