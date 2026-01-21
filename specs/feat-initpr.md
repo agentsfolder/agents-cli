@@ -17,12 +17,12 @@ Unblocks: feat-adbase (if used), feat-adtest
   - `.agents/state/.gitignore`
 
 ## Implementation Plan
-- [ ] Define preset list (PRD)
-  - [ ] `conservative`
-  - [ ] `standard`
-  - [ ] `ci-safe`
-  - [ ] `monorepo`
-  - [ ] `agent-pack`
+- [x] Define preset list (PRD)
+  - [x] `conservative`
+  - [x] `standard`
+  - [x] `ci-safe`
+  - [x] `monorepo`
+  - [x] `agent-pack`
 
 - [ ] Bundle template assets in the binary
   - [ ] Use `include_str!` / `include_bytes!` for each template file
