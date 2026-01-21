@@ -1,5 +1,5 @@
-pub mod driftx;
 pub mod cleanup;
+pub mod driftx;
 pub mod explain;
 pub mod fsutil;
 pub mod loadag;
@@ -13,6 +13,7 @@ pub mod shared;
 pub mod skillpl;
 pub mod stamps;
 pub mod templ;
+pub mod vfsctr;
 
 pub fn hello_core() -> &'static str {
     "agents-core"

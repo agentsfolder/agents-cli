@@ -6,7 +6,10 @@ use crate::model::OutputFormat;
 use crate::outputs::OutputPlan;
 use crate::stamps::parse_stamp;
 
-use super::{ApplyReport, Backend, BackendError, BackendSession, ConflictDetail, ConflictReason, RenderedOutput};
+use super::{
+    ApplyReport, Backend, BackendError, BackendSession, ConflictDetail, ConflictReason,
+    RenderedOutput,
+};
 
 #[derive(Debug, Default, Clone)]
 pub struct MaterializeBackend;
@@ -33,14 +36,11 @@ impl Backend for MaterializeBackend {
         }
 
         for out in outputs {
-            let planned = planned_by_path
-                .get(out.path.as_str())
-                .ok_or_else(|| BackendError::Unsupported {
-                    message: format!(
-                        "rendered output not present in plan: {}",
-                        out.path.as_str()
-                    ),
-                })?;
+            let planned = planned_by_path.get(out.path.as_str()).ok_or_else(|| {
+                BackendError::Unsupported {
+                    message: format!("rendered output not present in plan: {}", out.path.as_str()),
+                }
+            })?;
 
             let dest = session.repo_root.join(out.path.as_str());
 
@@ -59,7 +59,8 @@ impl Backend for MaterializeBackend {
                 if dest.exists() {
                     let existing = fsutil::read_to_string(&dest)?;
                     let stamp = parse_stamp(&existing);
-                    let managed_by_agents = stamp.as_ref().is_some_and(|s| s.meta.generator == "agents");
+                    let managed_by_agents =
+                        stamp.as_ref().is_some_and(|s| s.meta.generator == "agents");
                     if !managed_by_agents {
                         report.conflicts.push(out.path.clone());
                         report.conflict_details.push(ConflictDetail {
@@ -199,7 +200,11 @@ fn replace_agents_gitignore_block(existing: &str, entries: &[String]) -> String 
     out
 }
 
-fn normalize_bytes_for_write(_path: &PathBuf, bytes: &[u8], format: Option<OutputFormat>) -> Vec<u8> {
+fn normalize_bytes_for_write(
+    _path: &PathBuf,
+    bytes: &[u8],
+    format: Option<OutputFormat>,
+) -> Vec<u8> {
     let format = format.unwrap_or(OutputFormat::Text);
     if !is_text_format(format) {
         return bytes.to_vec();
@@ -216,6 +221,10 @@ fn normalize_bytes_for_write(_path: &PathBuf, bytes: &[u8], format: Option<Outpu
 
 fn is_text_format(format: OutputFormat) -> bool {
     match format {
-        OutputFormat::Text | OutputFormat::Md | OutputFormat::Yaml | OutputFormat::Json | OutputFormat::Jsonc => true,
+        OutputFormat::Text
+        | OutputFormat::Md
+        | OutputFormat::Yaml
+        | OutputFormat::Json
+        | OutputFormat::Jsonc => true,
     }
 }

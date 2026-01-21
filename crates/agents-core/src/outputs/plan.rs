@@ -324,12 +324,7 @@ fn validate_renderer_sources(
 
     // Validate template existence for template renderer.
     if out.renderer.type_ == RendererType::Template {
-        let template_name = out
-            .renderer
-            .template
-            .as_deref()
-            .unwrap_or("")
-            .trim();
+        let template_name = out.renderer.template.as_deref().unwrap_or("").trim();
 
         if template_name.is_empty() {
             return Err(fail("template renderer requires `template`".to_string()));
@@ -340,14 +335,13 @@ fn validate_renderer_sources(
             return Ok(());
         }
 
-        let template_dir = out.template_dir.as_ref().ok_or_else(|| {
-            fail("template renderer requires adapter template_dir".to_string())
-        })?;
+        let template_dir = out
+            .template_dir
+            .as_ref()
+            .ok_or_else(|| fail("template renderer requires adapter template_dir".to_string()))?;
 
         if !template_exists(template_dir, template_name) {
-            return Err(fail(format!(
-                "unknown template source: {template_name}"
-            )));
+            return Err(fail(format!("unknown template source: {template_name}")));
         }
     }
 
@@ -369,13 +363,14 @@ fn validate_renderer_sources(
 
         match kind {
             Some("template") => {
-                let template_dir = out
-                    .template_dir
-                    .as_ref()
-                    .ok_or_else(|| fail("template source requires adapter template_dir".to_string()))?;
+                let template_dir = out.template_dir.as_ref().ok_or_else(|| {
+                    fail("template source requires adapter template_dir".to_string())
+                })?;
                 let name = val.trim();
                 if name.is_empty() {
-                    return Err(fail("template:<name> must include a template name".to_string()));
+                    return Err(fail(
+                        "template:<name> must include a template name".to_string(),
+                    ));
                 }
                 if !template_exists(template_dir, name) {
                     return Err(fail(format!("unknown template source: {raw}")));
@@ -394,7 +389,9 @@ fn validate_renderer_sources(
                     return Err(fail("snippet:<id> must include a snippet id".to_string()));
                 }
                 if !effective.snippet_ids_included.iter().any(|x| x == id) {
-                    return Err(fail(format!("snippet not included in effective config: {raw}")));
+                    return Err(fail(format!(
+                        "snippet not included in effective config: {raw}"
+                    )));
                 }
                 if !repo.prompts.snippets.contains_key(id) {
                     return Err(fail(format!("unknown snippet id: {raw}")));
@@ -467,7 +464,8 @@ fn build_planned_output(
         stamp: Some(StampMethod::Comment),
     });
 
-    let inline_template = if template_dir.is_none() && out.renderer.type_ == RendererType::Template {
+    let inline_template = if template_dir.is_none() && out.renderer.type_ == RendererType::Template
+    {
         let name = out.renderer.template.as_deref().unwrap_or("");
         crate::shared::builtin_template(agent_id, name).map(|s| s.to_string())
     } else {
@@ -506,10 +504,13 @@ fn resolve_collisions(
             continue;
         }
 
-        let surface = p.surface.as_deref().ok_or_else(|| PlanError::InvalidRenderer {
-            path: p.path.as_str().to_string(),
-            message: "collision=shared_owner requires a non-empty `surface`".to_string(),
-        })?;
+        let surface = p
+            .surface
+            .as_deref()
+            .ok_or_else(|| PlanError::InvalidRenderer {
+                path: p.path.as_str().to_string(),
+                message: "collision=shared_owner requires a non-empty `surface`".to_string(),
+            })?;
 
         if surface.is_empty() {
             return Err(PlanError::InvalidRenderer {
@@ -586,7 +587,10 @@ fn resolve_collisions(
                 paths.sort();
                 return Err(PlanError::SurfaceCollision {
                     surface,
-                    message: format!("multiple outputs for surface (collision=error): {}", paths.join(", ")),
+                    message: format!(
+                        "multiple outputs for surface (collision=error): {}",
+                        paths.join(", ")
+                    ),
                 });
             }
             CollisionPolicy::SharedOwner => {
@@ -625,7 +629,8 @@ fn resolve_collisions(
                 {
                     return Err(PlanError::SurfaceCollision {
                         surface,
-                        message: "merge requires all outputs to have the same writePolicy".to_string(),
+                        message: "merge requires all outputs to have the same writePolicy"
+                            .to_string(),
                     });
                 }
                 if items
@@ -634,7 +639,8 @@ fn resolve_collisions(
                 {
                     return Err(PlanError::SurfaceCollision {
                         surface,
-                        message: "merge requires all outputs to have the same driftDetection".to_string(),
+                        message: "merge requires all outputs to have the same driftDetection"
+                            .to_string(),
                     });
                 }
 

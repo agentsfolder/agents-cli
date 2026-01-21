@@ -46,7 +46,10 @@ pub struct ExplainEffectiveConfig {
     pub snippet_ids: Vec<String>,
 }
 
-pub fn build_explain_source_maps(plan: &OutputPlan, sources: &[SourceMapSkeleton]) -> Vec<ExplainSourceMap> {
+pub fn build_explain_source_maps(
+    plan: &OutputPlan,
+    sources: &[SourceMapSkeleton],
+) -> Vec<ExplainSourceMap> {
     let mut by_output: BTreeMap<&str, &SourceMapSkeleton> = BTreeMap::new();
     for s in sources {
         by_output.insert(&s.output_path, s);

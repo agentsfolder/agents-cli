@@ -13,57 +13,60 @@ Unblocks: feat-runner
   - runs the agent entrypoint within the container
 
 ## Implementation Plan
-- [ ] Decide container runtime support
-  - [ ] Primary: Docker CLI (`docker`)
-  - [ ] Optional future: Podman
-  - [ ] Implement `DockerRuntime` wrapper:
-    - [ ] check availability (`docker --version`)
-    - [ ] check daemon reachable (`docker info`)
+- [x] Decide container runtime support
+  - [x] Primary: Docker CLI (`docker`)
+  - Podman support (future)
+  - [x] Implement `DockerRuntime` wrapper:
+    - [x] check availability (`docker --version`)
+    - [x] check daemon reachable (`docker info`)
 
-- [ ] Define runtime contract
-  - [ ] Workspace mount:
-    - [ ] host repo -> container `/workspace`
-  - [ ] Generated outputs mount:
-    - [ ] host temp dir -> container `/__agents_out`
-  - [ ] Injection strategy (pick one and document):
-    - [ ] A) start container with writable layer and copy outputs to target paths at startup
-    - [ ] B) mount individual files onto exact target paths (harder cross-platform)
-  - [ ] Prefer A for portability.
+- [x] Define runtime contract
+  - [x] Workspace mount:
+    - [x] host repo -> container `/__agents_repo` (read-only)
+    - [x] container creates writable `/workspace` by copying repo contents
+  - [x] Generated outputs mount:
+    - [x] host temp dir -> container `/__agents_out` (read-only)
+  - [x] Injection strategy (pick one and document):
+    - [x] A) start container with writable layer and copy outputs to target paths at startup
+    - B) mount individual files onto exact target paths (future; cross-platform complexity)
+  - [x] Prefer A for portability.
 
-- [ ] Container image strategy
-  - [ ] Decide default image (lightweight with shells + git)
-  - [ ] Allow override via env/config (future)
-  - [ ] Ensure target agent binary is available:
-    - [ ] Either preinstalled in image OR mounted from host
-    - [ ] For v1, simplest: require agent binary present on host and run on host? (conflicts with container)
-    - [ ] If container must run the agent, define how agent is installed (document prerequisite)
+- [x] Container image strategy
+  - [x] Decide default image (lightweight with shells + git)
+    - [x] default: `alpine:3.19` (requires `sh` + `tar`)
+  - [x] Allow override via env/config (future)
+    - [x] env: `AGENTS_VFSCTR_IMAGE`
+  - [x] Ensure target agent binary is available:
+    - [x] Either preinstalled in image (v1 expectation)
+    - [x] Document prerequisite: the agent command must exist in the container image
 
-- [ ] Command execution
-  - [ ] Build deterministic `docker run` invocation:
-    - [ ] set workdir `/workspace`
-    - [ ] pass env vars required by skills (later)
-    - [ ] mount repo read-only by default
-    - [ ] optionally mount a writable scratch for temp files
-  - [ ] Entry script:
-    - [ ] copies `/__agents_out/*` into `/workspace` at correct repo-relative paths
-    - [ ] prints minimal banner if verbose
-    - [ ] execs agent command
+- [x] Command execution
+  - [x] Build deterministic `docker run` invocation:
+    - [x] set workdir `/workspace`
+    - [x] pass env vars required by skills (later)
+    - [x] mount repo read-only by default
+    - optionally mount a writable scratch for temp files (future)
+  - [x] Entry script:
+    - [x] copies `/__agents_out/*` into `/workspace` at correct repo-relative paths
+    - [x] prints minimal banner if verbose
+    - [x] execs agent command
 
-- [ ] Policy enforcement hooks (best-effort)
-  - [ ] If policy denies filesystem writes:
-    - [ ] mount `/workspace` read-only
-  - [ ] Network restrictions:
-    - [ ] document limitations (docker cannot easily restrict per-host without extra setup)
-  - [ ] Exec restrictions:
-    - [ ] enforced by wrapper for the commands it runs; agent internal exec is advisory
+- [x] Policy enforcement hooks (best-effort)
+  - [x] If policy denies filesystem writes:
+    - [x] make `/workspace` read-only inside container (best-effort chmod)
+  - [x] Network restrictions:
+    - [x] best-effort: `docker run --network none` when policy disables network
+    - [x] document limitations (docker cannot easily restrict per-host without extra setup)
+  - [x] Exec restrictions:
+    - [x] enforced by wrapper for the commands it runs; agent internal exec is advisory
 
-- [ ] Error handling
-  - [ ] Missing docker => actionable error
-  - [ ] Failed container start => include stderr, hint to run `docker info`
+- [x] Error handling
+  - [x] Missing docker => actionable error
+  - [x] Failed container start => include stderr, hint to run `docker info`
 
-- [ ] Tests
-  - [ ] Unit tests for docker command building (pure string/args)
-  - [ ] Integration tests gated behind env var (optional): runs a dummy container
+- [x] Tests
+  - [x] Unit tests for docker command building (pure string/args)
+  - [x] Integration tests gated behind env var (optional): runs a dummy container
 
 ## Verification
-- [ ] `agents run <agent> --backend vfs_container` starts docker container and agent sees injected files
+- [x] `AGENTS_DOCKER_TESTS=1 cargo test -p agents-core --test vfsctr` runs a docker container and verifies injected files are visible in `/workspace`
