@@ -39,7 +39,7 @@ Notes:
 
 - [ ] Tests
   - [ ] Golden fixture for `.claude/settings.json`
-  - [ ] Ensure stamp present and drift detectable
+  - [x] Ensure stamp present and drift detectable
 
 ## Verification
-- [ ] `agents preview --agent claude` produces `.claude/settings.json` deterministically
+- [x] `agents preview --agent claude` produces `.claude/settings.json` deterministically
