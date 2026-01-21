@@ -51,9 +51,9 @@ Unblocks: feat-adbase (if used), feat-adtest
   - [ ] Schemas:
     - [x] embed PRD schemas into `.agents/schemas/`
 
-- [ ] Post-init validation
-  - [ ] After writing, run internal validate (same as `agents validate`)
-  - [ ] Print next steps (run `agents status`, `agents preview`)
+- [x] Post-init validation
+  - [x] After writing, run internal validate (same as `agents validate`)
+  - [x] Print next steps (run `agents status`, `agents preview`)
 
 - [ ] Tests
   - [ ] Init into temp dir creates expected structure
