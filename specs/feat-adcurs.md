@@ -17,14 +17,14 @@ Unblocks: feat-adtest
     - [x] `20-policy.md`
   - [x] Ensure naming is deterministic and stable
 
-- [ ] Implement adapter YAML
+- [x] Implement adapter YAML
   - [ ] Outputs:
-    - [ ] `.cursor/rules/00-current-mode.md`
-    - [ ] `.cursor/rules/10-guidance.md` (composed prompts)
-    - [ ] `.cursor/rules/20-policy.md` (policy summary)
-  - [ ] `writePolicy: if_generated`
-  - [ ] stamp via comment
-  - [ ] Backend defaults: preferred `materialize`
+    - [x] `.cursor/rules/00-current-mode.md`
+    - [x] `.cursor/rules/10-guidance.md` (composed prompts)
+    - [x] `.cursor/rules/20-policy.md` (policy summary)
+  - [x] `writePolicy: if_generated`
+  - [x] stamp via comment
+  - [x] Backend defaults: preferred `materialize`
 
 - [ ] Implement templates
   - [ ] Each file includes:
