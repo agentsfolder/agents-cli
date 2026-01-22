@@ -52,12 +52,8 @@ enabled: { modes: [default], policies: [safe], skills: [], adapters: [dummy] }\n
         "output\n",
     );
 
-    let repo_root: PathBuf = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .and_then(|p| p.parent())
-        .unwrap()
-        .to_path_buf();
-    let fixture_script = repo_root.join("fixtures/runner/dummy-agent.sh");
+    let fixture_script =
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/assets/dummy-agent.sh");
     let agent_path = repo.join("dummy-agent.sh");
     fs::copy(&fixture_script, &agent_path).unwrap();
     make_executable(&agent_path);
