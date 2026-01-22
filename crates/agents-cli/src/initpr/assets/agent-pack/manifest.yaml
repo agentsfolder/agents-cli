@@ -4,4 +4,4 @@ enabled:
   modes: [default, readonly-audit]
   policies: [safe, conservative, ci-safe]
   skills: []
-  adapters: [core, cursor, copilot, opencode, claude, codex]
+  adapters: [core, cursor, copilot, opencode, gemini-cli, claude, codex]

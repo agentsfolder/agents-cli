@@ -1,0 +1,7 @@
+{
+  "x_generated": {"generator":"agents","adapterAgentId":"gemini-cli","manifestSpecVersion":"0.1","mode":"default","policy":"safe","backend":"vfs_container","contentSha256":"33952aec09faf6e98957ac6c4c6472448d67647f80519b4011cb2963e7b15eca"},
+  "$schema": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/schemas/settings.schema.json",
+  "context": {
+    "fileName": "AGENTS.md"
+  }
+}
