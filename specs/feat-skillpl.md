@@ -33,7 +33,7 @@ Unblocks: feat-runner, feat-compat
     - [x] ensure resolved backend is included
   - [x] Decide behavior:
     - [x] default error (strict)
-    - [ ] optionally warn+drop skill (future)
+    - [x] optionally warn+drop skill (future; deferred)
 
 - [x] Summarize requirements for later policy checks
   - [x] Extract required capabilities (filesystem/exec/network)
