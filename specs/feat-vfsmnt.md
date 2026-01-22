@@ -10,11 +10,11 @@ Unblocks: IDE workflows without materialize
 - Clear documentation of limitations and supported environments.
 
 ## Implementation Plan
-- [ ] Research mount options per platform
-  - [ ] macOS: `macFUSE`/`osxfuse` options
-  - [ ] Linux: FUSE
-  - [ ] Windows: WinFsp
-  - [ ] Decide whether to ship in v1.1 or keep experimental
+- [x] Research mount options per platform
+  - [x] macOS: `macFUSE`/`osxfuse` options (defer to v1.2)
+  - [x] Linux: FUSE (defer to v1.2)
+  - [x] Windows: WinFsp (defer to v1.2)
+  - [x] Decide whether to ship in v1.1 or keep experimental (ship copy-based workspace in v1.1)
 
 - [ ] Define mount layout
   - [ ] Mount point contains full repo content
