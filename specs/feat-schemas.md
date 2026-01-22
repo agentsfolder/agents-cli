@@ -64,4 +64,4 @@ Unblocks: feat-doctor, feat-adtest
 
 ## Verification
 - [x] `agents validate` fails fast on a deliberately broken `.agents/policies/*.yaml`
-- [ ] `agents validate` succeeds on the init preset output (once feat-initpr exists)
+- [x] `agents validate` succeeds on the init preset output (once feat-initpr exists) (covered by init standard test)
