@@ -154,7 +154,7 @@ fn common_files() -> Vec<EmbeddedFile> {
         // State
         file(
             ".agents/state/.gitignore",
-            include_str!("assets/common/state/.gitignore"),
+            include_str!("assets/common/state/gitignore"),
         ),
     ]
 }

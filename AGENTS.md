@@ -81,6 +81,7 @@ Adapters (agent-native surfaces)
 
 Maintenance
 - `specs/feat-prodci.md`: production CI hardening (fmt/clippy/tests)
+- `specs/feat-npmpub.md`: npm packaging for CLI distribution
 
 ## Repo-Specific Learnings / Conventions
 

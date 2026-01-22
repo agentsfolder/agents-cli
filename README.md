@@ -20,6 +20,14 @@ cargo run -p agents-cli -- preview --agent opencode
 cargo run -p agents-cli -- sync --agent opencode --backend materialize
 ```
 
+## Install (npm)
+```bash
+npm install -g agents
+agents --help
+```
+
+Note: the npm package builds the Rust binary on install, so a Rust toolchain is required.
+
 ## Common Commands
 ```bash
 # Validate configuration

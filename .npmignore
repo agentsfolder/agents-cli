@@ -1,0 +1,9 @@
+target/
+fixtures/
+specs/
+.git/
+.github/
+**/*.rs.bk
+**/*.log
+**/*.tmp
+**/*.swp

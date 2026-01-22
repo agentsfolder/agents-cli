@@ -269,3 +269,12 @@ Adapters are implemented after the shared rendering/planning pipeline is stable.
   - `cargo fmt -- --check`
   - `cargo clippy --all-targets --all-features -- -D warnings`
   - `cargo test`
+
+## Phase 10: Distribution
+### feat-npmpub
+- Goal: npm packaging for CLI distribution.
+- Depends on: feat-cliapp
+- Unblocks: npm install workflow
+- Verify:
+  - `npm pack`
+  - `npm install -g agents && agents --help`
