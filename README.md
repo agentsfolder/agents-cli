@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="agents-folder.PNG" alt="(dot)agents folder logo" width="500"/>
+</p>
+
 # agents
 
 `agents` is a Rust CLI + core library that projects canonical `.agents/` configuration into agent-native surfaces (Copilot, Cursor, Codex, Claude Code, OpenCode, Gemini, etc.). It gives you deterministic outputs, drift detection, and a single source of truth for agent instructions.
