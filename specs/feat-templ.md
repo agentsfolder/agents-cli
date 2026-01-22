@@ -68,5 +68,5 @@ Unblocks: feat-outputs, feat-shared, all adapters
 
 
 ## Verification
-- [ ] `agents preview` (once available) renders templates without missing-variable surprises
+- [x] `agents preview` (once available) renders templates without missing-variable surprises (covered by preview missing-var test)
 - [x] Helper outputs are byte-identical across runs
