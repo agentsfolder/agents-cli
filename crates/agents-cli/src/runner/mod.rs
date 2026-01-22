@@ -33,6 +33,19 @@ pub struct RunOptions {
 }
 
 pub fn cmd_run(repo_root: &Path, opts: RunOptions) -> Result<(), AppError> {
+    let registry = registry::default_agent_registry();
+    let agent_spec = registry::lookup_agent_spec(&registry, &opts.agent_cmd).cloned();
+    let agent_cmd = agent_spec
+        .as_ref()
+        .map(|spec| spec.exec.to_string())
+        .unwrap_or_else(|| opts.agent_cmd.clone());
+    let adapter_id = opts.adapter.clone().unwrap_or_else(|| {
+        agent_spec
+            .as_ref()
+            .map(|spec| spec.id.to_string())
+            .unwrap_or_else(|| opts.agent_cmd.clone())
+    });
+
     let (repo, _report) = load_repo_config(
         repo_root,
         &LoaderOptions {
@@ -68,7 +81,16 @@ pub fn cmd_run(repo_root: &Path, opts: RunOptions) -> Result<(), AppError> {
     req.repo_root = repo_root.to_path_buf();
     req.override_mode = opts.mode.clone();
     req.override_profile = opts.profile.clone();
-    req.override_backend = opts.backend;
+    let state_backend = repo.state.as_ref().and_then(|s| s.backend);
+    let backend_override = if opts.backend.is_none()
+        && repo.manifest.defaults.backend.is_none()
+        && state_backend.is_none()
+    {
+        agent_spec.as_ref().map(|spec| spec.preferred_backend)
+    } else {
+        None
+    };
+    req.override_backend = opts.backend.or(backend_override);
     let effective = resolver.resolve(&req).map_err(|e| AppError {
         category: ErrorCategory::Io,
         message: e.to_string(),
@@ -76,11 +98,6 @@ pub fn cmd_run(repo_root: &Path, opts: RunOptions) -> Result<(), AppError> {
     })?;
 
     warn_policy_risks(&repo, &effective);
-
-    let adapter_id = opts
-        .adapter
-        .clone()
-        .unwrap_or_else(|| opts.agent_cmd.clone());
 
     let plan_res =
         plan_outputs(repo_root, repo.clone(), &effective, &adapter_id).map_err(|e| AppError {
@@ -113,8 +130,14 @@ pub fn cmd_run(repo_root: &Path, opts: RunOptions) -> Result<(), AppError> {
     if opts.verbose {
         eprintln!(
             "run: agent={} adapter={} backend={:?}",
-            opts.agent_cmd, adapter_id, effective.backend
+            agent_cmd, adapter_id, effective.backend
         );
+        if let Some(spec) = &agent_spec {
+            eprintln!(
+                "run: registry id={} exec={} preferred_backend={:?}",
+                spec.id, spec.exec, spec.preferred_backend
+            );
+        }
         for p in &rendered {
             eprintln!("run: output: {}", p.path);
         }
@@ -124,7 +147,7 @@ pub fn cmd_run(repo_root: &Path, opts: RunOptions) -> Result<(), AppError> {
         BackendKind::Materialize => {
             apply_materialize(repo_root, &plan_res.plan.outputs, &rendered)?;
 
-            let status = run_host_agent(repo_root, &opts.agent_cmd, &opts.passthrough)?;
+            let status = run_host_agent(repo_root, &agent_cmd, &opts.passthrough)?;
             exit_with_status(status)
         }
 
@@ -176,7 +199,7 @@ pub fn cmd_run(repo_root: &Path, opts: RunOptions) -> Result<(), AppError> {
                 .map(|f| f.write)
                 .unwrap_or(true);
 
-            let cmd = build_agent_cmd(&opts.agent_cmd, &opts.passthrough);
+            let cmd = build_agent_cmd(&agent_cmd, &opts.passthrough);
 
             let inv = agents_core::vfsctr::run::VfsContainerInvocation {
                 repo_root: repo_root.to_path_buf(),
@@ -242,7 +265,7 @@ pub fn cmd_run(repo_root: &Path, opts: RunOptions) -> Result<(), AppError> {
 
             println!("mount: {}", workspace.path().display());
 
-            let status = run_host_agent(workspace.path(), &opts.agent_cmd, &opts.passthrough)?;
+            let status = run_host_agent(workspace.path(), &agent_cmd, &opts.passthrough)?;
             exit_with_status(status)
         }
     }

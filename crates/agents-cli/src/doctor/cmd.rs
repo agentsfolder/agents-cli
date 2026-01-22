@@ -11,7 +11,9 @@ use std::collections::BTreeSet;
 
 use crate::{AppError, ErrorCategory};
 
-use super::{DoctorContext, DoctorItem, DoctorLevel, DoctorReport};
+use super::{
+    CheckResult, DoctorCheck, DoctorContext, DoctorItem, DoctorLevel, DoctorReport, FixResult,
+};
 
 #[derive(Debug, Clone)]
 pub struct DoctorOptions {
@@ -53,14 +55,29 @@ pub fn cmd_doctor(repo_root: &Path, opts: DoctorOptions) -> Result<(), AppError>
     };
 
     let mut report = DoctorReport::default();
-    report.items.extend(schema_check(&ctx));
-    report.items.extend(collision_check(&ctx));
-    report.items.extend(drift_check(&ctx));
-    report.items.extend(prereqs_check(&ctx));
-    report.items.extend(state_file_check(&ctx));
+    let checks: Vec<Box<dyn DoctorCheck>> = vec![
+        Box::new(SchemaCheck),
+        Box::new(CollisionCheck),
+        Box::new(DriftCheck),
+        Box::new(PrereqsCheck),
+        Box::new(StateFileCheck),
+        Box::new(FixCheck),
+    ];
 
-    if opts.fix {
-        report.items.extend(apply_fixes(&ctx));
+    for check in checks {
+        let check_name = check.name();
+        let result = check.run(&ctx);
+        for item in normalize_items(check_name, result.items) {
+            report.add(item);
+        }
+
+        if ctx.fix {
+            if let Some(fix) = check.fix(&ctx) {
+                for item in normalize_items(check_name, fix.items) {
+                    report.add(item);
+                }
+            }
+        }
     }
     report.normalize_order();
 
@@ -84,7 +101,7 @@ pub fn cmd_doctor(repo_root: &Path, opts: DoctorOptions) -> Result<(), AppError>
             .filter(|i| i.level == DoctorLevel::Warning)
             .count(),
         opts.ci,
-        opts.fix
+        ctx.fix
     );
 
     let fail = report.has_errors() || (opts.ci && report.has_warnings());
@@ -97,6 +114,106 @@ pub fn cmd_doctor(repo_root: &Path, opts: DoctorOptions) -> Result<(), AppError>
     }
 
     Ok(())
+}
+
+fn normalize_items(check_name: &str, items: Vec<DoctorItem>) -> Vec<DoctorItem> {
+    items
+        .into_iter()
+        .map(|mut item| {
+            if item.check.is_empty() {
+                item.check = check_name.to_string();
+            }
+            item
+        })
+        .collect()
+}
+
+struct SchemaCheck;
+
+impl DoctorCheck for SchemaCheck {
+    fn name(&self) -> &'static str {
+        "schemas"
+    }
+
+    fn run(&self, ctx: &DoctorContext) -> CheckResult {
+        CheckResult {
+            items: schema_check(ctx),
+        }
+    }
+}
+
+struct CollisionCheck;
+
+impl DoctorCheck for CollisionCheck {
+    fn name(&self) -> &'static str {
+        "collisions"
+    }
+
+    fn run(&self, ctx: &DoctorContext) -> CheckResult {
+        CheckResult {
+            items: collision_check(ctx),
+        }
+    }
+}
+
+struct DriftCheck;
+
+impl DoctorCheck for DriftCheck {
+    fn name(&self) -> &'static str {
+        "drift"
+    }
+
+    fn run(&self, ctx: &DoctorContext) -> CheckResult {
+        CheckResult {
+            items: drift_check(ctx),
+        }
+    }
+}
+
+struct PrereqsCheck;
+
+impl DoctorCheck for PrereqsCheck {
+    fn name(&self) -> &'static str {
+        "prereqs"
+    }
+
+    fn run(&self, ctx: &DoctorContext) -> CheckResult {
+        CheckResult {
+            items: prereqs_check(ctx),
+        }
+    }
+}
+
+struct StateFileCheck;
+
+impl DoctorCheck for StateFileCheck {
+    fn name(&self) -> &'static str {
+        "state"
+    }
+
+    fn run(&self, ctx: &DoctorContext) -> CheckResult {
+        CheckResult {
+            items: state_file_check(ctx),
+        }
+    }
+}
+
+struct FixCheck;
+
+impl DoctorCheck for FixCheck {
+    fn name(&self) -> &'static str {
+        "fix"
+    }
+
+    fn run(&self, _ctx: &DoctorContext) -> CheckResult {
+        CheckResult { items: vec![] }
+    }
+
+    fn fix(&self, ctx: &DoctorContext) -> Option<FixResult> {
+        Some(FixResult {
+            items: apply_fixes(ctx),
+        })
+    }
 }
 
 fn apply_fixes(ctx: &DoctorContext) -> Vec<DoctorItem> {

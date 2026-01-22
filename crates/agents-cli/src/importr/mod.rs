@@ -36,9 +36,6 @@ pub struct ImportOptions {
 
 pub fn cmd_import(repo_root: &Path, opts: ImportOptions) -> Result<(), AppError> {
     let from = opts.from_agent.trim();
-    let inputs = resolve_import_inputs(repo_root, from, opts.path.as_deref())?;
-
-    ensure_agents_not_initialized(repo_root)?;
 
     let importer: Box<dyn Importer> = match from {
         "copilot" => Box::new(CopilotImporter),
@@ -54,7 +51,11 @@ pub fn cmd_import(repo_root: &Path, opts: ImportOptions) -> Result<(), AppError>
         }
     };
 
-    let artifacts = importer.convert(inputs).map_err(|e| AppError {
+    let inputs = resolve_import_inputs(repo_root, importer.as_ref(), opts.path.as_deref())?;
+
+    ensure_agents_not_initialized(repo_root)?;
+
+    let artifacts = importer.convert(inputs.clone()).map_err(|e| AppError {
         category: ErrorCategory::Io,
         message: e,
         context: vec![],
@@ -67,6 +68,7 @@ pub fn cmd_import(repo_root: &Path, opts: ImportOptions) -> Result<(), AppError>
             .map(|f| f.rel_path.as_str())
             .collect();
         paths.sort();
+        println!("source: {}", inputs.source_path.display());
         println!("dry-run: would write {} files", paths.len());
         for p in paths {
             println!("write: {p}");
@@ -104,6 +106,7 @@ pub fn cmd_import(repo_root: &Path, opts: ImportOptions) -> Result<(), AppError>
     })?;
 
     println!("ok: imported into .agents/ (from: {})", importer.agent_id());
+    println!("source: {}", inputs.source_path.display());
     println!("ok: schemas valid");
     println!("next: run `agents status` and `agents preview --agent copilot`");
 
@@ -117,8 +120,17 @@ impl Importer for CopilotImporter {
         "copilot"
     }
 
-    fn discover(&self, _repo_root: &Path) -> Option<ImportInputs> {
-        None
+    fn discover(&self, repo_root: &Path) -> Option<ImportInputs> {
+        let path = repo_root.join(".github/copilot-instructions.md");
+        if !path.is_file() {
+            return None;
+        }
+
+        let content = agents_core::fsutil::read_to_string(&path).ok()?;
+        Some(ImportInputs {
+            source_path: path,
+            content,
+        })
     }
 
     fn convert(&self, inputs: ImportInputs) -> Result<CanonicalArtifacts, String> {
@@ -279,50 +291,60 @@ fn write_file(repo_root: &Path, rel_path: &str, bytes: &[u8]) -> Result<(), AppE
 
 fn resolve_import_inputs(
     repo_root: &Path,
-    from_agent: &str,
+    importer: &dyn Importer,
     path_override: Option<&Path>,
 ) -> Result<ImportInputs, AppError> {
-    match from_agent {
-        "copilot" => {
-            let p = path_override
-                .map(|p| {
-                    if p.is_absolute() {
-                        p.to_path_buf()
-                    } else {
-                        repo_root.join(p)
-                    }
-                })
-                .unwrap_or_else(|| repo_root.join(".github/copilot-instructions.md"));
-
-            if !p.is_file() {
-                return Err(AppError {
-                    category: ErrorCategory::InvalidArgs,
-                    message: "copilot instructions file not found".to_string(),
-                    context: vec![
-                        format!("path: {}", p.display()),
-                        "hint: pass --path to point at a copilot instructions file".to_string(),
-                    ],
-                });
-            }
-
-            let content = agents_core::fsutil::read_to_string(&p).map_err(|e| AppError {
-                category: ErrorCategory::Io,
-                message: e.to_string(),
-                context: vec![format!("path: {}", p.display())],
-            })?;
-
-            Ok(ImportInputs {
-                source_path: p,
-                content,
-            })
-        }
-        other => Err(AppError {
-            category: ErrorCategory::InvalidArgs,
-            message: "unsupported import source".to_string(),
-            context: vec![
-                format!("from: {other}"),
-                "hint: supported: copilot".to_string(),
-            ],
-        }),
+    if let Some(path) = path_override {
+        return read_import_path(repo_root, importer.agent_id(), path);
     }
+
+    if let Some(inputs) = importer.discover(repo_root) {
+        return Ok(inputs);
+    }
+
+    Err(AppError {
+        category: ErrorCategory::InvalidArgs,
+        message: format!("{} import source not found", importer.agent_id()),
+        context: vec![format!(
+            "hint: pass --path to point at a {} instructions file",
+            importer.agent_id()
+        )],
+    })
+}
+
+fn read_import_path(
+    repo_root: &Path,
+    agent_id: &str,
+    path: &Path,
+) -> Result<ImportInputs, AppError> {
+    let p = if path.is_absolute() {
+        path.to_path_buf()
+    } else {
+        repo_root.join(path)
+    };
+
+    if !p.is_file() {
+        return Err(AppError {
+            category: ErrorCategory::InvalidArgs,
+            message: format!("{} instructions file not found", agent_id),
+            context: vec![
+                format!("path: {}", p.display()),
+                format!(
+                    "hint: pass --path to point at a {} instructions file",
+                    agent_id
+                ),
+            ],
+        });
+    }
+
+    let content = agents_core::fsutil::read_to_string(&p).map_err(|e| AppError {
+        category: ErrorCategory::Io,
+        message: e.to_string(),
+        context: vec![format!("path: {}", p.display())],
+    })?;
+
+    Ok(ImportInputs {
+        source_path: p,
+        content,
+    })
 }

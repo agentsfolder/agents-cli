@@ -34,6 +34,18 @@ impl Backend {
     }
 }
 
+fn map_backend(backend: Backend, verbose: bool) -> agents_core::model::BackendKind {
+    if verbose {
+        eprintln!("cli: backend override {}", backend.as_str());
+    }
+
+    match backend {
+        Backend::VfsContainer => agents_core::model::BackendKind::VfsContainer,
+        Backend::Materialize => agents_core::model::BackendKind::Materialize,
+        Backend::VfsMount => agents_core::model::BackendKind::VfsMount,
+    }
+}
+
 #[derive(Debug, Parser)]
 #[command(name = "agents")]
 #[command(about = "Project agent-native config from .agents/", long_about = None)]
@@ -272,11 +284,7 @@ fn dispatch(ctx: &AppContext, cmd: Commands) -> AppResult<()> {
             keep_temp,
         } => {
             let agent = agent.unwrap_or_else(|| "core".to_string());
-            let backend = backend.map(|b| match b {
-                Backend::VfsContainer => agents_core::model::BackendKind::VfsContainer,
-                Backend::Materialize => agents_core::model::BackendKind::Materialize,
-                Backend::VfsMount => agents_core::model::BackendKind::VfsMount,
-            });
+            let backend = backend.map(|b| map_backend(b, ctx.verbose));
 
             crate::prevdf::cmd_preview(
                 &ctx.repo_root,
@@ -297,11 +305,7 @@ fn dispatch(ctx: &AppContext, cmd: Commands) -> AppResult<()> {
 
         Commands::Sync { agent, backend } => {
             let agent = agent.unwrap_or_else(|| "core".to_string());
-            let backend = backend.map(|b| match b {
-                Backend::VfsContainer => agents_core::model::BackendKind::VfsContainer,
-                Backend::Materialize => agents_core::model::BackendKind::Materialize,
-                Backend::VfsMount => agents_core::model::BackendKind::VfsMount,
-            });
+            let backend = backend.map(|b| map_backend(b, ctx.verbose));
 
             crate::syncer::cmd_sync(
                 &ctx.repo_root,
@@ -321,11 +325,7 @@ fn dispatch(ctx: &AppContext, cmd: Commands) -> AppResult<()> {
             backend,
             passthrough,
         } => {
-            let backend = backend.map(|b| match b {
-                Backend::VfsContainer => agents_core::model::BackendKind::VfsContainer,
-                Backend::Materialize => agents_core::model::BackendKind::Materialize,
-                Backend::VfsMount => agents_core::model::BackendKind::VfsMount,
-            });
+            let backend = backend.map(|b| map_backend(b, ctx.verbose));
 
             crate::runner::cmd_run(
                 &ctx.repo_root,
@@ -383,7 +383,7 @@ fn cmd_validate(ctx: &AppContext) -> AppResult<()> {
 
     match agents_core::loadag::load_repo_config(&ctx.repo_root, &opts) {
         Ok((_cfg, report)) => {
-            if ctx.output == OutputMode::Human {
+            if ctx.output == OutputMode::Human && !ctx.quiet {
                 if report.warnings.is_empty() {
                     println!("ok: .agents loaded");
                 } else {
@@ -400,7 +400,7 @@ fn cmd_validate(ctx: &AppContext) -> AppResult<()> {
 
             match agents_core::schemas::validate_repo(&ctx.repo_root) {
                 Ok(()) => {
-                    if ctx.output == OutputMode::Human {
+                    if ctx.output == OutputMode::Human && !ctx.quiet {
                         println!("ok: schemas valid");
                     }
                     Ok(())
