@@ -99,3 +99,36 @@ fn sync_fails_on_unmanaged_file_with_if_generated() {
         .failure()
         .stderr(predicate::str::contains("unmanaged"));
 }
+
+#[test]
+fn sync_vfs_mount_reports_workspace_without_writing_repo() {
+    let tmp = tempfile::tempdir().unwrap();
+    let repo = tmp.path();
+
+    base_repo(repo);
+
+    write_file(
+        &repo.join(".agents/adapters/a/adapter.yaml"),
+        "agentId: a\nversion: '0.1'\nbackendDefaults: { preferred: vfs_mount, fallback: materialize }\noutputs:\n  - path: out.md\n    format: md\n    renderer: { type: template, template: t.hbs }\n    driftDetection: { method: sha256, stamp: comment }\n    writePolicy: { mode: always }\n",
+    );
+    write_file(&repo.join(".agents/adapters/a/templates/t.hbs"), "hello\n");
+
+    write_file(&repo.join("out.md"), "repo\n");
+
+    let mut cmd = Command::cargo_bin("agents").unwrap();
+    cmd.current_dir(repo)
+        .arg("sync")
+        .arg("--agent")
+        .arg("a")
+        .arg("--backend")
+        .arg("vfs-mount")
+        .write_stdin("\n");
+
+    let output = cmd.output().unwrap();
+    assert!(output.status.success());
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.contains("mount: "));
+    assert!(stdout.contains("hint: open this path"));
+
+    assert_eq!(fs::read_to_string(repo.join("out.md")).unwrap(), "repo\n");
+}

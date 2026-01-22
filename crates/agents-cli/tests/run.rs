@@ -79,3 +79,61 @@ enabled: { modes: [default], policies: [safe], skills: [], adapters: [dummy] }\n
     let args = fs::read_to_string(repo.join("run-args.txt")).unwrap();
     assert_eq!(args, "--flag\nvalue\n");
 }
+
+#[test]
+fn run_executes_in_vfs_mount_workspace() {
+    let tmp = tempfile::tempdir().unwrap();
+    let repo = tmp.path();
+
+    write_file(
+        &repo.join(".agents/manifest.yaml"),
+        "specVersion: '0.1'\n\
+ defaults: { mode: default, policy: safe }\n\
+ enabled: { modes: [default], policies: [safe], skills: [], adapters: [dummy] }\n",
+    );
+    write_file(&repo.join(".agents/prompts/base.md"), "base\n");
+    write_file(&repo.join(".agents/prompts/project.md"), "project\n");
+    write_file(
+        &repo.join(".agents/modes/default.md"),
+        "---\nid: default\n---\n\n",
+    );
+    write_file(
+        &repo.join(".agents/policies/safe.yaml"),
+        "id: safe\ndescription: safe\ncapabilities: {}\npaths: {}\nconfirmations: {}\n",
+    );
+    write_file(
+        &repo.join(".agents/adapters/dummy/adapter.yaml"),
+        "agentId: dummy\nversion: '0.1'\nbackendDefaults: { preferred: vfs_mount, fallback: materialize }\noutputs:\n  - path: out.md\n    format: md\n    renderer: { type: template, template: out.md.hbs }\n    driftDetection: { method: sha256, stamp: comment }\n    writePolicy: { mode: always }\n",
+    );
+    write_file(
+        &repo.join(".agents/adapters/dummy/templates/out.md.hbs"),
+        "output\n",
+    );
+
+    write_file(&repo.join("out.md"), "repo\n");
+
+    let agent_path = repo.join("dummy-agent.sh");
+    write_file(
+        &agent_path,
+        "#!/bin/sh\nset -eu\nresult=\"$1\"\ncat out.md > \"$result\"\n",
+    );
+    make_executable(&agent_path);
+
+    let result_path = repo.join("run-result.txt");
+    let mut cmd = Command::cargo_bin("agents").unwrap();
+    cmd.current_dir(repo)
+        .arg("run")
+        .arg("./dummy-agent.sh")
+        .arg("--adapter")
+        .arg("dummy")
+        .arg("--backend")
+        .arg("vfs-mount")
+        .arg("--")
+        .arg(result_path.to_string_lossy().to_string());
+
+    cmd.assert().success();
+
+    let result = fs::read_to_string(&result_path).unwrap();
+    assert!(result.contains("output"));
+    assert_eq!(fs::read_to_string(repo.join("out.md")).unwrap(), "repo\n");
+}

@@ -33,6 +33,8 @@ Unblocks: IDE workflows without materialize
 - [x] Tests
   - [x] Unit tests for mount plan logic
   - [x] Integration tests optional/manual due to environment requirements (skipped in v1)
+  - [x] CLI integration: `agents run --backend vfs_mount` executes in workspace
+  - [x] CLI integration: `agents sync --backend vfs_mount` reports mount path
 
 ## Verification
 - [x] Mounted workspace path shows generated files without writing into repo (covered by vfs_mount unit test)
