@@ -8,6 +8,7 @@ use agents_core::model::BackendKind;
 use agents_core::outputs::{plan_outputs, render_planned_output};
 use agents_core::resolv::{ResolutionRequest, Resolver};
 use agents_core::stamps::{classify as classify_drift, parse_stamp};
+use agents_core::vfsmnt::{OverlayFile, VfsMountOptions};
 
 use crate::{AppError, ErrorCategory};
 
@@ -200,11 +201,50 @@ pub fn cmd_run(repo_root: &Path, opts: RunOptions) -> Result<(), AppError> {
             exit_with_status(status)
         }
 
-        BackendKind::VfsMount => Err(AppError {
-            category: ErrorCategory::ExternalToolMissing,
-            message: "vfs_mount backend not supported by agents run yet".to_string(),
-            context: vec!["hint: use --backend materialize".to_string()],
-        }),
+        BackendKind::VfsMount => {
+            let policy = repo
+                .policies
+                .get(&effective.policy_id)
+                .ok_or_else(|| AppError {
+                    category: ErrorCategory::Io,
+                    message: "missing effective policy".to_string(),
+                    context: vec![format!("policy: {}", effective.policy_id)],
+                })?;
+
+            let fs_write_enabled = policy
+                .capabilities
+                .filesystem
+                .as_ref()
+                .map(|f| f.write)
+                .unwrap_or(true);
+
+            let overlays: Vec<OverlayFile> = rendered
+                .iter()
+                .map(|item| OverlayFile {
+                    rel_path: item.path.clone(),
+                    bytes: item.content_with_stamp.as_bytes().to_vec(),
+                })
+                .collect();
+
+            let workspace = agents_core::vfsmnt::create_workspace(
+                repo_root,
+                &overlays,
+                &VfsMountOptions {
+                    deny_writes: !fs_write_enabled,
+                    verbose: opts.verbose,
+                },
+            )
+            .map_err(|e| AppError {
+                category: ErrorCategory::Io,
+                message: e.to_string(),
+                context: vec![],
+            })?;
+
+            println!("mount: {}", workspace.path().display());
+
+            let status = run_host_agent(workspace.path(), &opts.agent_cmd, &opts.passthrough)?;
+            exit_with_status(status)
+        }
     }
 }
 

@@ -6,6 +6,7 @@ use agents_core::model::BackendKind;
 use agents_core::outputs::{plan_outputs, render_planned_output};
 use agents_core::resolv::{ResolutionRequest, Resolver};
 use agents_core::stamps::{classify, parse_stamp};
+use agents_core::vfsmnt::{OverlayFile, VfsMountOptions};
 
 use crate::{AppError, ErrorCategory};
 
@@ -148,7 +149,60 @@ pub fn cmd_sync(repo_root: &Path, opts: SyncOptions) -> Result<(), AppError> {
 
             Ok(())
         }
-        BackendKind::VfsContainer | BackendKind::VfsMount => Err(AppError {
+        BackendKind::VfsMount => {
+            let policy = repo
+                .policies
+                .get(&effective.policy_id)
+                .ok_or_else(|| AppError {
+                    category: ErrorCategory::Io,
+                    message: "missing effective policy".to_string(),
+                    context: vec![format!("policy: {}", effective.policy_id)],
+                })?;
+
+            let fs_write_enabled = policy
+                .capabilities
+                .filesystem
+                .as_ref()
+                .map(|f| f.write)
+                .unwrap_or(true);
+
+            let mut overlays: Vec<OverlayFile> = vec![];
+            for out in &plan_res.plan.outputs {
+                let rendered = render_planned_output(repo_root, out).map_err(|e| AppError {
+                    category: ErrorCategory::Io,
+                    message: e.to_string(),
+                    context: vec![format!("path: {}", out.path.as_str())],
+                })?;
+
+                overlays.push(OverlayFile {
+                    rel_path: out.path.as_str().to_string(),
+                    bytes: rendered.content_with_stamp.into_bytes(),
+                });
+            }
+
+            let workspace = agents_core::vfsmnt::create_workspace(
+                repo_root,
+                &overlays,
+                &VfsMountOptions {
+                    deny_writes: !fs_write_enabled,
+                    verbose: opts.verbose,
+                },
+            )
+            .map_err(|e| AppError {
+                category: ErrorCategory::Io,
+                message: e.to_string(),
+                context: vec![],
+            })?;
+
+            println!("mount: {}", workspace.path().display());
+            println!("hint: open this path in your IDE");
+            println!("hint: press Enter to unmount");
+
+            let mut input = String::new();
+            let _ = std::io::stdin().read_line(&mut input);
+            Ok(())
+        }
+        BackendKind::VfsContainer => Err(AppError {
             category: ErrorCategory::ExternalToolMissing,
             message: format!("backend not implemented yet: {selected_backend:?}"),
             context: vec![],

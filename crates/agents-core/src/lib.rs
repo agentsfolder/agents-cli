@@ -14,6 +14,7 @@ pub mod skillpl;
 pub mod stamps;
 pub mod templ;
 pub mod vfsctr;
+pub mod vfsmnt;
 
 pub fn hello_core() -> &'static str {
     "agents-core"

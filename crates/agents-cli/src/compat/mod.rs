@@ -180,7 +180,7 @@ fn enforcement_for_backend(backend: BackendKind) -> EnforcementSummary {
             exec: "advisory".to_string(),
         },
         BackendKind::VfsMount => EnforcementSummary {
-            filesystem: "planned (mount enforcement)".to_string(),
+            filesystem: "copy-based workspace overlay".to_string(),
             network: "advisory".to_string(),
             exec: "advisory".to_string(),
         },
@@ -191,7 +191,7 @@ fn backend_limitation(backend: BackendKind) -> Option<&'static str> {
     match backend {
         BackendKind::VfsContainer => Some("requires container runtime for vfs_container"),
         BackendKind::Materialize => Some("writes generated outputs into the repo"),
-        BackendKind::VfsMount => Some("vfs_mount backend not supported in v1"),
+        BackendKind::VfsMount => Some("vfs_mount uses a temporary workspace copy"),
     }
 }
 
