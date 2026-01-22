@@ -251,7 +251,7 @@ fn sanitize_scope_id_for_path(id: &str) -> String {
 
 fn condition_allows(out: &AdapterOutput, effective: &EffectiveConfig) -> bool {
     if let Some(cond) = &out.condition {
-        if !cond.backend_in.is_empty() && !cond.backend_in.iter().any(|b| *b == effective.backend) {
+        if !cond.backend_in.is_empty() && !cond.backend_in.contains(&effective.backend) {
             return false;
         }
 

@@ -286,7 +286,7 @@ pub fn walk_repo_agents(root: &Path) -> FsResult<Vec<PathBuf>> {
     for entry in WalkDir::new(&agents_root).follow_links(false) {
         let entry = entry.map_err(|e| FsError::Io {
             path: agents_root.clone(),
-            source: io::Error::new(io::ErrorKind::Other, e.to_string()),
+            source: io::Error::other(e.to_string()),
         })?;
 
         if !entry.file_type().is_file() {
@@ -314,6 +314,6 @@ pub fn walk_repo_agents(root: &Path) -> FsResult<Vec<PathBuf>> {
         paths.push(path.to_path_buf());
     }
 
-    paths.sort_by(|a, b| path_to_forward_slash(a).cmp(&path_to_forward_slash(b)));
+    paths.sort_by_key(|a| path_to_forward_slash(a));
     Ok(paths)
 }

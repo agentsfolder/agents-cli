@@ -7,19 +7,13 @@ use crate::model::{
     parse_frontmatter_markdown, Adapter, Manifest, ModeFile, Policy, Scope, Skill, State,
 };
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct LoaderOptions {
     /// If true, missing `.agents/schemas` is an error.
     pub require_schemas_dir: bool,
 }
 
-impl Default for LoaderOptions {
-    fn default() -> Self {
-        Self {
-            require_schemas_dir: false,
-        }
-    }
-}
+type LoadedMap<T> = (BTreeMap<String, T>, BTreeMap<String, PathBuf>);
 
 pub fn load_repo_config(
     repo_root: &Path,
@@ -199,9 +193,7 @@ fn load_yaml_dir<T: serde::de::DeserializeOwned>(
     Ok(out)
 }
 
-fn load_skills_dir(
-    dir: &Path,
-) -> Result<(BTreeMap<String, Skill>, BTreeMap<String, PathBuf>), LoadError> {
+fn load_skills_dir(dir: &Path) -> Result<LoadedMap<Skill>, LoadError> {
     let mut skills = BTreeMap::new();
     let mut dirs = BTreeMap::new();
 
@@ -253,9 +245,7 @@ fn load_skills_dir(
     Ok((skills, dirs))
 }
 
-fn load_modes_dir(
-    dir: &Path,
-) -> Result<(BTreeMap<String, ModeFile>, BTreeMap<String, PathBuf>), LoadError> {
+fn load_modes_dir(dir: &Path) -> Result<LoadedMap<ModeFile>, LoadError> {
     let mut modes = BTreeMap::new();
     let mut sources = BTreeMap::new();
 
@@ -312,9 +302,7 @@ fn load_modes_dir(
     Ok((modes, sources))
 }
 
-fn load_adapters_dir(
-    dir: &Path,
-) -> Result<(BTreeMap<String, Adapter>, BTreeMap<String, PathBuf>), LoadError> {
+fn load_adapters_dir(dir: &Path) -> Result<LoadedMap<Adapter>, LoadError> {
     let mut adapters = BTreeMap::new();
     let mut template_dirs = BTreeMap::new();
 

@@ -109,7 +109,8 @@ pub fn cmd_explain(
             })?;
 
             if let Some(stamp) = agents_core::stamps::parse_stamp(&content) {
-                return Ok(print_stamp_explain(&repo_rel, &stamp, output));
+                print_stamp_explain(&repo_rel, &stamp, output);
+                return Ok(());
             }
 
             return Err(AppError {

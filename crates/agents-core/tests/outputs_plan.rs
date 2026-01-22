@@ -54,17 +54,22 @@ fn load_and_resolve(
     .unwrap();
 
     let resolver = Resolver::new(cfg.clone());
-    let mut req = ResolutionRequest::default();
-    req.repo_root = repo.to_path_buf();
-    req.override_backend = override_backend;
-    req.override_profile = override_profile.map(|s| s.to_string());
+    let req = ResolutionRequest {
+        repo_root: repo.to_path_buf(),
+        override_backend,
+        override_profile: override_profile.map(|s| s.to_string()),
+        ..Default::default()
+    };
     let eff = resolver.resolve(&req).unwrap();
 
     (cfg, eff)
 }
 
 fn plan_paths(plan: &agents_core::outputs::OutputPlan) -> Vec<String> {
-    plan.outputs.iter().map(|o| o.path.as_str().to_string()).collect()
+    plan.outputs
+        .iter()
+        .map(|o| o.path.as_str().to_string())
+        .collect()
 }
 
 #[test]
@@ -94,7 +99,10 @@ outputs:
 "#,
     );
 
-    write_file(&repo.join(".agents/adapters/a/templates/always.hbs"), "always\n");
+    write_file(
+        &repo.join(".agents/adapters/a/templates/always.hbs"),
+        "always\n",
+    );
     write_file(&repo.join(".agents/adapters/a/templates/vfs.hbs"), "vfs\n");
     write_file(&repo.join(".agents/adapters/a/templates/mat.hbs"), "mat\n");
     write_file(&repo.join(".agents/adapters/a/templates/dev.hbs"), "dev\n");
@@ -225,13 +233,16 @@ outputs:
     assert_eq!(out.path.as_str(), "a.md");
     assert_eq!(out.surface.as_deref(), Some("s"));
     assert_eq!(out.renderer.type_, agents_core::model::RendererType::Concat);
-    assert_eq!(out.renderer.sources, vec!["template:a.hbs", "template:b.hbs"]);
+    assert_eq!(
+        out.renderer.sources,
+        vec!["template:a.hbs", "template:b.hbs"]
+    );
 }
 
 #[test]
 fn fixture_plan_ordering_is_deterministic() {
-    let repo_root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../fixtures/outputs-plan/repo");
+    let repo_root =
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/outputs-plan/repo");
 
     let (cfg, _report) = load_repo_config(
         &repo_root,
@@ -242,8 +253,10 @@ fn fixture_plan_ordering_is_deterministic() {
     .unwrap();
 
     let resolver = Resolver::new(cfg.clone());
-    let mut req = ResolutionRequest::default();
-    req.repo_root = repo_root.clone();
+    let req = ResolutionRequest {
+        repo_root: repo_root.clone(),
+        ..Default::default()
+    };
     let eff = resolver.resolve(&req).unwrap();
 
     let plan_res = plan_outputs(&repo_root, cfg, &eff, "a").unwrap();
@@ -252,8 +265,7 @@ fn fixture_plan_ordering_is_deterministic() {
 
 #[test]
 fn scope_id_placeholder_expands_with_sanitized_deterministic_paths() {
-    let repo_root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../fixtures/copilot/repo");
+    let repo_root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/copilot/repo");
 
     let (cfg, _report) = load_repo_config(
         &repo_root,
@@ -264,8 +276,10 @@ fn scope_id_placeholder_expands_with_sanitized_deterministic_paths() {
     .unwrap();
 
     let resolver = Resolver::new(cfg.clone());
-    let mut req = ResolutionRequest::default();
-    req.repo_root = repo_root.clone();
+    let req = ResolutionRequest {
+        repo_root: repo_root.clone(),
+        ..Default::default()
+    };
     let eff = resolver.resolve(&req).unwrap();
 
     let plan_res = plan_outputs(&repo_root, cfg, &eff, "copilot").unwrap();
@@ -292,7 +306,10 @@ enabled: { modes: [default], policies: [safe], skills: [], adapters: [core] }\n"
     );
     write_file(&repo.join(".agents/prompts/base.md"), "base\n");
     write_file(&repo.join(".agents/prompts/project.md"), "project\n");
-    write_file(&repo.join(".agents/modes/default.md"), "---\nid: default\n---\n\n");
+    write_file(
+        &repo.join(".agents/modes/default.md"),
+        "---\nid: default\n---\n\n",
+    );
     write_file(
         &repo.join(".agents/policies/safe.yaml"),
         "id: safe\ndescription: safe\ncapabilities: {}\npaths: { allow: [], deny: [], redact: [] }\nconfirmations: {}\n",
@@ -301,7 +318,10 @@ enabled: { modes: [default], policies: [safe], skills: [], adapters: [core] }\n"
     let (cfg, eff) = load_and_resolve(repo, None, None);
     let plan_res = plan_outputs(repo, cfg, &eff, "core").unwrap();
     assert_eq!(plan_paths(&plan_res.plan), vec!["AGENTS.md"]);
-    assert_eq!(plan_res.plan.outputs[0].surface.as_deref(), Some("shared:AGENTS.md"));
+    assert_eq!(
+        plan_res.plan.outputs[0].surface.as_deref(),
+        Some("shared:AGENTS.md")
+    );
 }
 
 #[test]
@@ -317,7 +337,10 @@ enabled: { modes: [default], policies: [safe], skills: [], adapters: [core] }\n"
     );
     write_file(&repo.join(".agents/prompts/base.md"), "base\n");
     write_file(&repo.join(".agents/prompts/project.md"), "project\n");
-    write_file(&repo.join(".agents/modes/default.md"), "---\nid: default\n---\n\n");
+    write_file(
+        &repo.join(".agents/modes/default.md"),
+        "---\nid: default\n---\n\n",
+    );
     write_file(
         &repo.join(".agents/policies/safe.yaml"),
         "id: safe\ndescription: safe\ncapabilities: {}\npaths: { allow: [], deny: [], redact: [] }\nconfirmations: {}\n",
@@ -352,7 +375,10 @@ enabled: { modes: [default], policies: [safe], skills: [], adapters: [core, a] }
     );
     write_file(&repo.join(".agents/prompts/base.md"), "base\n");
     write_file(&repo.join(".agents/prompts/project.md"), "project\n");
-    write_file(&repo.join(".agents/modes/default.md"), "---\nid: default\n---\n\n");
+    write_file(
+        &repo.join(".agents/modes/default.md"),
+        "---\nid: default\n---\n\n",
+    );
     write_file(
         &repo.join(".agents/policies/safe.yaml"),
         "id: safe\ndescription: safe\ncapabilities: {}\npaths: {}\nconfirmations: {}\n",
@@ -381,7 +407,9 @@ outputs:
     // Non-owner fails.
     let err = plan_outputs(repo, cfg, &eff, "a").unwrap_err();
     match err {
-        agents_core::outputs::PlanError::SharedOwnerViolation { owner, agent_id, .. } => {
+        agents_core::outputs::PlanError::SharedOwnerViolation {
+            owner, agent_id, ..
+        } => {
             assert_eq!(owner, "core");
             assert_eq!(agent_id, "a");
         }
@@ -402,7 +430,10 @@ enabled: { modes: [default], policies: [safe], skills: [], adapters: [codex] }\n
     );
     write_file(&repo.join(".agents/prompts/base.md"), "base\n");
     write_file(&repo.join(".agents/prompts/project.md"), "project\n");
-    write_file(&repo.join(".agents/modes/default.md"), "---\nid: default\n---\n\n");
+    write_file(
+        &repo.join(".agents/modes/default.md"),
+        "---\nid: default\n---\n\n",
+    );
     write_file(
         &repo.join(".agents/policies/safe.yaml"),
         "id: safe\ndescription: safe\ncapabilities: {}\npaths: {}\nconfirmations: {}\n",

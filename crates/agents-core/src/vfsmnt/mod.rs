@@ -106,12 +106,11 @@ fn cleanup_stale_mounts(verbose: bool) -> Result<(), VfsMountError> {
             .unwrap_or_default()
             .saturating_sub(STALE_TTL)
             > Duration::from_secs(0)
+            && path.is_dir()
         {
-            if path.is_dir() {
-                let _ = std::fs::remove_dir_all(&path);
-                if verbose {
-                    eprintln!("vfs_mount: removed stale workspace {}", name);
-                }
+            let _ = std::fs::remove_dir_all(&path);
+            if verbose {
+                eprintln!("vfs_mount: removed stale workspace {}", name);
             }
         }
     }
@@ -123,7 +122,7 @@ fn copy_repo(repo_root: &Path, dest_root: &Path) -> Result<(), VfsMountError> {
     for entry in WalkDir::new(repo_root).follow_links(false) {
         let entry = entry.map_err(|e| VfsMountError::Io {
             path: repo_root.to_path_buf(),
-            source: std::io::Error::new(std::io::ErrorKind::Other, e.to_string()),
+            source: std::io::Error::other(e.to_string()),
         })?;
 
         let path = entry.path();
@@ -182,7 +181,7 @@ fn copy_symlink(src: &Path, dest: &Path) -> Result<(), VfsMountError> {
             path: dest.to_path_buf(),
             source: e,
         })?;
-        return Ok(());
+        Ok(())
     }
 
     #[cfg(not(unix))]
@@ -206,9 +205,9 @@ fn copy_symlink(src: &Path, dest: &Path) -> Result<(), VfsMountError> {
             return Ok(());
         }
 
-        return Err(VfsMountError::UnsupportedSymlink {
+        Err(VfsMountError::UnsupportedSymlink {
             path: src.to_path_buf(),
-        });
+        })
     }
 }
 
@@ -234,26 +233,26 @@ fn make_readonly(root: &Path) -> Result<(), VfsMountError> {
         for entry in WalkDir::new(root).follow_links(false) {
             let entry = entry.map_err(|e| VfsMountError::Io {
                 path: root.to_path_buf(),
-                source: std::io::Error::new(std::io::ErrorKind::Other, e.to_string()),
+                source: std::io::Error::other(e.to_string()),
             })?;
             let path = entry.path();
             let mut perms = entry
                 .metadata()
                 .map_err(|e| VfsMountError::Io {
                     path: path.to_path_buf(),
-                    source: std::io::Error::new(std::io::ErrorKind::Other, e.to_string()),
+                    source: std::io::Error::other(e.to_string()),
                 })?
                 .permissions();
             let mode = perms.mode() & 0o555;
             perms.set_mode(mode);
             let _ = std::fs::set_permissions(path, perms);
         }
-        return Ok(());
+        Ok(())
     }
 
     #[cfg(not(unix))]
     {
         let _ = root;
-        return Ok(());
+        Ok(())
     }
 }

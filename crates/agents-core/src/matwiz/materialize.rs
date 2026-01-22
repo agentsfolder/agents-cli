@@ -174,9 +174,8 @@ fn replace_agents_gitignore_block(existing: &str, entries: &[String]) -> String 
             // Remove from start..=end
             lines.drain(start..=end);
             // Also remove a single trailing blank line if present.
-            while start < lines.len() && lines[start].trim().is_empty() {
+            if start < lines.len() && lines[start].trim().is_empty() {
                 lines.remove(start);
-                break;
             }
         }
     }

@@ -19,7 +19,7 @@ pub fn validate_repo_config(repo_root: &Path, cfg: &RepoConfig) -> Result<(), Sc
     )?;
 
     // Policies
-    for (id, _) in &cfg.policies {
+    for id in cfg.policies.keys() {
         let path = repo_root.join(format!(".agents/policies/{id}.yaml"));
         if path.is_file() {
             validate_yaml_file(&mut store, SchemaKind::Policy, &path)?;
@@ -27,7 +27,7 @@ pub fn validate_repo_config(repo_root: &Path, cfg: &RepoConfig) -> Result<(), Sc
     }
 
     // Skills
-    for (_id, dir) in &cfg.skill_dirs {
+    for dir in cfg.skill_dirs.values() {
         let path = dir.join("skill.yaml");
         if path.is_file() {
             validate_yaml_file(&mut store, SchemaKind::Skill, &path)?;
@@ -35,7 +35,7 @@ pub fn validate_repo_config(repo_root: &Path, cfg: &RepoConfig) -> Result<(), Sc
     }
 
     // Scopes
-    for (id, _) in &cfg.scopes {
+    for id in cfg.scopes.keys() {
         let path = repo_root.join(format!(".agents/scopes/{id}.yaml"));
         if path.is_file() {
             validate_yaml_file(&mut store, SchemaKind::Scope, &path)?;
@@ -43,7 +43,7 @@ pub fn validate_repo_config(repo_root: &Path, cfg: &RepoConfig) -> Result<(), Sc
     }
 
     // Adapters
-    for (_id, adapter) in &cfg.adapters {
+    for adapter in cfg.adapters.values() {
         // Adapter file path is not stored in cfg, so derive from agent_id.
         let path = repo_root.join(format!(
             ".agents/adapters/{}/adapter.yaml",
@@ -61,7 +61,7 @@ pub fn validate_repo_config(repo_root: &Path, cfg: &RepoConfig) -> Result<(), Sc
     }
 
     // Modes: validate frontmatter only if present
-    for (id, _mode) in &cfg.modes {
+    for id in cfg.modes.keys() {
         let path = repo_root.join(format!(".agents/modes/{id}.md"));
         if !path.is_file() {
             continue;

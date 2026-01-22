@@ -1,3 +1,5 @@
+#![deny(warnings)]
+
 use std::path::{Path, PathBuf};
 
 use clap::{Parser, Subcommand, ValueEnum};

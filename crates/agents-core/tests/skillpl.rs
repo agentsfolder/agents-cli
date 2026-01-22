@@ -61,9 +61,11 @@ fn enable_disable_precedence_is_deterministic() {
     .unwrap();
     let resolver = Resolver::new(cfg.clone());
 
-    let mut req = ResolutionRequest::default();
-    req.repo_root = repo.to_path_buf();
-    req.target_path = Some("x".to_string());
+    let req = ResolutionRequest {
+        repo_root: repo.to_path_buf(),
+        target_path: Some("x".to_string()),
+        ..Default::default()
+    };
 
     let eff = resolver.resolve(&req).unwrap();
 
@@ -95,8 +97,10 @@ fn incompatible_backend_errors() {
     .unwrap();
     let resolver = Resolver::new(cfg.clone());
 
-    let mut req = ResolutionRequest::default();
-    req.repo_root = repo.to_path_buf();
+    let req = ResolutionRequest {
+        repo_root: repo.to_path_buf(),
+        ..Default::default()
+    };
 
     let eff = resolver.resolve(&req).unwrap();
 
@@ -151,8 +155,10 @@ fn ordering_is_stable() {
     .unwrap();
     let resolver = Resolver::new(cfg.clone());
 
-    let mut req = ResolutionRequest::default();
-    req.repo_root = repo.to_path_buf();
+    let req = ResolutionRequest {
+        repo_root: repo.to_path_buf(),
+        ..Default::default()
+    };
 
     let eff = resolver.resolve(&req).unwrap();
 

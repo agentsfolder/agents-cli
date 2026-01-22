@@ -89,13 +89,9 @@ pub fn apply_stamp(
             let json = encode_stamp_meta_json(meta)?;
             let stamp_line = format!("{}: {}\n", FRONTMATTER_STAMP_KEY, json);
 
-            if content_without_stamp.starts_with("---\n") {
+            if let Some(rest) = content_without_stamp.strip_prefix("---\n") {
                 // Insert stamp line immediately after frontmatter start delimiter.
-                Ok(format!(
-                    "---\n{}{}",
-                    stamp_line,
-                    &content_without_stamp[4..]
-                ))
+                Ok(format!("---\n{}{}", stamp_line, rest))
             } else {
                 Ok(format!("---\n{}---\n{}", stamp_line, content_without_stamp))
             }
@@ -160,10 +156,10 @@ fn parse_frontmatter_stamp(content: &str) -> Option<StampMeta> {
         }
         let rest = trimmed.strip_prefix(FRONTMATTER_STAMP_KEY)?;
         let rest = rest.trim_start();
-        if !rest.starts_with(':') {
+        let Some(rest) = rest.strip_prefix(':') else {
             continue;
-        }
-        let json = rest[1..].trim();
+        };
+        let json = rest.trim();
         return serde_json::from_str::<StampMeta>(json).ok();
     }
 
@@ -184,8 +180,8 @@ fn strip_frontmatter_stamp(content: &str) -> Option<(String, StampMeta)> {
         if trimmed.starts_with(FRONTMATTER_STAMP_KEY) {
             let rest = trimmed.strip_prefix(FRONTMATTER_STAMP_KEY)?;
             let rest = rest.trim_start();
-            if rest.starts_with(':') {
-                let json = rest[1..].trim();
+            if let Some(rest) = rest.strip_prefix(':') {
+                let json = rest.trim();
                 if let Ok(meta) = serde_json::from_str::<StampMeta>(json) {
                     found = Some((meta, line_start, line_end));
                     break;
@@ -256,7 +252,7 @@ fn apply_json_field_stamp(content: &str, meta_json: &str) -> Result<String, Stam
         let mut out = String::new();
         out.push_str(&content[..after_open + 1]); // include "{\n"
         out.push_str(indent);
-        out.push_str("\"");
+        out.push('"');
         out.push_str(JSON_STAMP_FIELD);
         out.push_str("\": ");
         out.push_str(meta_json);
@@ -274,7 +270,7 @@ fn apply_json_field_stamp(content: &str, meta_json: &str) -> Result<String, Stam
 
     let mut out = String::new();
     out.push_str(&content[..after_open]);
-    out.push_str("\"");
+    out.push('"');
     out.push_str(JSON_STAMP_FIELD);
     out.push_str("\": ");
     out.push_str(meta_json);
@@ -411,8 +407,8 @@ fn strip_json_field_stamp(content: &str) -> Option<(String, StampMeta)> {
     depth = 0;
     in_str = false;
     esc = false;
-    for idx in j..bytes.len() {
-        let c = bytes[idx] as char;
+    for (idx, byte) in bytes.iter().enumerate().skip(j) {
+        let c = *byte as char;
         if in_str {
             if esc {
                 esc = false;

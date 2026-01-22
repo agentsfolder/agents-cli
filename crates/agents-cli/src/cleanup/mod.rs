@@ -35,8 +35,10 @@ pub fn cmd_clean(repo_root: &Path, opts: CleanOptions) -> Result<(), AppError> {
 
     // Resolve effective config.
     let resolver = Resolver::new(repo.clone());
-    let mut req = ResolutionRequest::default();
-    req.repo_root = repo_root.to_path_buf();
+    let req = ResolutionRequest {
+        repo_root: repo_root.to_path_buf(),
+        ..Default::default()
+    };
     let effective = resolver.resolve(&req).map_err(|e| AppError {
         category: ErrorCategory::Io,
         message: e.to_string(),
@@ -57,8 +59,7 @@ pub fn cmd_clean(repo_root: &Path, opts: CleanOptions) -> Result<(), AppError> {
         let requires_confirm = policy
             .confirmations
             .required_for
-            .iter()
-            .any(|c| *c == ConfirmationType::Delete);
+            .contains(&ConfirmationType::Delete);
 
         if requires_confirm && !opts.yes {
             return Err(AppError {

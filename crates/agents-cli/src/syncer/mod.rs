@@ -41,9 +41,11 @@ pub fn cmd_sync(repo_root: &Path, opts: SyncOptions) -> Result<(), AppError> {
 
     // Resolve effective config.
     let resolver = Resolver::new(repo.clone());
-    let mut req = ResolutionRequest::default();
-    req.repo_root = repo_root.to_path_buf();
-    req.override_backend = Some(selected_backend);
+    let req = ResolutionRequest {
+        repo_root: repo_root.to_path_buf(),
+        override_backend: Some(selected_backend),
+        ..Default::default()
+    };
 
     let effective = resolver.resolve(&req).map_err(|e| AppError {
         category: ErrorCategory::Io,

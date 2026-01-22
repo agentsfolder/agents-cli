@@ -61,10 +61,12 @@ fn cli_override_beats_scope() {
     .unwrap();
     let resolver = Resolver::new(cfg);
 
-    let mut req = ResolutionRequest::default();
-    req.repo_root = repo.to_path_buf();
-    req.target_path = Some("apps/web".to_string());
-    req.override_mode = Some("refactor".to_string());
+    let req = ResolutionRequest {
+        repo_root: repo.to_path_buf(),
+        target_path: Some("apps/web".to_string()),
+        override_mode: Some("refactor".to_string()),
+        ..Default::default()
+    };
 
     let eff = resolver.resolve(&req).unwrap();
     assert_eq!(eff.mode_id, "refactor");
@@ -92,9 +94,11 @@ fn scope_beats_repo_default() {
     .unwrap();
     let resolver = Resolver::new(cfg);
 
-    let mut req = ResolutionRequest::default();
-    req.repo_root = repo.to_path_buf();
-    req.target_path = Some("apps/web".to_string());
+    let req = ResolutionRequest {
+        repo_root: repo.to_path_buf(),
+        target_path: Some("apps/web".to_string()),
+        ..Default::default()
+    };
 
     let eff = resolver.resolve(&req).unwrap();
     assert_eq!(eff.mode_id, "refactor");
@@ -121,8 +125,10 @@ fn state_overrides_defaults() {
     .unwrap();
     let resolver = Resolver::new(cfg);
 
-    let mut req = ResolutionRequest::default();
-    req.repo_root = repo.to_path_buf();
+    let req = ResolutionRequest {
+        repo_root: repo.to_path_buf(),
+        ..Default::default()
+    };
 
     let eff = resolver.resolve(&req).unwrap();
     assert_eq!(eff.mode_id, "refactor");
@@ -154,9 +160,11 @@ fn specificity_and_priority_break_ties() {
     .unwrap();
     let resolver = Resolver::new(cfg);
 
-    let mut req = ResolutionRequest::default();
-    req.repo_root = repo.to_path_buf();
-    req.target_path = Some("apps/web/x".to_string());
+    let req = ResolutionRequest {
+        repo_root: repo.to_path_buf(),
+        target_path: Some("apps/web/x".to_string()),
+        ..Default::default()
+    };
 
     let eff = resolver.resolve(&req).unwrap();
     assert_eq!(eff.mode_id, "refactor");

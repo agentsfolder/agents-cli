@@ -24,8 +24,6 @@ pub fn cmd_status(repo_root: &Path, output: OutputMode) -> Result<(), AppError> 
     let _ = agents_core::schemas::validate_repo(repo_root);
 
     let resolver = Resolver::new(repo.clone());
-    let mut req = ResolutionRequest::default();
-    req.repo_root = repo_root.to_path_buf();
 
     // If state.yaml exists, resolution will likely use it. Expose this as a hint.
     let state_influences = repo.state.is_some();
@@ -38,9 +36,11 @@ pub fn cmd_status(repo_root: &Path, output: OutputMode) -> Result<(), AppError> 
         .map(|r| r.enable_user_overlay)
         .unwrap_or(true);
 
-    if user_overlay_enabled {
-        req.enable_user_overlay = true;
-    }
+    let req = ResolutionRequest {
+        repo_root: repo_root.to_path_buf(),
+        enable_user_overlay: user_overlay_enabled,
+        ..Default::default()
+    };
 
     // If the repo warns about missing schemas, we keep it as a hint as well.
     let has_load_warnings = !report.warnings.is_empty();

@@ -122,7 +122,12 @@ fn stamp_meta(profile: Option<&str>, content_without_stamp: &str) -> StampMeta {
     }
 }
 
-fn rendered(path: fsutil::RepoPath, meta: StampMeta, drift_status: DriftStatus, content: &str) -> RenderedOutput {
+fn rendered(
+    path: fsutil::RepoPath,
+    meta: StampMeta,
+    drift_status: DriftStatus,
+    content: &str,
+) -> RenderedOutput {
     let stamped = apply_stamp(content, &meta, StampMethod::Comment).unwrap();
     RenderedOutput {
         path,
@@ -165,7 +170,9 @@ fn write_new_file() {
     let report = backend.apply(&mut session, &[out]).unwrap();
 
     assert_eq!(report.written, vec![path]);
-    assert_eq!(fs::read_to_string(repo_root.join("out.txt")).unwrap().contains("hello"), true);
+    assert!(fs::read_to_string(repo_root.join("out.txt"))
+        .unwrap()
+        .contains("hello"));
 }
 
 #[test]
@@ -262,7 +269,9 @@ fn gitignore_update_is_stable_and_idempotent() {
 
     let backend = MaterializeBackend;
     let mut session = backend.prepare(repo_root, &plan).unwrap();
-    let _ = backend.apply(&mut session, &[out.clone()]).unwrap();
+    let _ = backend
+        .apply(&mut session, std::slice::from_ref(&out))
+        .unwrap();
     let first = fs::read_to_string(repo_root.join(".gitignore")).unwrap();
 
     let mut session2 = backend.prepare(repo_root, &plan).unwrap();

@@ -27,7 +27,7 @@ pub struct LoadWarning {
     pub message: String,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct LoadReport {
     pub warnings: Vec<LoadWarning>,
 }

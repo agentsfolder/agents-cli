@@ -76,11 +76,6 @@ pub fn cmd_run(repo_root: &Path, opts: RunOptions) -> Result<(), AppError> {
         })?;
     }
 
-    let resolver = Resolver::new(repo.clone());
-    let mut req = ResolutionRequest::default();
-    req.repo_root = repo_root.to_path_buf();
-    req.override_mode = opts.mode.clone();
-    req.override_profile = opts.profile.clone();
     let state_backend = repo.state.as_ref().and_then(|s| s.backend);
     let backend_override = if opts.backend.is_none()
         && repo.manifest.defaults.backend.is_none()
@@ -90,7 +85,14 @@ pub fn cmd_run(repo_root: &Path, opts: RunOptions) -> Result<(), AppError> {
     } else {
         None
     };
-    req.override_backend = opts.backend.or(backend_override);
+    let resolver = Resolver::new(repo.clone());
+    let req = ResolutionRequest {
+        repo_root: repo_root.to_path_buf(),
+        override_mode: opts.mode.clone(),
+        override_profile: opts.profile.clone(),
+        override_backend: opts.backend.or(backend_override),
+        ..Default::default()
+    };
     let effective = resolver.resolve(&req).map_err(|e| AppError {
         category: ErrorCategory::Io,
         message: e.to_string(),
@@ -313,7 +315,7 @@ fn apply_materialize(
     planned: &[agents_core::outputs::PlannedOutput],
     rendered: &[RenderedItem],
 ) -> Result<(), AppError> {
-    let backend = MaterializeBackend::default();
+    let backend = MaterializeBackend;
 
     let plan = agents_core::outputs::OutputPlan {
         agent_id: "<run>".to_string(),
@@ -427,17 +429,14 @@ mod tests {
 
     #[test]
     fn build_agent_cmd_appends_passthrough_args() {
-        let cmd = build_agent_cmd(
-            "opencode",
-            &vec!["--help".to_string(), "--json".to_string()],
-        );
+        let cmd = build_agent_cmd("opencode", &["--help".to_string(), "--json".to_string()]);
 
         assert_eq!(cmd, vec!["opencode", "--help", "--json"]);
     }
 
     #[test]
     fn build_agent_cmd_handles_empty_passthrough() {
-        let cmd = build_agent_cmd("claude", &vec![]);
+        let cmd = build_agent_cmd("claude", &[]);
 
         assert_eq!(cmd, vec!["claude"]);
     }

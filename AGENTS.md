@@ -11,6 +11,7 @@ Development loop (required)
 - Create a feature branch per spec: `git checkout -b feat/<spec-slug>`.
 - Pick the next unchecked item in the relevant `specs/feat-*.md`.
 - Before coding user-requested changes: update the relevant `specs/` file(s) first (checklists/notes), then implement.
+- When adding a new spec, update `specs/plan.md` and this AGENTS specs index.
 - Implement exactly one task; update the corresponding checkbox(es) in the spec.
 - Run the smallest relevant test set (`cargo test -p agents-core`, `cargo test -p agents-cli`, or a targeted `cargo test -p ... --test ...`).
 - Commit after each completed task.
@@ -77,6 +78,9 @@ Adapters (agent-native surfaces)
 - `specs/feat-adcurs.md`: Cursor adapter (`.cursor/rules/*.md`)
 - `specs/feat-adgcli.md`: Gemini CLI adapter (planned)
 - `specs/feat-adgghb.md`: Gemini GitHub adapter (planned)
+
+Maintenance
+- `specs/feat-prodci.md`: production CI hardening (fmt/clippy/tests)
 
 ## Repo-Specific Learnings / Conventions
 

@@ -73,7 +73,10 @@ pub enum TestError {
     Render(String),
 }
 
-pub fn run_fixture(fixture_root: &Path, agent_filter: Option<&str>) -> Result<TestReport, TestError> {
+pub fn run_fixture(
+    fixture_root: &Path,
+    agent_filter: Option<&str>,
+) -> Result<TestReport, TestError> {
     let repo_root = fixture_root.join("repo");
     let expect_root = fixture_root.join("expect");
     let matrix_path = fixture_root.join("matrix.yaml");
@@ -102,12 +105,14 @@ pub fn run_fixture(fixture_root: &Path, agent_filter: Option<&str>) -> Result<Te
     let mut out = TestReport::default();
     for agent_id in agent_ids {
         for case in &cases {
-            let mut req = ResolutionRequest::default();
-            req.repo_root = repo_root.clone();
-            req.target_path = case.target_path.clone();
-            req.override_mode = case.mode.clone();
-            req.override_profile = case.profile.clone();
-            req.override_backend = case.backend;
+            let req = ResolutionRequest {
+                repo_root: repo_root.clone(),
+                target_path: case.target_path.clone(),
+                override_mode: case.mode.clone(),
+                override_profile: case.profile.clone(),
+                override_backend: case.backend,
+                ..Default::default()
+            };
 
             let effective = resolver
                 .resolve(&req)
@@ -275,10 +280,12 @@ fn collect_rel_files(root: &Path) -> Result<Vec<String>, TestError> {
 
     let mut files = vec![];
     for entry in walkdir::WalkDir::new(root).follow_links(false) {
-        let entry = entry.map_err(|e| TestError::Fs(fsutil::FsError::Io {
-            path: root.to_path_buf(),
-            source: std::io::Error::new(std::io::ErrorKind::Other, e.to_string()),
-        }))?;
+        let entry = entry.map_err(|e| {
+            TestError::Fs(fsutil::FsError::Io {
+                path: root.to_path_buf(),
+                source: std::io::Error::other(e.to_string()),
+            })
+        })?;
 
         if !entry.file_type().is_file() {
             continue;
@@ -358,15 +365,7 @@ mod tests {
         let mismatches = compare_dirs(&expect, &actual).unwrap();
         assert_eq!(mismatches.len(), 1);
         assert_eq!(mismatches[0].kind, "content_mismatch");
-        assert!(mismatches[0]
-            .diff
-            .as_deref()
-            .unwrap_or("")
-            .contains("-one"));
-        assert!(mismatches[0]
-            .diff
-            .as_deref()
-            .unwrap_or("")
-            .contains("+two"));
+        assert!(mismatches[0].diff.as_deref().unwrap_or("").contains("-one"));
+        assert!(mismatches[0].diff.as_deref().unwrap_or("").contains("+two"));
     }
 }

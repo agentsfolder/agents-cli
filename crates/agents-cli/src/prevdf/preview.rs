@@ -37,13 +37,13 @@ pub fn cmd_preview(repo_root: &Path, opts: PreviewOptions) -> Result<(), AppErro
 
     // Resolve effective config.
     let resolver = Resolver::new(repo.clone());
-    let mut req = ResolutionRequest::default();
-    req.repo_root = repo_root.to_path_buf();
-    req.override_mode = opts.mode.clone();
-    req.override_profile = opts.profile.clone();
-    if let Some(b) = opts.backend {
-        req.override_backend = Some(b);
-    }
+    let req = ResolutionRequest {
+        repo_root: repo_root.to_path_buf(),
+        override_mode: opts.mode.clone(),
+        override_profile: opts.profile.clone(),
+        override_backend: opts.backend,
+        ..Default::default()
+    };
 
     let effective = resolver.resolve(&req).map_err(|e| AppError {
         category: ErrorCategory::Io,

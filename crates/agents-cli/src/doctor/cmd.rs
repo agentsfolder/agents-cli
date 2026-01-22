@@ -38,8 +38,10 @@ pub fn cmd_doctor(repo_root: &Path, opts: DoctorOptions) -> Result<(), AppError>
     })?;
 
     let resolver = Resolver::new(repo.clone());
-    let mut req = ResolutionRequest::default();
-    req.repo_root = repo_root.to_path_buf();
+    let req = ResolutionRequest {
+        repo_root: repo_root.to_path_buf(),
+        ..Default::default()
+    };
     let effective = resolver.resolve(&req).map_err(|e| AppError {
         category: ErrorCategory::Io,
         message: e.to_string(),

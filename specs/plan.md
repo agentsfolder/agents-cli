@@ -259,3 +259,13 @@ Adapters are implemented after the shared rendering/planning pipeline is stable.
 - Unblocks: IDE integration that avoids materializing into repo
 - Verify:
   - Mount workflow produces a usable composite workspace path on supported platforms
+
+## Phase 9: Production Hardening
+### feat-prodci
+- Goal: production CI hardening (fmt, clippy, tests, warning-free builds).
+- Depends on: feat-cliapp
+- Unblocks: CI stability, release readiness
+- Verify:
+  - `cargo fmt -- --check`
+  - `cargo clippy --all-targets --all-features -- -D warnings`
+  - `cargo test`

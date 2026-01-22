@@ -1,3 +1,5 @@
+#![deny(warnings)]
+
 pub mod cleanup;
 pub mod driftx;
 pub mod explain;

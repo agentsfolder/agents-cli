@@ -68,10 +68,12 @@ fn user_overlay_is_lowest_precedence() {
 
     let resolver = Resolver::new(cfg);
 
-    let mut req = ResolutionRequest::default();
-    req.repo_root = repo.to_path_buf();
-    req.enable_user_overlay = true;
-    req.user_overlay_root = Some(overlay_root);
+    let req = ResolutionRequest {
+        repo_root: repo.to_path_buf(),
+        enable_user_overlay: true,
+        user_overlay_root: Some(overlay_root),
+        ..Default::default()
+    };
 
     let eff = resolver.resolve(&req).unwrap();
 

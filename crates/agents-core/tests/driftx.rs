@@ -50,8 +50,10 @@ fn load_and_resolve(
     .unwrap();
 
     let resolver = Resolver::new(cfg.clone());
-    let mut req = ResolutionRequest::default();
-    req.repo_root = repo.to_path_buf();
+    let req = ResolutionRequest {
+        repo_root: repo.to_path_buf(),
+        ..Default::default()
+    };
     let eff = resolver.resolve(&req).unwrap();
 
     (cfg, eff)

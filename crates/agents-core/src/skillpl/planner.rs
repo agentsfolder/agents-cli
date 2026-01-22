@@ -113,9 +113,7 @@ impl SkillPlanner {
                     }
                 }
 
-                if !comp.backends.is_empty()
-                    && !comp.backends.iter().any(|b| *b == effective.backend)
-                {
+                if !comp.backends.is_empty() && !comp.backends.contains(&effective.backend) {
                     return Err(SkillPlanError::IncompatibleBackend {
                         backend: effective.backend,
                         skill_id: id.clone(),
