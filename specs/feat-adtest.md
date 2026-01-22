@@ -47,6 +47,7 @@ Unblocks: CI gate for adapter changes
 - [x] Tests
   - [x] Unit tests for file discovery and compare logic
   - [x] One self-contained fixture test (runs in CI)
+  - [x] Adapter fixture coverage for remaining agents (codex, gemini-cli, gemini-github)
 
 ## Verification
 - [x] `agents test adapters` passes on fixtures

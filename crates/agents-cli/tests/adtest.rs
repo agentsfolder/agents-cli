@@ -81,3 +81,23 @@ fn agents_test_adapters_failure_shows_unified_diff() {
         .stdout(predicate::str::contains("-bad"))
         .stderr(predicate::str::contains("adapter fixtures failed"));
 }
+
+#[test]
+fn agents_test_adapters_passes_for_supported_agent_fixtures() {
+    let repo_root: PathBuf = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .and_then(|p| p.parent())
+        .unwrap()
+        .to_path_buf();
+
+    for agent in ["codex", "gemini-cli", "gemini-github"] {
+        let mut cmd = support::agents_cmd();
+        cmd.current_dir(&repo_root)
+            .arg("test")
+            .arg("adapters")
+            .arg("--agent")
+            .arg(agent);
+
+        cmd.assert().success();
+    }
+}
