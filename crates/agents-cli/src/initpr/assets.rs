@@ -211,6 +211,15 @@ fn agent_pack_adapters() -> Vec<EmbeddedFile> {
             ".agents/adapters/gemini-cli/templates/settings.json.hbs",
             include_str!("assets/agent-pack/adapters/gemini-cli/templates/settings.json.hbs"),
         ),
+        // Gemini GitHub
+        file(
+            ".agents/adapters/gemini-github/adapter.yaml",
+            include_str!("assets/agent-pack/adapters/gemini-github/adapter.yaml"),
+        ),
+        file(
+            ".agents/adapters/gemini-github/templates/styleguide.md.hbs",
+            include_str!("assets/agent-pack/adapters/gemini-github/templates/styleguide.md.hbs"),
+        ),
         // Claude Code
         file(
             ".agents/adapters/claude/adapter.yaml",

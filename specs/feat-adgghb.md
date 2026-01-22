@@ -10,23 +10,23 @@ Unblocks: feat-adtest
 - Template for `.gemini/styleguide.md`
 
 ## Implementation Plan
-- [ ] Confirm GitHub Gemini expectations
-  - [ ] Determine whether `.gemini/config.yaml` is needed (optional)
+- [x] Confirm GitHub Gemini expectations
+  - [x] Determine whether `.gemini/config.yaml` is needed (optional; not required for v1)
 
-- [ ] Implement adapter YAML
-  - [ ] Output `.gemini/styleguide.md`
-    - [ ] `format: md`
-    - [ ] stamp via comment
-    - [ ] `writePolicy: if_generated`
-  - [ ] Backend defaults: preferred `materialize` (GitHub reads repo files)
+- [x] Implement adapter YAML
+  - [x] Output `.gemini/styleguide.md`
+    - [x] `format: md`
+    - [x] stamp via comment
+    - [x] `writePolicy: if_generated`
+  - [x] Backend defaults: preferred `materialize` (GitHub reads repo files)
 
-- [ ] Implement template
-  - [ ] Include:
-    - [ ] current mode banner
-    - [ ] coding conventions + composed prompt content
+- [x] Implement template
+  - [x] Include:
+    - [x] current mode banner
+    - [x] coding conventions + composed prompt content
 
-- [ ] Tests
-  - [ ] Golden fixture for `.gemini/styleguide.md`
+- [x] Tests
+  - [x] Golden fixture for `.gemini/styleguide.md`
 
 ## Verification
-- [ ] `agents preview --agent gemini-github` produces `.gemini/styleguide.md`
+- [x] `agents preview --agent gemini-github` produces `.gemini/styleguide.md`

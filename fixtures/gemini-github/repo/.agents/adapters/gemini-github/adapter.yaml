@@ -1,0 +1,9 @@
+agentId: gemini-github
+version: '0.1'
+backendDefaults: { preferred: materialize, fallback: materialize }
+outputs:
+  - path: .gemini/styleguide.md
+    format: md
+    renderer: { type: template, template: styleguide.md.hbs }
+    writePolicy: { mode: if_generated, gitignore: false }
+    driftDetection: { method: sha256, stamp: comment }
