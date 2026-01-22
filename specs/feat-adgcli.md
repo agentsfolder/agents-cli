@@ -10,9 +10,9 @@ Unblocks: feat-adtest
 - Template for `.gemini/settings.json`
 
 ## Implementation Plan
-- [ ] Confirm Gemini CLI project settings format
-  - [ ] Identify minimal config keys used by Gemini CLI
-  - [ ] Decide whether to embed instructions directly or point to a file
+- [x] Confirm Gemini CLI project settings format
+  - [x] Identify minimal config keys used by Gemini CLI (`context.fileName` + `$schema`)
+  - [x] Decide whether to embed instructions directly or point to a file (point to shared `AGENTS.md`)
 
 - [ ] Implement adapter YAML
   - [ ] Output `.gemini/settings.json`
