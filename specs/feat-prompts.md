@@ -26,12 +26,12 @@ Unblocks: feat-templ, feat-shared
   - [x] Collect snippet IDs from:
     - [x] resolved mode frontmatter `includeSnippets`
     - [x] scope overrides `includeSnippets`
-    - [ ] (optional) profile overrides if supported
+    - [x] (optional) profile overrides if supported (not supported in v1)
   - [x] Deduplicate and stable-sort snippet IDs
   - [x] Load snippet content from `RepoConfig.prompts.snippets`
   - [x] Define behavior for unknown snippet IDs:
     - [x] default: error (prefer correctness)
-    - [ ] optionally `--on-missing warn` later
+    - [x] optionally `--on-missing warn` later (not supported in v1)
 
 - [x] Compose deterministic markdown
   - [x] Decide separator conventions:
@@ -59,4 +59,4 @@ Unblocks: feat-templ, feat-shared
 
 ## Verification
 - [x] Golden test: same fixture produces byte-identical composed prompt
-- [ ] `agents preview` (once implemented) uses composed prompt in templates
+- [x] `agents preview` (once implemented) uses composed prompt in templates (covered by preview composed prompt test)

@@ -87,3 +87,73 @@ fn preview_fails_on_missing_template_vars() {
         .failure()
         .stderr(predicate::str::contains("template render error"));
 }
+
+#[test]
+fn preview_renders_composed_prompt_in_templates() {
+    let tmp = tempfile::tempdir().unwrap();
+    let repo = tmp.path();
+
+    write_file(
+        &repo.join(".agents/manifest.yaml"),
+        "specVersion: '0.1'\n\
+         defaults: { mode: default, policy: safe }\n\
+         enabled: { modes: [default], policies: [safe], skills: [], adapters: [a] }\n",
+    );
+    write_file(&repo.join(".agents/prompts/base.md"), "base\n");
+    write_file(&repo.join(".agents/prompts/project.md"), "project\n");
+    write_file(&repo.join(".agents/prompts/snippets/extra.md"), "snippet\n");
+    write_file(
+        &repo.join(".agents/modes/default.md"),
+        "---\nid: default\nincludeSnippets: [extra]\n---\n\n",
+    );
+    write_file(
+        &repo.join(".agents/policies/safe.yaml"),
+        "id: safe\ndescription: safe\ncapabilities: {}\npaths: {}\nconfirmations: {}\n",
+    );
+
+    write_file(
+        &repo.join(".agents/adapters/a/adapter.yaml"),
+        "agentId: a\nversion: '0.1'\nbackendDefaults: { preferred: vfs_container, fallback: materialize }\noutputs:\n  - path: out.md\n    format: md\n    renderer: { type: template, template: t.hbs }\n",
+    );
+    write_file(
+        &repo.join(".agents/adapters/a/templates/t.hbs"),
+        "{{effective.prompts.composed_md}}",
+    );
+
+    let output = Command::cargo_bin("agents")
+        .unwrap()
+        .current_dir(repo)
+        .arg("preview")
+        .arg("--agent")
+        .arg("a")
+        .arg("--keep-temp")
+        .output()
+        .unwrap();
+
+    assert!(output.status.success());
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let line = stdout
+        .lines()
+        .find(|l| l.starts_with("preview: out.md -> "))
+        .expect("preview output path");
+    let dest = line
+        .split("preview: out.md -> ")
+        .nth(1)
+        .expect("temp output path");
+    let dest = dest.trim();
+
+    let temp_line = stdout
+        .lines()
+        .find(|l| l.starts_with("temp: "))
+        .expect("temp dir output");
+    let temp_dir = temp_line
+        .split("temp: ")
+        .nth(1)
+        .expect("temp dir path")
+        .trim();
+
+    let rendered = fs::read_to_string(dest).unwrap();
+    assert!(rendered.contains("base\n\nproject\n\nsnippet\n"));
+
+    fs::remove_dir_all(temp_dir).unwrap();
+}
