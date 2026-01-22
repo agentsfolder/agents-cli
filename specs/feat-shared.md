@@ -11,9 +11,9 @@ Unblocks: feat-adcodx, feat-adopen, feat-adcopl
 
 ## Implementation Plan
 - [x] Decide implementation approach
-  - [ ] Option A: Create a special adapter id (e.g., `core`) under `.agents/adapters/core` embedded by init preset
+  - [x] Option A: Create a special adapter id (e.g., `core`) under `.agents/adapters/core` embedded by init preset (rejected)
   - [x] Option B: Hardcode shared surface generation in code
-  - [ ] Prefer Option A to keep everything in `.agents/adapters/**` and testable via golden fixtures.
+  - [x] Prefer Option A to keep everything in `.agents/adapters/**` and testable via golden fixtures (rejected)
 
 - [x] Define shared surface template requirements
   - [x] Top banner includes:
@@ -42,7 +42,7 @@ Unblocks: feat-adcodx, feat-adopen, feat-adcopl
 - [x] Collision ownership enforcement
   - [x] Ensure manifest `defaults.sharedSurfacesOwner` is honored
   - [x] If `sharedSurfacesOwner != core`, ensure either:
-    - [ ] another adapter owns the shared surface, or
+    - [x] another adapter owns the shared surface, or
     - [x] planning fails with actionable error
 
 - [x] Tests
