@@ -1,6 +1,6 @@
 use agents_core::model::BackendKind;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize)]
 pub struct StatusReport {
     pub repo_root: String,
 

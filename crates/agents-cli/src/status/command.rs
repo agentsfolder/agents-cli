@@ -100,10 +100,14 @@ pub fn cmd_status(repo_root: &Path, output: OutputMode) -> Result<(), AppError> 
             print!("{}", report.render_human());
             Ok(())
         }
-        OutputMode::Json => Err(AppError {
-            category: ErrorCategory::InvalidArgs,
-            message: "--json output is not implemented yet".to_string(),
-            context: vec![],
-        }),
+        OutputMode::Json => {
+            let s = serde_json::to_string_pretty(&report).map_err(|e| AppError {
+                category: ErrorCategory::Io,
+                message: e.to_string(),
+                context: vec![],
+            })?;
+            println!("{s}");
+            Ok(())
+        }
     }
 }

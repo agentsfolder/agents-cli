@@ -17,7 +17,7 @@ Unblocks: feat-compat
 - [x] Define status output model
   - [x] `StatusReport` struct that can be rendered as:
     - [x] human-readable text
-    - [ ] json (optional placeholder)
+    - [x] json (optional placeholder)
   - [x] Include fields:
     - [x] `repo_root`
     - [x] `effective_mode`, `effective_policy`, `effective_profile`, `effective_backend`

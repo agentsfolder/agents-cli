@@ -43,7 +43,7 @@ struct Cli {
     repo: Option<PathBuf>,
 
     /// Emit machine-readable output (reserved)
-    #[arg(long)]
+    #[arg(long, global = true)]
     json: bool,
 
     /// Verbose output
