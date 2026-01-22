@@ -1,9 +1,10 @@
-use assert_cmd::Command;
 use predicates::prelude::*;
+
+mod support;
 
 #[test]
 fn help_shows_core_commands() {
-    let mut cmd = Command::cargo_bin("agents").expect("binary builds");
+    let mut cmd = support::agents_cmd();
     cmd.arg("--help");
     cmd.assert()
         .success()
@@ -17,7 +18,7 @@ fn help_shows_core_commands() {
 fn validate_in_empty_dir_returns_not_initialized_exit_code_3() {
     let tmp = tempfile::tempdir().expect("tempdir");
 
-    let mut cmd = Command::cargo_bin("agents").expect("binary builds");
+    let mut cmd = support::agents_cmd();
     cmd.current_dir(tmp.path()).arg("validate");
 
     cmd.assert()

@@ -1,7 +1,7 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use assert_cmd::Command;
+mod support;
 
 fn write_file(path: &Path, content: &str) {
     if let Some(parent) = path.parent() {
@@ -58,7 +58,7 @@ enabled: { modes: [default], policies: [safe], skills: [], adapters: [dummy] }\n
     fs::copy(&fixture_script, &agent_path).unwrap();
     make_executable(&agent_path);
 
-    let mut cmd = Command::cargo_bin("agents").unwrap();
+    let mut cmd = support::agents_cmd();
     cmd.current_dir(repo)
         .arg("run")
         .arg("./dummy-agent.sh")
@@ -116,7 +116,7 @@ fn run_executes_in_vfs_mount_workspace() {
     make_executable(&agent_path);
 
     let result_path = repo.join("run-result.txt");
-    let mut cmd = Command::cargo_bin("agents").unwrap();
+    let mut cmd = support::agents_cmd();
     cmd.current_dir(repo)
         .arg("run")
         .arg("./dummy-agent.sh")

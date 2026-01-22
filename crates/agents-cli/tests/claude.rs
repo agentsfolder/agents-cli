@@ -1,7 +1,8 @@
 use std::fs;
 
-use assert_cmd::Command;
 use predicates::prelude::*;
+
+mod support;
 
 fn write_file(path: &std::path::Path, content: &str) {
     if let Some(parent) = path.parent() {
@@ -23,7 +24,10 @@ enabled: { modes: [default], policies: [safe], skills: [], adapters: [claude] }\
     );
     write_file(&repo.join(".agents/prompts/base.md"), "base\n");
     write_file(&repo.join(".agents/prompts/project.md"), "project\n");
-    write_file(&repo.join(".agents/modes/default.md"), "---\nid: default\n---\n\n");
+    write_file(
+        &repo.join(".agents/modes/default.md"),
+        "---\nid: default\n---\n\n",
+    );
     write_file(
         &repo.join(".agents/policies/safe.yaml"),
         "id: safe\ndescription: safe\ncapabilities: {}\npaths: { allow: [], deny: [], redact: [\"./.env\"] }\nconfirmations: {}\n",
@@ -55,7 +59,7 @@ outputs:
         "# CLAUDE\n\nmode={{generation.stamp.mode}}\n",
     );
 
-    let mut sync = Command::cargo_bin("agents").unwrap();
+    let mut sync = support::agents_cmd();
     sync.current_dir(repo)
         .arg("sync")
         .arg("--agent")
@@ -68,13 +72,20 @@ outputs:
     assert!(original.contains("\"x_generated\""));
 
     // Drift it.
-    fs::write(repo.join(".claude/settings.json"), original.replace("permissions", "perms")).unwrap();
+    fs::write(
+        repo.join(".claude/settings.json"),
+        original.replace("permissions", "perms"),
+    )
+    .unwrap();
 
-    let mut diff = Command::cargo_bin("agents").unwrap();
-    diff.current_dir(repo).arg("diff").arg("--agent").arg("claude");
-    diff.assert()
-        .success()
-        .stdout(predicate::str::contains("CONFLICT(drifted): .claude/settings.json"));
+    let mut diff = support::agents_cmd();
+    diff.current_dir(repo)
+        .arg("diff")
+        .arg("--agent")
+        .arg("claude");
+    diff.assert().success().stdout(predicate::str::contains(
+        "CONFLICT(drifted): .claude/settings.json",
+    ));
 }
 
 #[test]
@@ -90,7 +101,10 @@ enabled: { modes: [default], policies: [safe], skills: [], adapters: [claude] }\
     );
     write_file(&repo.join(".agents/prompts/base.md"), "base\n");
     write_file(&repo.join(".agents/prompts/project.md"), "project\n");
-    write_file(&repo.join(".agents/modes/default.md"), "---\nid: default\n---\n\n");
+    write_file(
+        &repo.join(".agents/modes/default.md"),
+        "---\nid: default\n---\n\n",
+    );
     write_file(
         &repo.join(".agents/policies/safe.yaml"),
         "id: safe\ndescription: safe\ncapabilities: {}\npaths: {}\nconfirmations: {}\n",
@@ -116,13 +130,21 @@ outputs:
         &repo.join(".agents/adapters/claude/templates/settings.json.hbs"),
         "{\n  \"ok\": true\n}\n",
     );
-    write_file(&repo.join(".agents/adapters/claude/templates/CLAUDE.md.hbs"), "# CLAUDE\n");
+    write_file(
+        &repo.join(".agents/adapters/claude/templates/CLAUDE.md.hbs"),
+        "# CLAUDE\n",
+    );
 
-    let mut cmd = Command::cargo_bin("agents").unwrap();
-    cmd.current_dir(repo).arg("preview").arg("--agent").arg("claude");
+    let mut cmd = support::agents_cmd();
+    cmd.current_dir(repo)
+        .arg("preview")
+        .arg("--agent")
+        .arg("claude");
 
     cmd.assert()
         .success()
-        .stdout(predicate::str::contains("preview: .claude/settings.json ->"))
+        .stdout(predicate::str::contains(
+            "preview: .claude/settings.json ->",
+        ))
         .stdout(predicate::str::contains("preview: CLAUDE.md ->"));
 }

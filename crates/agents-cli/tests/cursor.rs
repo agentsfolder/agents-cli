@@ -1,7 +1,8 @@
 use std::fs;
 
-use assert_cmd::Command;
 use predicates::prelude::*;
+
+mod support;
 
 fn write_file(path: &std::path::Path, content: &str) {
     if let Some(parent) = path.parent() {
@@ -23,7 +24,10 @@ enabled: { modes: [default], policies: [safe], skills: [], adapters: [cursor] }\
     );
     write_file(&repo.join(".agents/prompts/base.md"), "base\n");
     write_file(&repo.join(".agents/prompts/project.md"), "project\n");
-    write_file(&repo.join(".agents/modes/default.md"), "---\nid: default\n---\n\nmode\n");
+    write_file(
+        &repo.join(".agents/modes/default.md"),
+        "---\nid: default\n---\n\nmode\n",
+    );
     write_file(
         &repo.join(".agents/policies/safe.yaml"),
         "id: safe\ndescription: safe\ncapabilities: {}\npaths: { allow: [\"src/**\"], deny: [\"secrets/**\"], redact: [\"secrets/**\"] }\nconfirmations: {}\n",
@@ -65,16 +69,24 @@ outputs:
         "# Policy\n\nallow={{join effective.policy.paths.allow \",\"}}\n",
     );
 
-    let mut sync1 = Command::cargo_bin("agents").unwrap();
-    sync1.current_dir(repo).arg("sync").arg("--agent").arg("cursor");
+    let mut sync1 = support::agents_cmd();
+    sync1
+        .current_dir(repo)
+        .arg("sync")
+        .arg("--agent")
+        .arg("cursor");
     sync1.assert().success();
 
     let a0 = fs::read(repo.join(".cursor/rules/00-current-mode.md")).unwrap();
     let a1 = fs::read(repo.join(".cursor/rules/10-guidance.md")).unwrap();
     let a2 = fs::read(repo.join(".cursor/rules/20-policy.md")).unwrap();
 
-    let mut sync2 = Command::cargo_bin("agents").unwrap();
-    sync2.current_dir(repo).arg("sync").arg("--agent").arg("cursor");
+    let mut sync2 = support::agents_cmd();
+    sync2
+        .current_dir(repo)
+        .arg("sync")
+        .arg("--agent")
+        .arg("cursor");
     sync2.assert().success();
 
     let b0 = fs::read(repo.join(".cursor/rules/00-current-mode.md")).unwrap();
@@ -85,7 +97,7 @@ outputs:
     assert_eq!(a1, b1);
     assert_eq!(a2, b2);
 
-    let mut diff = Command::cargo_bin("agents").unwrap();
+    let mut diff = support::agents_cmd();
     diff.current_dir(repo)
         .arg("diff")
         .arg("--agent")
@@ -93,7 +105,11 @@ outputs:
     diff.assert()
         .success()
         .stdout(predicate::str::contains("noop=3"))
-        .stdout(predicate::str::contains("NOOP: .cursor/rules/00-current-mode.md"))
-        .stdout(predicate::str::contains("NOOP: .cursor/rules/10-guidance.md"))
+        .stdout(predicate::str::contains(
+            "NOOP: .cursor/rules/00-current-mode.md",
+        ))
+        .stdout(predicate::str::contains(
+            "NOOP: .cursor/rules/10-guidance.md",
+        ))
         .stdout(predicate::str::contains("NOOP: .cursor/rules/20-policy.md"));
 }

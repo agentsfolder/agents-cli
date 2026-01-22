@@ -1,7 +1,8 @@
 use std::fs;
 
-use assert_cmd::Command;
 use predicates::prelude::*;
+
+mod support;
 
 fn write_file(path: &std::path::Path, content: &str) {
     if let Some(parent) = path.parent() {
@@ -41,7 +42,7 @@ fn preview_produces_expected_paths_in_output() {
     // Workaround: outputs planner currently canonicalizes output paths.
     write_file(&repo.join("out.md"), "");
 
-    let mut cmd = Command::cargo_bin("agents").unwrap();
+    let mut cmd = support::agents_cmd();
     cmd.current_dir(repo).arg("preview").arg("--agent").arg("a");
 
     cmd.assert()
@@ -80,7 +81,7 @@ fn preview_fails_on_missing_template_vars() {
         "missing: {{missing.value}}\n",
     );
 
-    let mut cmd = Command::cargo_bin("agents").unwrap();
+    let mut cmd = support::agents_cmd();
     cmd.current_dir(repo).arg("preview").arg("--agent").arg("a");
 
     cmd.assert()
@@ -120,8 +121,7 @@ fn preview_renders_composed_prompt_in_templates() {
         "{{effective.prompts.composed_md}}",
     );
 
-    let output = Command::cargo_bin("agents")
-        .unwrap()
+    let output = support::agents_cmd()
         .current_dir(repo)
         .arg("preview")
         .arg("--agent")

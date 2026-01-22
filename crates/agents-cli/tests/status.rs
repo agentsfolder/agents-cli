@@ -1,5 +1,6 @@
-use assert_cmd::Command;
 use predicates::prelude::*;
+
+mod support;
 use std::fs;
 
 fn write_file(path: &std::path::Path, content: &str) {
@@ -31,7 +32,7 @@ fn status_output_is_stable_for_minimal_repo() {
         "id: safe\ndescription: safe\ncapabilities: {}\npaths: {}\nconfirmations: {}\n",
     );
 
-    let mut cmd = Command::cargo_bin("agents").unwrap();
+    let mut cmd = support::agents_cmd();
     cmd.current_dir(repo).arg("status");
 
     cmd.assert()
@@ -64,7 +65,7 @@ fn status_json_output_contains_effective_fields() {
         "id: safe\ndescription: safe\ncapabilities: {}\npaths: {}\nconfirmations: {}\n",
     );
 
-    let mut cmd = Command::cargo_bin("agents").unwrap();
+    let mut cmd = support::agents_cmd();
     cmd.current_dir(repo).arg("status").arg("--json");
 
     cmd.assert()

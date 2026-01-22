@@ -1,7 +1,8 @@
 use std::fs;
 
-use assert_cmd::Command;
 use predicates::prelude::*;
+
+mod support;
 
 fn write_file(path: &std::path::Path, content: &str) {
     if let Some(parent) = path.parent() {
@@ -41,7 +42,7 @@ fn diff_report_matches_fixture_expectations() {
     // Workaround: outputs planner currently canonicalizes output paths.
     write_file(&repo.join("out.md"), "bye\n");
 
-    let mut cmd = Command::cargo_bin("agents").unwrap();
+    let mut cmd = support::agents_cmd();
     cmd.current_dir(repo).arg("diff").arg("--agent").arg("a");
 
     cmd.assert()

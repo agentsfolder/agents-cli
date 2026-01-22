@@ -1,5 +1,6 @@
-use assert_cmd::Command;
 use std::fs;
+
+mod support;
 
 fn write_file(path: &std::path::Path, content: &str) {
     if let Some(parent) = path.parent() {
@@ -43,7 +44,7 @@ fn compat_output_is_stable_for_multiple_adapters() {
     );
     write_file(&repo.join(".agents/adapters/b/templates/b.hbs"), "b\n");
 
-    let mut cmd = Command::cargo_bin("agents").unwrap();
+    let mut cmd = support::agents_cmd();
     let output = cmd.current_dir(repo).arg("compat").output().unwrap();
     assert!(output.status.success());
 

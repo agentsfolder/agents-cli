@@ -1,7 +1,8 @@
 use std::fs;
 
-use assert_cmd::Command;
 use predicates::prelude::*;
+
+mod support;
 
 fn write_file(path: &std::path::Path, content: &str) {
     if let Some(parent) = path.parent() {
@@ -19,7 +20,10 @@ fn base_repo(repo: &std::path::Path) {
     );
     write_file(&repo.join(".agents/prompts/base.md"), "base\n");
     write_file(&repo.join(".agents/prompts/project.md"), "project\n");
-    write_file(&repo.join(".agents/modes/default.md"), "---\nid: default\n---\n\n");
+    write_file(
+        &repo.join(".agents/modes/default.md"),
+        "---\nid: default\n---\n\n",
+    );
     write_file(
         &repo.join(".agents/policies/safe.yaml"),
         "id: safe\ndescription: safe\ncapabilities: {}\npaths: {}\nconfirmations: {}\n",
@@ -44,7 +48,7 @@ fn deletes_stamped_file() {
     base_repo(repo);
     adapter(repo, "out.md");
 
-    let mut sync_cmd = Command::cargo_bin("agents").unwrap();
+    let mut sync_cmd = support::agents_cmd();
     sync_cmd
         .current_dir(repo)
         .arg("sync")
@@ -55,8 +59,12 @@ fn deletes_stamped_file() {
     sync_cmd.assert().success();
     assert!(repo.join("out.md").is_file());
 
-    let mut clean_cmd = Command::cargo_bin("agents").unwrap();
-    clean_cmd.current_dir(repo).arg("clean").arg("--agent").arg("a");
+    let mut clean_cmd = support::agents_cmd();
+    clean_cmd
+        .current_dir(repo)
+        .arg("clean")
+        .arg("--agent")
+        .arg("a");
     clean_cmd.assert().success();
 
     assert!(!repo.join("out.md").exists());
@@ -72,8 +80,12 @@ fn does_not_delete_unmanaged_file() {
     write_file(&repo.join("out.md"), "manual\n");
     assert!(repo.join("out.md").is_file());
 
-    let mut clean_cmd = Command::cargo_bin("agents").unwrap();
-    clean_cmd.current_dir(repo).arg("clean").arg("--agent").arg("a");
+    let mut clean_cmd = support::agents_cmd();
+    clean_cmd
+        .current_dir(repo)
+        .arg("clean")
+        .arg("--agent")
+        .arg("a");
     clean_cmd
         .assert()
         .success()
@@ -89,7 +101,7 @@ fn prunes_empty_dirs() {
     base_repo(repo);
     adapter(repo, "gen/sub/out.md");
 
-    let mut sync_cmd = Command::cargo_bin("agents").unwrap();
+    let mut sync_cmd = support::agents_cmd();
     sync_cmd
         .current_dir(repo)
         .arg("sync")
@@ -100,8 +112,12 @@ fn prunes_empty_dirs() {
     sync_cmd.assert().success();
     assert!(repo.join("gen/sub/out.md").is_file());
 
-    let mut clean_cmd = Command::cargo_bin("agents").unwrap();
-    clean_cmd.current_dir(repo).arg("clean").arg("--agent").arg("a");
+    let mut clean_cmd = support::agents_cmd();
+    clean_cmd
+        .current_dir(repo)
+        .arg("clean")
+        .arg("--agent")
+        .arg("a");
     clean_cmd.assert().success();
 
     assert!(!repo.join("gen/sub/out.md").exists());

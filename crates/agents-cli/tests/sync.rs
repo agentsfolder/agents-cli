@@ -1,7 +1,8 @@
 use std::fs;
 
-use assert_cmd::Command;
 use predicates::prelude::*;
+
+mod support;
 
 fn write_file(path: &std::path::Path, content: &str) {
     if let Some(parent) = path.parent() {
@@ -46,7 +47,7 @@ fn sync_then_diff_yields_no_changes() {
     write_file(&repo.join("out.md"), "");
 
     // Sync writes file.
-    let mut sync_cmd = Command::cargo_bin("agents").unwrap();
+    let mut sync_cmd = support::agents_cmd();
     sync_cmd
         .current_dir(repo)
         .arg("sync")
@@ -58,7 +59,7 @@ fn sync_then_diff_yields_no_changes() {
     sync_cmd.assert().success();
 
     // Diff should be noop.
-    let mut diff_cmd = Command::cargo_bin("agents").unwrap();
+    let mut diff_cmd = support::agents_cmd();
     diff_cmd
         .current_dir(repo)
         .arg("diff")
@@ -87,7 +88,7 @@ fn sync_fails_on_unmanaged_file_with_if_generated() {
     // Unmanaged existing file.
     write_file(&repo.join("out.md"), "manual\n");
 
-    let mut cmd = Command::cargo_bin("agents").unwrap();
+    let mut cmd = support::agents_cmd();
     cmd.current_dir(repo)
         .arg("sync")
         .arg("--agent")
@@ -115,7 +116,7 @@ fn sync_vfs_mount_reports_workspace_without_writing_repo() {
 
     write_file(&repo.join("out.md"), "repo\n");
 
-    let mut cmd = Command::cargo_bin("agents").unwrap();
+    let mut cmd = support::agents_cmd();
     cmd.current_dir(repo)
         .arg("sync")
         .arg("--agent")

@@ -1,12 +1,13 @@
-use assert_cmd::Command;
 use predicates::prelude::*;
+
+mod support;
 
 #[test]
 fn init_standard_creates_agents_dir_and_validate_passes() {
     let tmp = tempfile::tempdir().unwrap();
     let root = tmp.path();
 
-    let mut init = Command::cargo_bin("agents").unwrap();
+    let mut init = support::agents_cmd();
     init.current_dir(root)
         .arg("init")
         .arg("--preset")
@@ -19,9 +20,12 @@ fn init_standard_creates_agents_dir_and_validate_passes() {
     assert!(root.join(".agents/schemas/manifest.schema.json").is_file());
     assert!(root.join(".agents/state/.gitignore").is_file());
 
-    let mut validate = Command::cargo_bin("agents").unwrap();
+    let mut validate = support::agents_cmd();
     validate.current_dir(root).arg("validate");
-    validate.assert().success().stdout(predicate::str::contains("ok: schemas valid"));
+    validate
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("ok: schemas valid"));
 }
 
 #[test]
@@ -29,7 +33,7 @@ fn init_is_deterministic_or_fails_safely_on_second_run() {
     let tmp = tempfile::tempdir().unwrap();
     let root = tmp.path();
 
-    let mut init1 = Command::cargo_bin("agents").unwrap();
+    let mut init1 = support::agents_cmd();
     init1
         .current_dir(root)
         .arg("init")
@@ -37,7 +41,7 @@ fn init_is_deterministic_or_fails_safely_on_second_run() {
         .arg("standard");
     init1.assert().success();
 
-    let mut init2 = Command::cargo_bin("agents").unwrap();
+    let mut init2 = support::agents_cmd();
     init2
         .current_dir(root)
         .arg("init")

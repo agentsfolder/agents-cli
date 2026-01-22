@@ -1,7 +1,8 @@
 use std::fs;
 
-use assert_cmd::Command;
 use predicates::prelude::*;
+
+mod support;
 
 fn write_file(path: &std::path::Path, content: &str) {
     if let Some(parent) = path.parent() {
@@ -23,7 +24,10 @@ fn explain_returns_expected_components_after_preview() {
     );
     write_file(&repo.join(".agents/prompts/base.md"), "base\n");
     write_file(&repo.join(".agents/prompts/project.md"), "project\n");
-    write_file(&repo.join(".agents/modes/default.md"), "---\nid: default\n---\n\n");
+    write_file(
+        &repo.join(".agents/modes/default.md"),
+        "---\nid: default\n---\n\n",
+    );
     write_file(
         &repo.join(".agents/policies/safe.yaml"),
         "id: safe\ndescription: safe\ncapabilities: {}\npaths: {}\nconfirmations: {}\n",
@@ -42,7 +46,7 @@ outputs:
     );
     write_file(&repo.join(".agents/adapters/a/templates/t.hbs"), "hello\n");
 
-    let mut preview = Command::cargo_bin("agents").unwrap();
+    let mut preview = support::agents_cmd();
     preview
         .current_dir(repo)
         .arg("preview")
@@ -50,11 +54,8 @@ outputs:
         .arg("a");
     preview.assert().success();
 
-    let mut explain = Command::cargo_bin("agents").unwrap();
-    explain
-        .current_dir(repo)
-        .arg("explain")
-        .arg("AGENTS.md");
+    let mut explain = support::agents_cmd();
+    explain.current_dir(repo).arg("explain").arg("AGENTS.md");
 
     explain
         .assert()
@@ -72,7 +73,7 @@ fn explain_reports_unmanaged_file_helpfully() {
 
     write_file(&repo.join("notes.txt"), "hello\n");
 
-    let mut explain = Command::cargo_bin("agents").unwrap();
+    let mut explain = support::agents_cmd();
     explain.current_dir(repo).arg("explain").arg("notes.txt");
 
     explain

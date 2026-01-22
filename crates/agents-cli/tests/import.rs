@@ -1,7 +1,8 @@
 use std::fs;
 
-use assert_cmd::Command;
 use predicates::prelude::*;
+
+mod support;
 
 fn write_file(path: &std::path::Path, content: &str) {
     if let Some(parent) = path.parent() {
@@ -20,7 +21,7 @@ fn import_copilot_creates_agents_and_validates() {
         "# Copilot\n\nDo the thing.\n",
     );
 
-    let mut import = Command::cargo_bin("agents").unwrap();
+    let mut import = support::agents_cmd();
     import
         .current_dir(root)
         .arg("import")
@@ -35,9 +36,12 @@ fn import_copilot_creates_agents_and_validates() {
     assert!(root.join(".agents/prompts/snippets/copilot.md").is_file());
     assert!(root.join(".agents/modes/copilot-import.md").is_file());
 
-    let mut validate = Command::cargo_bin("agents").unwrap();
+    let mut validate = support::agents_cmd();
     validate.current_dir(root).arg("validate");
-    validate.assert().success().stdout(predicate::str::contains("ok: schemas valid"));
+    validate
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("ok: schemas valid"));
 }
 
 #[test]
@@ -47,7 +51,7 @@ fn import_dry_run_does_not_write_anything() {
 
     write_file(&root.join(".github/copilot-instructions.md"), "x\n");
 
-    let mut import = Command::cargo_bin("agents").unwrap();
+    let mut import = support::agents_cmd();
     import
         .current_dir(root)
         .arg("import")

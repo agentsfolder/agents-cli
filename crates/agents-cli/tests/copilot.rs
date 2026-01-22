@@ -1,7 +1,8 @@
 use std::fs;
 
-use assert_cmd::Command;
 use predicates::prelude::*;
+
+mod support;
 
 fn write_file(path: &std::path::Path, content: &str) {
     if let Some(parent) = path.parent() {
@@ -23,7 +24,10 @@ enabled: { modes: [default], policies: [safe], skills: [], adapters: [copilot] }
     );
     write_file(&repo.join(".agents/prompts/base.md"), "base\n");
     write_file(&repo.join(".agents/prompts/project.md"), "project\n");
-    write_file(&repo.join(".agents/modes/default.md"), "---\nid: default\n---\n\n");
+    write_file(
+        &repo.join(".agents/modes/default.md"),
+        "---\nid: default\n---\n\n",
+    );
     write_file(
         &repo.join(".agents/policies/safe.yaml"),
         "id: safe\ndescription: safe\ncapabilities: {}\npaths: {}\nconfirmations: {}\n",
@@ -63,12 +67,17 @@ outputs:
         "---\napplyTo: \"{{join scope.applyTo \",\"}}\"\n---\n\n# Scope {{scope.id}}\n",
     );
 
-    let mut cmd = Command::cargo_bin("agents").unwrap();
-    cmd.current_dir(repo).arg("preview").arg("--agent").arg("copilot");
+    let mut cmd = support::agents_cmd();
+    cmd.current_dir(repo)
+        .arg("preview")
+        .arg("--agent")
+        .arg("copilot");
 
     cmd.assert()
         .success()
-        .stdout(predicate::str::contains("preview: .github/copilot-instructions.md ->"))
+        .stdout(predicate::str::contains(
+            "preview: .github/copilot-instructions.md ->",
+        ))
         .stdout(predicate::str::contains(
             "preview: .github/instructions/api_v2.instructions.md ->",
         ))

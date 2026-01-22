@@ -1,7 +1,8 @@
 use std::fs;
 
-use assert_cmd::Command;
 use predicates::prelude::*;
+
+mod support;
 
 fn write_file(path: &std::path::Path, content: &str) {
     if let Some(parent) = path.parent() {
@@ -19,7 +20,10 @@ fn base_repo(repo: &std::path::Path) {
     );
     write_file(&repo.join(".agents/prompts/base.md"), "base\n");
     write_file(&repo.join(".agents/prompts/project.md"), "project\n");
-    write_file(&repo.join(".agents/modes/default.md"), "---\nid: default\n---\n\n");
+    write_file(
+        &repo.join(".agents/modes/default.md"),
+        "---\nid: default\n---\n\n",
+    );
     write_file(
         &repo.join(".agents/policies/safe.yaml"),
         "id: safe\ndescription: safe\ncapabilities: {}\npaths: {}\nconfirmations: {}\n",
@@ -39,7 +43,7 @@ fn doctor_passes_on_clean_fixture() {
     base_repo(repo);
 
     // Make repo clean by syncing first.
-    let mut sync_cmd = Command::cargo_bin("agents").unwrap();
+    let mut sync_cmd = support::agents_cmd();
     sync_cmd
         .current_dir(repo)
         .arg("sync")
@@ -49,7 +53,7 @@ fn doctor_passes_on_clean_fixture() {
         .arg("materialize");
     sync_cmd.assert().success();
 
-    let mut cmd = Command::cargo_bin("agents").unwrap();
+    let mut cmd = support::agents_cmd();
     cmd.current_dir(repo).arg("doctor");
     cmd.assert()
         .success()
@@ -62,7 +66,7 @@ fn doctor_reports_drift_when_generated_file_is_edited() {
     let repo = tmp.path();
     base_repo(repo);
 
-    let mut sync_cmd = Command::cargo_bin("agents").unwrap();
+    let mut sync_cmd = support::agents_cmd();
     sync_cmd
         .current_dir(repo)
         .arg("sync")
@@ -77,7 +81,7 @@ fn doctor_reports_drift_when_generated_file_is_edited() {
     s.push_str("\nmanual edit\n");
     fs::write(repo.join("out.md"), s).unwrap();
 
-    let mut cmd = Command::cargo_bin("agents").unwrap();
+    let mut cmd = support::agents_cmd();
     cmd.current_dir(repo).arg("doctor");
     cmd.assert()
         .success()
@@ -92,7 +96,7 @@ fn doctor_fix_creates_missing_state_gitignore() {
 
     assert!(!repo.join(".agents/state/.gitignore").exists());
 
-    let mut cmd = Command::cargo_bin("agents").unwrap();
+    let mut cmd = support::agents_cmd();
     cmd.current_dir(repo).arg("doctor").arg("--fix");
     cmd.assert().success();
 

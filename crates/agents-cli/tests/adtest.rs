@@ -1,7 +1,8 @@
 use std::path::PathBuf;
 
-use assert_cmd::Command;
 use predicates::prelude::*;
+
+mod support;
 
 fn write_file(path: &std::path::Path, content: &str) {
     if let Some(parent) = path.parent() {
@@ -18,7 +19,7 @@ fn agents_test_adapters_passes_on_basic_fixture() {
         .unwrap()
         .to_path_buf();
 
-    let mut cmd = Command::cargo_bin("agents").unwrap();
+    let mut cmd = support::agents_cmd();
     cmd.current_dir(&repo_root)
         .arg("test")
         .arg("adapters")
@@ -40,7 +41,10 @@ fn agents_test_adapters_failure_shows_unified_diff() {
          defaults: { mode: default, policy: safe, backend: materialize }\n\
          enabled: { modes: [default], policies: [safe], skills: [], adapters: [a] }\n",
     );
-    write_file(&root.join("fixtures/basic/repo/.agents/prompts/base.md"), "base\n");
+    write_file(
+        &root.join("fixtures/basic/repo/.agents/prompts/base.md"),
+        "base\n",
+    );
     write_file(
         &root.join("fixtures/basic/repo/.agents/prompts/project.md"),
         "project\n",
@@ -64,7 +68,7 @@ fn agents_test_adapters_failure_shows_unified_diff() {
 
     write_file(&root.join("fixtures/basic/expect/a/out.md"), "bad\n");
 
-    let mut cmd = Command::cargo_bin("agents").unwrap();
+    let mut cmd = support::agents_cmd();
     cmd.current_dir(root)
         .arg("test")
         .arg("adapters")

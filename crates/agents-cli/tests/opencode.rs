@@ -1,7 +1,8 @@
 use std::fs;
 
-use assert_cmd::Command;
 use predicates::prelude::*;
+
+mod support;
 
 fn write_file(path: &std::path::Path, content: &str) {
     if let Some(parent) = path.parent() {
@@ -23,7 +24,10 @@ enabled: { modes: [default], policies: [safe], skills: [], adapters: [opencode] 
     );
     write_file(&repo.join(".agents/prompts/base.md"), "base\n");
     write_file(&repo.join(".agents/prompts/project.md"), "project\n");
-    write_file(&repo.join(".agents/modes/default.md"), "---\nid: default\n---\n\n");
+    write_file(
+        &repo.join(".agents/modes/default.md"),
+        "---\nid: default\n---\n\n",
+    );
     write_file(
         &repo.join(".agents/policies/safe.yaml"),
         "id: safe\ndescription: safe\ncapabilities: {}\npaths: {}\nconfirmations: {}\n",
@@ -51,9 +55,12 @@ outputs:
         &repo.join(".agents/adapters/opencode/templates/opencode.jsonc.hbs"),
         "{\n  \"$schema\": \"https://opencode.ai/config.json\"\n}\n",
     );
-    write_file(&repo.join(".agents/adapters/opencode/templates/AGENTS.md.hbs"), "# AGENTS\n");
+    write_file(
+        &repo.join(".agents/adapters/opencode/templates/AGENTS.md.hbs"),
+        "# AGENTS\n",
+    );
 
-    let mut sync = Command::cargo_bin("agents").unwrap();
+    let mut sync = support::agents_cmd();
     sync.current_dir(repo)
         .arg("sync")
         .arg("--agent")
@@ -69,14 +76,14 @@ outputs:
     let edited = original.replace("https://opencode.ai/config.json", "https://example.invalid");
     fs::write(repo.join("opencode.jsonc"), edited).unwrap();
 
-    let mut diff = Command::cargo_bin("agents").unwrap();
+    let mut diff = support::agents_cmd();
     diff.current_dir(repo)
         .arg("diff")
         .arg("--agent")
         .arg("opencode");
-    diff.assert()
-        .success()
-        .stdout(predicate::str::contains("CONFLICT(drifted): opencode.jsonc"));
+    diff.assert().success().stdout(predicate::str::contains(
+        "CONFLICT(drifted): opencode.jsonc",
+    ));
 }
 
 #[test]
@@ -92,7 +99,10 @@ enabled: { modes: [default], policies: [safe], skills: [], adapters: [opencode] 
     );
     write_file(&repo.join(".agents/prompts/base.md"), "base\n");
     write_file(&repo.join(".agents/prompts/project.md"), "project\n");
-    write_file(&repo.join(".agents/modes/default.md"), "---\nid: default\n---\n\n");
+    write_file(
+        &repo.join(".agents/modes/default.md"),
+        "---\nid: default\n---\n\n",
+    );
     write_file(
         &repo.join(".agents/policies/safe.yaml"),
         "id: safe\ndescription: safe\ncapabilities: {}\npaths: {}\nconfirmations: {}\n",
@@ -120,10 +130,16 @@ outputs:
         &repo.join(".agents/adapters/opencode/templates/opencode.jsonc.hbs"),
         "{\n  \"$schema\": \"https://opencode.ai/config.json\"\n}\n",
     );
-    write_file(&repo.join(".agents/adapters/opencode/templates/AGENTS.md.hbs"), "# AGENTS\n");
+    write_file(
+        &repo.join(".agents/adapters/opencode/templates/AGENTS.md.hbs"),
+        "# AGENTS\n",
+    );
 
-    let mut cmd = Command::cargo_bin("agents").unwrap();
-    cmd.current_dir(repo).arg("preview").arg("--agent").arg("opencode");
+    let mut cmd = support::agents_cmd();
+    cmd.current_dir(repo)
+        .arg("preview")
+        .arg("--agent")
+        .arg("opencode");
 
     cmd.assert()
         .success()
