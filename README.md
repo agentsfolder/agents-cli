@@ -105,6 +105,15 @@ cargo clippy --all-targets --all-features -- -D warnings
 cargo test
 ```
 
+## Release
+Cargo-dist drives releases. Tag main with a semver version to publish:
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+The release workflow builds multi-platform binaries, publishes the npm package, and updates the Homebrew tap.
+
 ## Notes
 - Use `--backend vfs_container` to avoid writing to the repo when supported by your environment.
 - Adapter fixtures live under `fixtures/` and are exercised by `agents test adapters`.
