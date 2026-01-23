@@ -19,10 +19,12 @@ Unblocks: distribution for Node/npm users
 - [x] Add `.npmignore` to avoid publishing cargo artifacts.
 - [x] Update README with npm install instructions.
 - [x] Configure cargo-dist for multi-platform binaries and npm packaging.
-- [x] Add GitHub Actions workflow for cargo-dist on main.
+- [x] Add GitHub Actions workflow for cargo-dist on tags.
 - [x] Add Homebrew distribution via cargo-dist.
+- [x] Wire npm/homebrew publish tokens into dist workflow.
 
 ## Verification
 - [x] `npm pack` includes the wrapper and binary scripts.
 - [x] `npm install -g` followed by `agents --help` works (manual).
 - [x] `cargo dist build` produces binaries for supported platforms (CI).
+- [ ] `git push --tags` triggers cargo-dist release workflow (manual).
