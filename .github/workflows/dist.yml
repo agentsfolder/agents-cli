@@ -1,0 +1,35 @@
+name: Dist
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  dist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install cargo-dist
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-dist
+
+      - name: Build dist artifacts
+        run: cargo dist build --output-format github
+
+      - name: Publish dist artifacts
+        if: ${{ secrets.NPM_TOKEN != '' && secrets.HOMEBREW_TAP_TOKEN != '' }}
+        run: cargo dist publish --output-format github
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}

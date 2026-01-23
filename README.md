@@ -26,7 +26,13 @@ npm install -g agents
 agents --help
 ```
 
-Note: the npm package builds the Rust binary on install, so a Rust toolchain is required.
+## Install (Homebrew)
+```bash
+brew install agentsfolder/homebrew/agents
+agents --help
+```
+
+The npm and Homebrew packages use prebuilt binaries; a Rust toolchain is not required for end users.
 
 ## Common Commands
 ```bash
