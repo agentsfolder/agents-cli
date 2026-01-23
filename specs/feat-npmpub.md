@@ -25,4 +25,4 @@ Unblocks: distribution for Node/npm users
 ## Verification
 - [x] `npm pack` includes the wrapper and binary scripts.
 - [x] `npm install -g` followed by `agents --help` works (manual).
-- [ ] `cargo dist build` produces binaries for supported platforms (CI).
+- [x] `cargo dist build` produces binaries for supported platforms (CI).

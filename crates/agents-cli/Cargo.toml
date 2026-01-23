@@ -3,6 +3,9 @@ name = "agents-cli"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
+repository = "https://github.com/agentsfolder/agents-cli"
+description = "Canonical .agents config to agent-native surfaces"
+homepage = "https://github.com/agentsfolder/agents-cli"
 
 [[bin]]
 name = "agents"
