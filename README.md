@@ -27,12 +27,9 @@ agents --help
 ```
 
 ## Install (Homebrew)
-```bash
-brew install agentsfolder/homebrew/agents
-agents --help
-```
+Homebrew packaging is queued for a follow-up release once the tap is enabled.
 
-The npm and Homebrew packages use prebuilt binaries; a Rust toolchain is not required for end users.
+The npm package uses prebuilt binaries; a Rust toolchain is not required for end users.
 
 ## Common Commands
 ```bash

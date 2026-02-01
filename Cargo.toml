@@ -13,7 +13,7 @@ cargo-dist-version = "0.30.3"
 # CI backends to support
 ci = "github"
 # The installers to generate for each app
-installers = ["shell", "powershell", "npm", "homebrew"]
+installers = ["shell", "powershell", "npm"]
 npm-package-name = "agents"
 # Which actions to run on pull requests
 pr-run-mode = "skip"
@@ -24,8 +24,6 @@ install-path = "CARGO_HOME"
 # Whether to install an updater program
 install-updater = false
 
-[workspace.metadata.dist.homebrew]
-tap = "agentsfolder/homebrew"
 
 # The profile that 'dist' will build with
 [profile.dist]
