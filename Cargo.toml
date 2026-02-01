@@ -12,6 +12,8 @@ resolver = "2"
 cargo-dist-version = "0.30.3"
 # CI backends to support
 ci = "github"
+# Allow manual edits to generated CI workflows (needed for NPM_TOKEN wiring)
+allow-dirty = ["ci"]
 # The installers to generate for each app
 installers = ["shell", "powershell", "npm"]
 npm-package-name = "agents"
