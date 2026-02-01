@@ -16,7 +16,9 @@ ci = "github"
 allow-dirty = ["ci"]
 # The installers to generate for each app
 installers = ["shell", "powershell", "npm"]
-npm-package-name = "@agentsfolder/agents"
+# npm package name = <scope>/<package>
+npm-package = "agents"
+npm-scope = "@agentsfolder"
 # Which actions to run on pull requests
 pr-run-mode = "skip"
 # Target platforms to build apps for (Rust target-triple syntax)
