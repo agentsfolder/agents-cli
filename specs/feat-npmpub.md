@@ -23,9 +23,10 @@ Unblocks: distribution for Node/npm users
 - [ ] Add Homebrew distribution via cargo-dist (deferred for npm-only release).
 - [x] Wire npm publish token into dist workflow.
 - [x] Align release tag with crate/package version.
+- [x] Use scoped npm package name.
 
 ## Verification
 - [x] `npm pack` includes the wrapper and binary scripts.
-- [x] `npm install -g` followed by `agents --help` works (manual).
+- [x] `npm install -g @agentsfolder/agents` followed by `agents --help` works (manual).
 - [x] `cargo dist build` produces binaries for supported platforms (CI).
 - [ ] `git push --tags` triggers cargo-dist release workflow (manual).

@@ -22,7 +22,7 @@ cargo run -p agents-cli -- sync --agent opencode --backend materialize
 
 ## Install (npm)
 ```bash
-npm install -g agents
+npm install -g @agentsfolder/agents
 agents --help
 ```
 
