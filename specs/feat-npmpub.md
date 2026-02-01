@@ -22,6 +22,7 @@ Unblocks: distribution for Node/npm users
 - [x] Add GitHub Actions workflow for cargo-dist on tags.
 - [ ] Add Homebrew distribution via cargo-dist (deferred for npm-only release).
 - [x] Wire npm publish token into dist workflow.
+- [x] Align release tag with crate/package version.
 
 ## Verification
 - [x] `npm pack` includes the wrapper and binary scripts.
