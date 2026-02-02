@@ -1,6 +1,6 @@
 {
   "name": "@agentsfolder/agents",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Canonical .agents config to agent-native surfaces",
   "license": "MIT",
   "bin": {

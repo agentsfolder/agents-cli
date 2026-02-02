@@ -24,6 +24,7 @@ Unblocks: distribution for Node/npm users
 - [x] Wire npm publish token into dist workflow.
 - [x] Align release tag with crate/package version.
 - [x] Use scoped npm package name.
+- [x] Enable npm publish job in cargo-dist.
 
 ## Verification
 - [x] `npm pack` includes the wrapper and binary scripts.
