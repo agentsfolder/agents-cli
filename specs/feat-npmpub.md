@@ -25,9 +25,11 @@ Unblocks: distribution for Node/npm users
 - [x] Align release tag with crate/package version.
 - [x] Use scoped npm package name.
 - [x] Enable npm publish job in cargo-dist.
+- [x] Publish npm package from CI using generated tarball.
 
 ## Verification
 - [x] `npm pack` includes the wrapper and binary scripts.
 - [x] `npm install -g @agentsfolder/agents` followed by `agents --help` works (manual).
 - [x] `cargo dist build` produces binaries for supported platforms (CI).
 - [ ] `git push --tags` triggers cargo-dist release workflow (manual).
+- [ ] npm publish succeeds (manual verification).
